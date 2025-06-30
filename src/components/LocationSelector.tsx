@@ -1,0 +1,155 @@
+import { MapPin, Loader2, AlertCircle, CheckCircle, Cloud, Edit } from 'lucide-react'
+import { useAppStore } from '../store'
+import { getCurrentPosition, reverseGeocode } from '../services/geolocation'
+import { fetchWeatherData } from '../services/weather'
+import { Card, CardContent } from './ui/card'
+import { Button } from './ui/button'
+import { Alert, AlertDescription } from './ui/alert'
+
+export function LocationSelector() {
+  const { 
+    geolocation, 
+    setGeolocationStatus, 
+    setPosition, 
+    setWeather, 
+    setGeolocationError 
+  } = useAppStore()
+  
+  
+  const handleCurrentLocation = async () => {
+    try {
+      setGeolocationStatus('fetching_location')
+      
+      const position = await getCurrentPosition()
+      const placeName = await reverseGeocode(position)
+      setPosition(position, placeName)
+      
+      setGeolocationStatus('fetching_weather')
+      const weather = await fetchWeatherData(position)
+      setWeather(weather)
+      
+    } catch (error) {
+      setGeolocationError(error instanceof Error ? error.message : 'Failed to get location')
+    }
+  }
+  
+  
+  const renderStatus = () => {
+    switch (geolocation.status) {
+      case 'blank':
+        return (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">Choose your location to get weather data</p>
+            </CardContent>
+          </Card>
+        )
+        
+      case 'fetching_location':
+        return (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
+              <p className="text-primary">Getting your location...</p>
+            </CardContent>
+          </Card>
+        )
+        
+      case 'fetching_weather':
+        return (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
+              <p className="text-primary">Fetching weather data...</p>
+            </CardContent>
+          </Card>
+        )
+        
+      case 'completed':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <div className="flex-1">
+                <span className="font-medium text-green-900">{geolocation.placeName}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setGeolocationStatus('blank')
+                }}
+                className="text-xs"
+              >
+                <Edit className="w-3 h-3 mr-1" />
+                Edit
+              </Button>
+            </div>
+            
+            {geolocation.weather && (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Cloud className="w-8 h-8 text-primary" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Current Weather</p>
+                        <p className="text-sm text-muted-foreground">
+                          {Math.round(geolocation.weather.current.temp)}°F, UV Index: {geolocation.weather.current.uvi}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold">
+                        {Math.round(geolocation.weather.current.temp)}°
+                      </p>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {geolocation.weather.current.weather[0]?.description || 'Clear'}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )
+        
+      case 'error':
+        return (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <div>
+                <p className="font-medium">Error</p>
+                <p className="text-sm">{geolocation.error}</p>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )
+        
+      default:
+        return null
+    }
+  }
+  
+  const isLoading = geolocation.status === 'fetching_location' || geolocation.status === 'fetching_weather'
+  
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4">
+        <Button
+          variant="outline"
+          onClick={handleCurrentLocation}
+          disabled={isLoading}
+          className="h-auto p-4 border-dashed"
+        >
+          <MapPin className="w-5 h-5 mr-2" />
+          Use Current Location
+        </Button>
+      </div>
+      
+      {renderStatus()}
+    </div>
+  )
+}

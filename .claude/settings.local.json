@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.api.met.no)",
+      "WebFetch(domain:api.met.no)",
+      "Bash(npm run build:*)",
+      "Bash(rg:*)",
+      "WebFetch(domain:open-meteo.com)"
+    ],
+    "deny": []
+  }
+}
