@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
@@ -16,6 +18,7 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/vite": "^4.1.11",
+    "@types/bun": "^1.2.17",
     "chart.js": "^4.5.0",
     "chartjs-adapter-date-fns": "^3.0.0",
     "class-variance-authority": "^0.7.1",

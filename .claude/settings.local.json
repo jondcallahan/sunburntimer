@@ -5,7 +5,9 @@
       "WebFetch(domain:api.met.no)",
       "Bash(npm run build:*)",
       "Bash(rg:*)",
-      "WebFetch(domain:open-meteo.com)"
+      "WebFetch(domain:open-meteo.com)",
+      "Bash(bun run:*)",
+      "Bash(bun test:*)"
     ],
     "deny": []
   }
