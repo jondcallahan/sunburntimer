@@ -204,7 +204,7 @@ export interface AppState {
 
 // Constants
 export const CALCULATION_CONSTANTS = {
-  BASE_DAMAGE_TIME: 200.0,
+  BASE_DAMAGE_TIME: 167.0, // Scientific baseline: max_time = 167/UVI minutes (https://meteo.lcd.lu/papers/uv/uvi/uvi_01.html)
   UV_SCALING_FACTOR: 3.0,
   DAMAGE_THRESHOLD: 100.0,
   SAFETY_THRESHOLD: 95.0,
