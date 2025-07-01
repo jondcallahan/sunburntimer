@@ -10,7 +10,10 @@ import {
   CALCULATION_CONSTANTS,
   SKIN_TYPE_CONFIG,
   SPF_CONFIG,
-  SWEAT_CONFIG
+  SWEAT_CONFIG,
+  TIME_CONSTANTS,
+  SPF_CONSTANTS,
+  TIME_SLICE_OPTIONS
 } from './types';
 
 // Core sunburn calculation formula
@@ -22,7 +25,7 @@ function calculateBurnTime(
 ): number {
   const safeUV = Math.max(CALCULATION_CONSTANTS.MIN_UV_THRESHOLD, uvIndex * CALCULATION_CONSTANTS.UV_SCALING_FACTOR);
   const timeForFullBurn = CALCULATION_CONSTANTS.BASE_DAMAGE_TIME * skinTypeCoeff / safeUV * spfCoeff;
-  const damagePercentage = sliceMinutes * 100.0 / timeForFullBurn;
+  const damagePercentage = sliceMinutes * TIME_CONSTANTS.PERCENTAGE_BASE / timeForFullBurn;
   
   return damagePercentage;
 }
@@ -35,7 +38,7 @@ function interpolateUV(
   totalSlices: number
 ): number {
   const gradient = sliceIndex / totalSlices; // Fixed: proper float division
-  return startUV * (1.0 - gradient) + endUV * gradient;
+  return startUV * (SPF_CONSTANTS.BASE_COEFFICIENT - gradient) + endUV * gradient;
 }
 
 // Create time slices with UV interpolation
@@ -45,14 +48,14 @@ function createTimeSlices(
   slicesPerHour: number
 ): TimeSlice[] {
   const slices: TimeSlice[] = [];
-  const sliceMinutes = 60 / slicesPerHour;
+  const sliceMinutes = TIME_CONSTANTS.MINUTES_PER_HOUR / slicesPerHour;
 
   for (let i = 0; i < hourlyWeather.length - 1; i++) {
     const currentHour = hourlyWeather[i];
     const nextHour = hourlyWeather[i + 1];
 
     for (let j = 0; j < slicesPerHour; j++) {
-      const sliceTime = new Date(currentHour.dt * 1000 + j * sliceMinutes * 60000);
+      const sliceTime = new Date(currentHour.dt * TIME_CONSTANTS.MILLISECONDS_PER_SECOND + j * sliceMinutes * TIME_CONSTANTS.SECONDS_PER_MINUTE * TIME_CONSTANTS.MILLISECONDS_PER_SECOND);
 
       if (sliceTime >= startTime) {
         const interpolatedUV = interpolateUV(
@@ -79,7 +82,7 @@ function calculateSPFAtTime(
   sweatLevel: SweatLevel,
   timeElapsed: number // hours since application
 ): number {
-  if (sweatLevel === SweatLevel.LOW || baseSPF === 1.0) {
+  if (sweatLevel === SweatLevel.LOW || baseSPF === SPF_CONSTANTS.BASE_COEFFICIENT) {
     return baseSPF;
   }
 
@@ -90,13 +93,13 @@ function calculateSPFAtTime(
   }
 
   if (timeElapsed >= config.startHours + config.durationHours) {
-    return 1.0;
+    return SPF_CONSTANTS.MIN_PROTECTION_FACTOR;
   }
 
   const degradationProgress = (timeElapsed - config.startHours) / config.durationHours;
   const remainingProtection = baseSPF * (1.0 - degradationProgress);
 
-  return Math.max(1.0, remainingProtection);
+  return Math.max(SPF_CONSTANTS.MIN_PROTECTION_FACTOR, remainingProtection);
 }
 
 // Check stopping conditions
@@ -152,7 +155,7 @@ function calculateBurnTimeWithSlices(
   input: CalculationInput,
   slicesPerHour: number
 ): CalculationResult {
-  const sliceMinutes = 60 / slicesPerHour;
+  const sliceMinutes = TIME_CONSTANTS.MINUTES_PER_HOUR / slicesPerHour;
   const timeSlices = createTimeSlices(input.weather.hourly, input.currentTime, slicesPerHour);
 
   const points: CalculationPoint[] = [];
@@ -160,7 +163,7 @@ function calculateBurnTimeWithSlices(
   let pointCount = 0;
 
   for (const slice of timeSlices) {
-    const hoursElapsed = (slice.datetime.getTime() - input.currentTime.getTime()) / (1000 * 60 * 60);
+    const hoursElapsed = (slice.datetime.getTime() - input.currentTime.getTime()) / TIME_CONSTANTS.MILLISECONDS_PER_HOUR;
     const spfAtTime = calculateSPFAtTime(
       SPF_CONFIG[input.spfLevel].coefficient,
       input.sweatLevel,
@@ -197,7 +200,7 @@ function calculateBurnTimeWithSlices(
 
 // Find optimal time slicing
 export function findOptimalTimeSlicing(input: CalculationInput): CalculationResult {
-  const sliceOptions = [30, 12, 6, 4]; // 2, 5, 10, 15 minute intervals
+  const sliceOptions = TIME_SLICE_OPTIONS; // 2, 5, 10, 15 minute intervals
 
   for (const slicesPerHour of sliceOptions) {
     const result = calculateBurnTimeWithSlices(input, slicesPerHour);
@@ -207,5 +210,5 @@ export function findOptimalTimeSlicing(input: CalculationInput): CalculationResu
     }
   }
 
-  return calculateBurnTimeWithSlices(input, 4);
+  return calculateBurnTimeWithSlices(input, TIME_SLICE_OPTIONS[TIME_SLICE_OPTIONS.length - 1]); // Fallback to most detailed slicing
 }

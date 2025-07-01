@@ -214,4 +214,48 @@ export const CALCULATION_CONSTANTS = {
   MIN_UV_THRESHOLD: 0.001
 };
 
-export const TIME_SLICE_OPTIONS = [30, 12, 6, 4];
+// Time and Duration Constants
+export const TIME_CONSTANTS = {
+  MILLISECONDS_PER_SECOND: 1000,
+  SECONDS_PER_MINUTE: 60,
+  MINUTES_PER_HOUR: 60,
+  SECONDS_PER_HOUR: 3600,
+  MILLISECONDS_PER_HOUR: 3600000,
+  TIMER_UPDATE_INTERVAL_MS: 1000, // UI timer refresh rate
+  PERCENTAGE_BASE: 100.0, // Base for percentage calculations
+} as const;
+
+// Damage and Risk Thresholds
+export const DAMAGE_THRESHOLDS = {
+  SAFE_EXPOSURE_MAX: 25, // Safe sun exposure threshold
+  CAUTION_THRESHOLD: 50, // Warning starts here
+  WARNING_THRESHOLD: 75, // More serious warning
+  CRITICAL_THRESHOLD: 90, // Critical damage level
+  DANGER_THRESHOLD: 95, // Danger - near burn
+} as const;
+
+// UV Index Risk Categories (WHO standard)
+export const UV_RISK_LEVELS = {
+  LOW_MAX: 2, // Low risk: 0-2
+  MODERATE_MAX: 5, // Moderate risk: 3-5
+  HIGH_MAX: 7, // High risk: 6-7
+  VERY_HIGH_MAX: 10, // Very high risk: 8-10
+  // 11+ is extreme
+} as const;
+
+// SPF and Protection Constants
+export const SPF_CONSTANTS = {
+  BASE_COEFFICIENT: 1.0, // No protection multiplier
+  MIN_PROTECTION_FACTOR: 1.0, // Minimum SPF after degradation
+} as const;
+
+// API and Network Configuration
+export const API_CONFIG = {
+  COORDINATE_PRECISION: 4, // Decimal places for lat/lng
+  WEATHER_FORECAST_DAYS: 3, // Days of forecast data
+  RATE_LIMIT_STATUS_CODE: 429, // HTTP status for rate limiting
+  DEFAULT_ATMOSPHERIC_PRESSURE: 1013, // hPa - standard pressure
+  DEFAULT_PRECIPITATION_PROBABILITY: 0, // Default 0% chance of rain
+} as const;
+
+export const TIME_SLICE_OPTIONS = [30, 12, 6, 4]; // Time slices per hour for calculations
