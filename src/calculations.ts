@@ -137,7 +137,7 @@ function generateAdvice(input: CalculationInput, points: CalculationPoint[]): st
   } else {
     if (input.spfLevel === 'NONE') {
       advice.push('You should try again with sunscreen');
-    } else if (input.spfLevel === 'SPF_100') {
+    } else if (input.spfLevel === 'SPF_50_PLUS') {
       advice.push('Limit your time in the sun today');
     } else {
       advice.push('Try using a stronger sunscreen or limit your time in the sun today');

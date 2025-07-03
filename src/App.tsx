@@ -15,7 +15,7 @@ import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
 import { StepHeader } from "./components/StepHeader";
 
-import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
+import { Card, CardContent, CardHeader } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { SunTimer } from "./components/SunTimer";
 
