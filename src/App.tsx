@@ -13,6 +13,7 @@ import { LocationSelector } from "./components/LocationSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
+import { StepHeader } from "./components/StepHeader";
 
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
@@ -96,17 +97,14 @@ function App() {
         </div>
 
         {/* Step 1: Skin Type */}
-        <Card className="mb-6 bg-stone-100 border-stone-200 shadow-sm">
+        <Card className="mb-8 bg-stone-100 border-stone-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center text-slate-800">
-              <span className="inline-flex items-center justify-center w-6 h-6 bg-amber-600 text-white rounded-full text-sm font-bold mr-3">
-                1
-              </span>
-              Fitzpatrick Skin Scale
-            </CardTitle>
-            <p className="text-sm text-slate-600">
-              Your skin's sensitivity to UV radiation. Click on your skin type.
-            </p>
+            <StepHeader 
+              stepNumber={1}
+              title="Fitzpatrick Skin Scale"
+              description="Your skin's sensitivity to UV radiation. Click on your skin type."
+              isCompleted={!!skinType}
+            />
           </CardHeader>
           <CardContent>
             <SkinTypeSelector />
@@ -114,14 +112,14 @@ function App() {
         </Card>
 
         {/* Step 2: Sunscreen */}
-        <Card className="mb-6 bg-stone-100 border-stone-200 shadow-sm">
+        <Card className="mb-8 bg-stone-100 border-stone-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center text-slate-800">
-              <span className="inline-flex items-center justify-center w-6 h-6 bg-amber-600 text-white rounded-full text-sm font-bold mr-3">
-                2
-              </span>
-              Sunscreen Protection
-            </CardTitle>
+            <StepHeader 
+              stepNumber={2}
+              title="Sunscreen Protection"
+              description="Select your sunscreen SPF level. Higher SPF provides longer protection."
+              isCompleted={!!spfLevel}
+            />
           </CardHeader>
           <CardContent className="space-y-6">
             <SPFSelector />
@@ -138,17 +136,14 @@ function App() {
         </Card>
 
         {/* Step 3: Location & Weather */}
-        <Card className="mb-6 bg-stone-100 border-stone-200 shadow-sm">
+        <Card className="mb-8 bg-stone-100 border-stone-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center text-slate-800">
-              <span className="inline-flex items-center justify-center w-6 h-6 bg-amber-600 text-white rounded-full text-sm font-bold mr-3">
-                3
-              </span>
-              Time & Place
-            </CardTitle>
-            <p className="text-sm text-slate-600">
-              Used for cloud coverage and the angle of the sun.
-            </p>
+            <StepHeader 
+              stepNumber={3}
+              title="Time & Place"
+              description="Used for cloud coverage and the angle of the sun."
+              isCompleted={geolocation.status === 'completed'}
+            />
           </CardHeader>
           <CardContent>
             <LocationSelector />

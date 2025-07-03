@@ -49,11 +49,6 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
               <div className="font-semibold">
                 {config.label}
               </div>
-              {level !== SPFLevel.NONE && (
-                <div className="text-sm text-muted-foreground">
-                  {config.coefficient}x protection
-                </div>
-              )}
             </div>
           </div>
           
@@ -73,9 +68,6 @@ export function SPFSelector() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Select your sunscreen SPF level. Higher SPF provides longer protection.
-      </p>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {Object.values(SPFLevel).map((level) => (
