@@ -49,10 +49,10 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
               {burnTime && safeTime ? (
                 <div>
                   <p className="text-2xl font-bold text-slate-800">
-                    {isHighRisk ? 'High burn risk' : `Safe for ${safeTime}`}
+                    {isHighRisk ? `Safe for ${safeTime}` : `Safe for ${safeTime}`}
                   </p>
                   <p className="text-slate-600">
-                    {isHighRisk ? 'Limit sun exposure today' : `Until ${format(burnTime, 'h:mm a')}`}
+                    {isHighRisk ? `Until ${format(burnTime, 'h:mm a')} - High burn risk` : `Until ${format(burnTime, 'h:mm a')}`}
                   </p>
                 </div>
               ) : (
