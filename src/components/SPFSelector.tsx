@@ -42,7 +42,7 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
               variant={selected ? "default" : "secondary"}
               className="text-sm font-bold min-w-[2.5rem] justify-center"
             >
-              {level === SPFLevel.NONE ? '0' : level.replace('SPF_', '')}
+              {level === SPFLevel.NONE ? '0' : config.label.replace('SPF ', '')}
             </Badge>
             
             <div className="text-left">
