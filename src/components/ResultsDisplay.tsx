@@ -39,13 +39,13 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
       <CardContent className="pt-6">
         <div className="text-center space-y-4">
           {/* Main Message */}
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-col items-center gap-3">
             {isHighRisk ? (
               <AlertTriangle className="w-8 h-8 text-red-600" />
             ) : (
               <CheckCircle className="w-8 h-8 text-green-600" />
             )}
-            <div>
+            <div className="text-center">
               {burnTime && safeTime ? (
                 <div>
                   <p className="text-2xl font-bold text-slate-800">
