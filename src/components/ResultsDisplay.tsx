@@ -3,6 +3,7 @@ import { Sun, CheckCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import { Card, CardContent } from './ui/card'
 import type { CalculationResult } from '../types'
+import { CALCULATION_CONSTANTS } from '../types'
 
 interface ResultsDisplayProps {
   result: CalculationResult
@@ -32,7 +33,21 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
     }
   }, [startTime, burnTime])
   
-  const isHighRisk = finalDamage >= 95
+  const isHighRisk = useMemo(() => {
+    // Multi-factor risk assessment
+    const isDamageHigh = finalDamage >= CALCULATION_CONSTANTS.SAFETY_THRESHOLD;
+    
+    // Check if burn time is within high-risk window (< 4 hours)
+    const isQuickBurn = safeTime && burnTime && startTime ? 
+      (burnTime.getTime() - startTime.getTime()) / (1000 * 60 * 60) < CALCULATION_CONSTANTS.HIGH_RISK_TIME_LIMIT_HOURS : false;
+    
+    // Check if burn occurs during high UV hours (before 6 PM)
+    const isHighUVPeriod = burnTime ? 
+      burnTime.getHours() < CALCULATION_CONSTANTS.EVENING_RISK_CUTOFF_HOUR : true;
+    
+    // High risk only if all conditions are met
+    return isDamageHigh && isQuickBurn && isHighUVPeriod;
+  }, [finalDamage, safeTime, burnTime, startTime])
   
   return (
     <Card>
