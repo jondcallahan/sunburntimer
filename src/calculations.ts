@@ -137,7 +137,7 @@ function generateAdvice(input: CalculationInput, points: CalculationPoint[]): st
   } else {
     if (input.spfLevel === 'NONE') {
       advice.push('You should try again with sunscreen');
-    } else if (input.spfLevel === 'SPF_100') {
+    } else if (input.spfLevel === 'SPF_50_PLUS') {
       advice.push('Limit your time in the sun today');
     } else {
       advice.push('Try using a stronger sunscreen or limit your time in the sun today');
@@ -160,6 +160,18 @@ function calculateBurnTimeWithSlices(
   let pointCount = 0;
 
   for (const slice of timeSlices) {
+    // Skip calculation for low UV periods (< 2.0 UV index)
+    if (slice.uvIndex < CALCULATION_CONSTANTS.MEANINGFUL_UV_THRESHOLD) {
+      const point: CalculationPoint = {
+        slice,
+        burnCost: 0, // No meaningful damage at low UV
+        totalDamageAtStart: totalDamage
+      };
+      points.push(point);
+      pointCount++;
+      continue;
+    }
+
     const hoursElapsed = (slice.datetime.getTime() - input.currentTime.getTime()) / (1000 * 60 * 60);
     const spfAtTime = calculateSPFAtTime(
       SPF_CONFIG[input.spfLevel].coefficient,

@@ -61,10 +61,7 @@ export const SPFLevel = {
   NONE: 'NONE',
   SPF_15: 'SPF_15',
   SPF_30: 'SPF_30',
-  SPF_50: 'SPF_50',
-  SPF_60: 'SPF_60',
-  SPF_80: 'SPF_80',
-  SPF_100: 'SPF_100'
+  SPF_50_PLUS: 'SPF_50_PLUS'
 } as const
 
 export type SPFLevel = typeof SPFLevel[keyof typeof SPFLevel]
@@ -73,10 +70,7 @@ export const SPF_CONFIG: Record<SPFLevel, { label: string; coefficient: number }
   [SPFLevel.NONE]: { label: 'None', coefficient: 1.0 },
   [SPFLevel.SPF_15]: { label: 'SPF 15', coefficient: 15.0 },
   [SPFLevel.SPF_30]: { label: 'SPF 30', coefficient: 30.0 },
-  [SPFLevel.SPF_50]: { label: 'SPF 50', coefficient: 50.0 },
-  [SPFLevel.SPF_60]: { label: 'SPF 60', coefficient: 60.0 },
-  [SPFLevel.SPF_80]: { label: 'SPF 80', coefficient: 80.0 },
-  [SPFLevel.SPF_100]: { label: 'SPF 100', coefficient: 100.0 }
+  [SPFLevel.SPF_50_PLUS]: { label: 'SPF 50+', coefficient: 50.0 }
 };
 
 // Sweat Levels
@@ -211,7 +205,10 @@ export const CALCULATION_CONSTANTS = {
   MAX_CALCULATION_POINTS: 26,
   EVENING_CUTOFF_HOUR: 22,
   MIN_POINTS_FOR_EVENING_STOP: 11,
-  MIN_UV_THRESHOLD: 0.001
+  MIN_UV_THRESHOLD: 0.001,
+  MEANINGFUL_UV_THRESHOLD: 2.0,
+  HIGH_RISK_TIME_LIMIT_HOURS: 4,
+  EVENING_RISK_CUTOFF_HOUR: 18
 };
 
 export const TIME_SLICE_OPTIONS = [30, 12, 6, 4];

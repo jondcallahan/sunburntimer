@@ -1,11 +1,9 @@
 import { useMemo } from 'react'
-import { Clock, Sun, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Sun, CheckCircle } from 'lucide-react'
 import { format } from 'date-fns'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Badge } from './ui/badge'
-import { Alert, AlertDescription } from './ui/alert'
-import { Progress } from './ui/progress'
+import { Card, CardContent } from './ui/card'
 import type { CalculationResult } from '../types'
+import { CALCULATION_CONSTANTS } from '../types'
 
 interface ResultsDisplayProps {
   result: CalculationResult
@@ -35,133 +33,59 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
     }
   }, [startTime, burnTime])
   
-  const getRiskLevel = (damage: number) => {
-    if (damage < 25) return { level: 'Safe', variant: 'secondary' as const, color: 'text-green-600' }
-    if (damage < 75) return { level: 'Caution', variant: 'outline' as const, color: 'text-yellow-600' }
-    if (damage < 95) return { level: 'Warning', variant: 'destructive' as const, color: 'text-orange-600' }
-    return { level: 'Danger', variant: 'destructive' as const, color: 'text-red-600' }
-  }
-  
-  const risk = getRiskLevel(finalDamage)
+  const isHighRisk = useMemo(() => {
+    // Multi-factor risk assessment
+    const isDamageHigh = finalDamage >= CALCULATION_CONSTANTS.SAFETY_THRESHOLD;
+    
+    // Check if burn time is within high-risk window (< 4 hours)
+    const isQuickBurn = safeTime && burnTime && startTime ? 
+      (burnTime.getTime() - startTime.getTime()) / (1000 * 60 * 60) < CALCULATION_CONSTANTS.HIGH_RISK_TIME_LIMIT_HOURS : false;
+    
+    // Check if burn occurs during high UV hours (before 6 PM)
+    const isHighUVPeriod = burnTime ? 
+      burnTime.getHours() < CALCULATION_CONSTANTS.EVENING_RISK_CUTOFF_HOUR : true;
+    
+    // High risk only if all conditions are met
+    return isDamageHigh && isQuickBurn && isHighUVPeriod;
+  }, [finalDamage, safeTime, burnTime, startTime])
   
   return (
-    <div className="space-y-6">
-      {/* Main Result Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              {finalDamage < 95 ? (
-                <CheckCircle className={risk.color} />
+    <Card>
+      <CardContent className="pt-6">
+        <div className="text-center space-y-4">
+          {/* Main Message */}
+          <div className="flex flex-col items-center gap-3">
+            {isHighRisk ? (
+              <Sun className="w-8 h-8 text-orange-500" />
+            ) : (
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            )}
+            <div className="text-center">
+              {burnTime && safeTime ? (
+                <div>
+                  <p className="text-2xl font-bold text-slate-800">
+                    {isHighRisk ? `Safe for ${safeTime}` : `Safe for ${safeTime}`}
+                  </p>
+                  <p className="text-slate-600">
+                    {isHighRisk ? `Use sunscreen by ${format(burnTime, 'h:mm a')}, sun damage may occur after` : `Until ${format(burnTime, 'h:mm a')}`}
+                  </p>
+                </div>
               ) : (
-                <AlertTriangle className={risk.color} />
+                <p className="text-2xl font-bold text-green-600">
+                  Safe for extended exposure
+                </p>
               )}
-              {burnTime ? 'Burn Risk Analysis' : 'Safe for Extended Exposure'}
-            </CardTitle>
-            <Badge variant={risk.variant}>{risk.level}</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Skin Damage</span>
-              <span className="font-medium">{Math.round(finalDamage)}%</span>
             </div>
-            <Progress value={Math.min(finalDamage, 100)} className="h-2" />
           </div>
           
-          {/* Time Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {startTime && (
-              <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">Start Time</p>
-                  <p className="text-sm text-muted-foreground">
-                    {format(startTime, 'h:mm a')}
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            {burnTime && safeTime && (
-              <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                <Sun className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">Safe Time</p>
-                  <p className="text-sm text-muted-foreground">{safeTime}</p>
-                </div>
-              </div>
-            )}
-            
-            {burnTime && (
-              <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                <AlertTriangle className="h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-sm font-medium">Burn Time</p>
-                  <p className="text-sm text-muted-foreground">
-                    {format(burnTime, 'h:mm a')}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Advice Section */}
-      {advice.length > 0 && (
-        <Alert>
-          <CheckCircle className="h-4 w-4" />
-          <AlertDescription>
-            <div className="space-y-2">
-              <p className="font-medium">Recommendations:</p>
-              <ul className="space-y-1">
-                {advice.map((tip, index) => (
-                  <li key={index} className="text-sm flex items-start gap-2">
-                    <span className="text-muted-foreground">•</span>
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
-      
-      {/* Calculation Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Calculation Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Data Points</p>
-              <p className="text-sm font-medium">{points.length}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Time Resolution</p>
-              <p className="text-sm font-medium">
-                {60 / result.timeSlices} min intervals
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Max UV Index</p>
-              <p className="text-sm font-medium">
-                {Math.max(...points.map(p => p.slice.uvIndex)).toFixed(1)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Avg UV Index</p>
-              <p className="text-sm font-medium">
-                {(points.reduce((sum, p) => sum + p.slice.uvIndex, 0) / points.length).toFixed(1)}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          {/* Simple Advice */}
+          {advice.length > 0 && (
+            <p className="text-slate-600 text-sm max-w-md mx-auto">
+              {advice[0]}
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
