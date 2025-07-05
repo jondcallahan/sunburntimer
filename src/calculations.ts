@@ -7,6 +7,7 @@ import type {
 } from './types';
 import {
   SweatLevel,
+  SPFLevel,
   CALCULATION_CONSTANTS,
   SKIN_TYPE_CONFIG,
   SPF_CONFIG,
@@ -173,8 +174,9 @@ function calculateBurnTimeWithSlices(
     }
 
     const hoursElapsed = (slice.datetime.getTime() - input.currentTime.getTime()) / (1000 * 60 * 60);
+    const spfConfig = SPF_CONFIG[input.spfLevel] || SPF_CONFIG[SPFLevel.NONE];
     const spfAtTime = calculateSPFAtTime(
-      SPF_CONFIG[input.spfLevel].coefficient,
+      spfConfig.coefficient,
       input.sweatLevel,
       hoursElapsed
     );
