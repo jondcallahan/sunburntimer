@@ -35,10 +35,19 @@ interface BurnChartProps {
 
 export function BurnChart({ result }: BurnChartProps) {
   const chartData = useMemo(() => {
-    const times = result.points.map(point => point.slice.datetime)
-    const damageData = result.points.map((_, i) => {
+    // Filter points to stop at midnight (next day)
+    const startDate = result.startTime ? new Date(result.startTime) : new Date()
+    const cutoffTime = new Date(startDate)
+    cutoffTime.setHours(24, 0, 0, 0) // Midnight next day
+    
+    const filteredPoints = result.points.filter(point => 
+      point.slice.datetime <= cutoffTime
+    )
+    
+    const times = filteredPoints.map(point => point.slice.datetime)
+    const damageData = filteredPoints.map((_, i) => {
       // Calculate cumulative damage up to this point
-      const cumulativeDamage = result.points
+      const cumulativeDamage = filteredPoints
         .slice(0, i + 1)
         .reduce((sum, point) => sum + point.burnCost, 0)
       return Math.min(cumulativeDamage, 100)
@@ -95,7 +104,14 @@ export function BurnChart({ result }: BurnChartProps) {
           },
           label: (context: any) => {
             const damage = context.parsed.y.toFixed(1)
-            const point = result.points[context.dataIndex]
+            const startDate = result.startTime ? new Date(result.startTime) : new Date()
+            const cutoffTime = new Date(startDate)
+            cutoffTime.setHours(24, 0, 0, 0) // Midnight next day
+            
+            const filteredPoints = result.points.filter(point => 
+              point.slice.datetime <= cutoffTime
+            )
+            const point = filteredPoints[context.dataIndex]
             return [
               `Damage: ${damage}%`,
               `UV Index: ${point.slice.uvIndex.toFixed(1)}`,
@@ -153,13 +169,21 @@ export function BurnChart({ result }: BurnChartProps) {
   }), [result.points])
 
   const burnTimeReached = useMemo(() => {
-    return result.points.some((_, i) => {
-      const cumulativeDamage = result.points
+    const startDate = result.startTime ? new Date(result.startTime) : new Date()
+    const cutoffTime = new Date(startDate)
+    cutoffTime.setHours(24, 0, 0, 0) // Midnight next day
+    
+    const filteredPoints = result.points.filter(point => 
+      point.slice.datetime <= cutoffTime
+    )
+    
+    return filteredPoints.some((_, i) => {
+      const cumulativeDamage = filteredPoints
         .slice(0, i + 1)
         .reduce((sum, point) => sum + point.burnCost, 0)
       return cumulativeDamage >= 100
     })
-  }, [result.points])
+  }, [result.points, result.startTime])
 
   return (
     <Card>

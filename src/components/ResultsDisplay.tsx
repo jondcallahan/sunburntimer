@@ -20,6 +20,17 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
   
   const safeTime = useMemo(() => {
     if (!startTime || !burnTime) return null
+    
+    // Check if burn time is past midnight (next day)
+    const startDate = new Date(startTime)
+    const burnDate = new Date(burnTime)
+    const isNextDay = burnDate.getDate() !== startDate.getDate()
+    const isPastMidnight = isNextDay
+    
+    if (isPastMidnight) {
+      return 'unlikely'
+    }
+    
     const diffMs = burnTime.getTime() - startTime.getTime()
     const hours = Math.floor(diffMs / (1000 * 60 * 60))
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
@@ -34,6 +45,9 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
   }, [startTime, burnTime])
   
   const isHighRisk = useMemo(() => {
+    // If sunburn is unlikely, it's not high risk
+    if (safeTime === 'unlikely') return false;
+    
     // Multi-factor risk assessment
     const isDamageHigh = finalDamage >= CALCULATION_CONSTANTS.SAFETY_THRESHOLD;
     
@@ -61,7 +75,7 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
               <CheckCircle className="w-8 h-8 text-green-600" />
             )}
             <div className="text-center">
-              {burnTime && safeTime ? (
+              {burnTime && safeTime && safeTime !== 'unlikely' ? (
                 <div>
                   <p className="text-2xl font-bold text-slate-800">
                     {isHighRisk ? `Safe for ${safeTime}` : `Safe for ${safeTime}`}
@@ -72,7 +86,7 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
                 </div>
               ) : (
                 <p className="text-2xl font-bold text-green-600">
-                  Safe for extended exposure
+                  Sunburn unlikely
                 </p>
               )}
             </div>

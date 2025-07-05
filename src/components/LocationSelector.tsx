@@ -48,22 +48,80 @@ export function LocationSelector() {
         
       case 'fetching_location':
         return (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
-              <p className="text-primary">Getting your location...</p>
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+              <div className="flex-1">
+                <span className="font-medium text-blue-900">Getting your location...</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-xs opacity-50"
+              >
+                <Edit className="w-3 h-3 mr-1" />
+                Edit
+              </Button>
+            </div>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Cloud className="w-8 h-8 text-gray-300" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Current Weather</p>
+                      <p className="text-sm text-muted-foreground">Loading...</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-gray-300">--°</p>
+                    <p className="text-sm text-muted-foreground">Loading...</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )
         
       case 'fetching_weather':
         return (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
-              <p className="text-primary">Fetching weather data...</p>
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+              <div className="flex-1">
+                <span className="font-medium text-blue-900">Fetching weather data...</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-xs opacity-50"
+              >
+                <Edit className="w-3 h-3 mr-1" />
+                Edit
+              </Button>
+            </div>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Current Weather</p>
+                      <p className="text-sm text-muted-foreground">Loading...</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-gray-300">--°</p>
+                    <p className="text-sm text-muted-foreground">Loading...</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )
         
       case 'completed':

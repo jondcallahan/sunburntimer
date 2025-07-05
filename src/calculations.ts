@@ -122,7 +122,7 @@ function generateAdvice(input: CalculationInput, points: CalculationPoint[]): st
   const advice: string[] = [];
 
   if (input.spfLevel !== 'NONE') {
-    advice.push('Reapply sunscreen after swimming or excessive sweating');
+    advice.push('Reapply sunscreen every 2 hours, after swimming, or excessive sweating');
   }
 
   const lastPoint = points[points.length - 1];

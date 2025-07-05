@@ -22,37 +22,37 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     color: '#F5D0B3',
     subtitle: 'Light, Pale White',
     description: 'Always burns, never tans',
-    coefficient: 2.5
+    coefficient: 2.5 // MED: 200 J/m^2 (Baseline)
   },
   [FitzpatrickType.II]: {
     color: '#E7B592',
     subtitle: 'White, Fair',
     description: 'Usually burns, tans with difficulty',
-    coefficient: 3.0
+    coefficient: 3.125 // MED: 250 J/m^2 (1.25x Type I)
   },
   [FitzpatrickType.III]: {
     color: '#D19F7F',
     subtitle: 'Medium, White to Olive',
     description: 'Sometimes mild burns, gradually tans to olive',
-    coefficient: 4.0
+    coefficient: 4.375 // MED: 350 J/m^2 (1.75x Type I)
   },
   [FitzpatrickType.IV]: {
     color: '#BB7955',
     subtitle: 'Olive, Brown',
     description: 'Rarely burns, tans with ease to a moderate brown',
-    coefficient: 5.0
+    coefficient: 5.625 // MED: 450 J/m^2 (2.25x Type I)
   },
   [FitzpatrickType.V]: {
     color: '#A55E31',
     subtitle: 'Brown, Dark Brown',
     description: 'Very rarely burns, tans very easily',
-    coefficient: 8.0
+    coefficient: 7.5 // MED: 600 J/m^2 (3.00x Type I)
   },
   [FitzpatrickType.VI]: {
     color: '#3A1F1C',
     subtitle: 'Very Dark, Brown to Black',
     description: 'Never burns, tans very easily, deeply pigmented',
-    coefficient: 15.0
+    coefficient: 12.5 // MED: 1000 J/m^2 (5.00x Type I)
   }
 };
 
