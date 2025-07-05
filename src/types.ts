@@ -15,44 +15,65 @@ export interface SkinTypeConfig {
   subtitle: string;
   description: string;
   coefficient: number;
+  hairColors: string[];
+  eyeColors: string[];
+  freckles: string;
 }
 
 export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
   [FitzpatrickType.I]: {
     color: '#F5D0B3',
-    subtitle: 'Light, Pale White',
-    description: 'Always burns, never tans',
-    coefficient: 2.5 // MED: 200 J/m^2 (Baseline)
+    subtitle: 'Very Light',
+    description: 'Burns easily, often has freckles',
+    coefficient: 2.5, // MED: 200 J/m^2 (Baseline)
+    hairColors: ['Red', 'Blond', 'Brown'],
+    eyeColors: ['Blue', 'Green', 'Gray', 'Brown'],
+    freckles: 'Common'
   },
   [FitzpatrickType.II]: {
     color: '#E7B592',
-    subtitle: 'White, Fair',
-    description: 'Usually burns, tans with difficulty',
-    coefficient: 3.125 // MED: 250 J/m^2 (1.25x Type I)
+    subtitle: 'Light',
+    description: 'Burns easily, tans minimally',
+    coefficient: 3.125, // MED: 250 J/m^2 (1.25x Type I)
+    hairColors: ['Light', 'Dark'],
+    eyeColors: ['Blue', 'Green', 'Hazel', 'Brown', 'Gray'],
+    freckles: 'Rare'
   },
   [FitzpatrickType.III]: {
     color: '#D19F7F',
-    subtitle: 'Medium, White to Olive',
-    description: 'Sometimes mild burns, gradually tans to olive',
-    coefficient: 4.375 // MED: 350 J/m^2 (1.75x Type I)
+    subtitle: 'Medium',
+    description: 'Burns moderately, tans gradually',
+    coefficient: 4.375, // MED: 350 J/m^2 (1.75x Type I)
+    hairColors: ['Brown'],
+    eyeColors: ['Blue', 'Green', 'Brown', 'Black'],
+    freckles: 'None'
   },
   [FitzpatrickType.IV]: {
     color: '#BB7955',
-    subtitle: 'Olive, Brown',
-    description: 'Rarely burns, tans with ease to a moderate brown',
-    coefficient: 5.625 // MED: 450 J/m^2 (2.25x Type I)
+    subtitle: 'Olive',
+    description: 'Burns rarely, tans easily',
+    coefficient: 5.625, // MED: 450 J/m^2 (2.25x Type I)
+    hairColors: ['Dark Brown', 'Black'],
+    eyeColors: ['Blue', 'Brown', 'Green', 'Black'],
+    freckles: 'None'
   },
   [FitzpatrickType.V]: {
     color: '#A55E31',
-    subtitle: 'Brown, Dark Brown',
-    description: 'Very rarely burns, tans very easily',
-    coefficient: 7.5 // MED: 600 J/m^2 (3.00x Type I)
+    subtitle: 'Brown',
+    description: 'Very rarely burns, tans deeply',
+    coefficient: 7.5, // MED: 600 J/m^2 (3.00x Type I)
+    hairColors: ['Black'],
+    eyeColors: ['Brown', 'Black'],
+    freckles: 'None'
   },
   [FitzpatrickType.VI]: {
     color: '#3A1F1C',
-    subtitle: 'Very Dark, Brown to Black',
-    description: 'Never burns, tans very easily, deeply pigmented',
-    coefficient: 12.5 // MED: 1000 J/m^2 (5.00x Type I)
+    subtitle: 'Very Dark',
+    description: 'Almost never burns, naturally dark',
+    coefficient: 12.5, // MED: 1000 J/m^2 (5.00x Type I)
+    hairColors: ['Black'],
+    eyeColors: ['Black'],
+    freckles: 'None'
   }
 };
 
