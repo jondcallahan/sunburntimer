@@ -9,7 +9,7 @@ interface SkinTypeCardProps {
   type: FitzpatrickType;
   selected: boolean;
   onSelect: (type: FitzpatrickType) => void;
-  cardRef?: React.RefObject<HTMLDivElement>;
+  cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 function SkinTypeCard({ type, selected, onSelect, cardRef }: SkinTypeCardProps) {
