@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { AlertTriangle, CheckCircle } from 'lucide-react'
+import { Sun, CheckCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import { Card, CardContent } from './ui/card'
 import type { CalculationResult } from '../types'
@@ -41,7 +41,7 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
           {/* Main Message */}
           <div className="flex flex-col items-center gap-3">
             {isHighRisk ? (
-              <AlertTriangle className="w-8 h-8 text-red-600" />
+              <Sun className="w-8 h-8 text-orange-500" />
             ) : (
               <CheckCircle className="w-8 h-8 text-green-600" />
             )}
@@ -52,7 +52,7 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
                     {isHighRisk ? `Safe for ${safeTime}` : `Safe for ${safeTime}`}
                   </p>
                   <p className="text-slate-600">
-                    {isHighRisk ? `Until ${format(burnTime, 'h:mm a')} - High burn risk` : `Until ${format(burnTime, 'h:mm a')}`}
+                    {isHighRisk ? `Use sunscreen by ${format(burnTime, 'h:mm a')}, sun damage may occur after` : `Until ${format(burnTime, 'h:mm a')}`}
                   </p>
                 </div>
               ) : (
