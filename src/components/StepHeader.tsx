@@ -5,9 +5,10 @@ interface StepHeaderProps {
   title: string
   description?: string
   isCompleted?: boolean
+  hideDescription?: boolean
 }
 
-export function StepHeader({ stepNumber, title, description, isCompleted }: StepHeaderProps) {
+export function StepHeader({ stepNumber, title, description, isCompleted, hideDescription }: StepHeaderProps) {
   return (
     <div>
       <div className="flex items-center text-slate-800 text-xl font-semibold mb-2">
@@ -20,7 +21,7 @@ export function StepHeader({ stepNumber, title, description, isCompleted }: Step
         </span>
         {title}
       </div>
-      {description && (
+      {description && !hideDescription && (
         <p className="text-slate-600 ml-12">
           {description}
         </p>
