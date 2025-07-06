@@ -7,11 +7,7 @@ import type {
   Position,
   WeatherData,
 } from "./types";
-import {
-  FitzpatrickType,
-  SPFLevel,
-  SweatLevel,
-} from "./types";
+import { FitzpatrickType, SPFLevel, SweatLevel } from "./types";
 
 interface AppStore extends AppState {
   // Actions
@@ -40,7 +36,15 @@ export const useAppStore = create<AppStore>()(
 
       setSkinType: (skinType) => set((state) => ({ ...state, skinType })),
 
-      setSPFLevel: (spfLevel) => set((state) => ({ ...state, spfLevel })),
+      setSPFLevel: (spfLevel) =>
+        set((state) => ({
+          ...state,
+          spfLevel,
+          // Auto-set sweat level to LOW (no sweating) when SPF is selected and no sweat level is set
+          sweatLevel: spfLevel !== SPFLevel.NONE && !state.sweatLevel
+            ? SweatLevel.LOW
+            : state.sweatLevel,
+        })),
 
       setSweatLevel: (sweatLevel) => set((state) => ({ ...state, sweatLevel })),
 
@@ -95,14 +99,17 @@ export const useAppStore = create<AppStore>()(
         skinType: state.skinType,
         spfLevel: state.spfLevel,
         sweatLevel: state.sweatLevel,
-        geolocation: state.geolocation.status === 'completed' && state.geolocation.position ? {
-          status: 'completed' as const,
-          position: state.geolocation.position,
-          placeName: state.geolocation.placeName,
-          // Note: weather data will be refreshed on app load
-        } : {
-          status: 'blank' as const
-        },
+        geolocation:
+          state.geolocation.status === "completed" && state.geolocation.position
+            ? {
+              status: "completed" as const,
+              position: state.geolocation.position,
+              placeName: state.geolocation.placeName,
+              // Note: weather data will be refreshed on app load
+            }
+            : {
+              status: "blank" as const,
+            },
       }),
     },
   ),
