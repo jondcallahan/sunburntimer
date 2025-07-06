@@ -176,6 +176,7 @@ export interface GeolocationState {
   position?: Position;
   placeName?: string;
   weather?: WeatherData;
+  lastFetched?: number; // timestamp when weather was last fetched
   error?: string;
 }
 

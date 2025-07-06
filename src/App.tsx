@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { RefreshCw, Sun, Trash2 } from "lucide-react";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
-import { SPFLevel } from "./types";
+import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
 
@@ -13,11 +13,18 @@ import { LocationSelector } from "./components/LocationSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/ui/accordion";
 import { StepHeader } from "./components/StepHeader";
 
-import { Card, CardContent, CardHeader } from "./components/ui/card";
 import { Button } from "./components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SunTimer } from "./components/SunTimer";
+import { RelativeTime } from "./components/RelativeTime";
 
 function App() {
   const {
@@ -34,6 +41,9 @@ function App() {
   } = useAppStore();
 
   const isReadyToCalculate = useIsReadyToCalculate();
+
+  // Check if user has pre-loaded preferences (returning user)
+  const hasPreloadedPrefs = !!(skinType && spfLevel);
 
   // Refresh weather data for saved locations
   useLocationRefresh();
@@ -96,59 +106,114 @@ function App() {
           </p>
         </div>
 
-        {/* Step 1: Skin Type */}
-        <Card className="mb-8 bg-stone-100 border-stone-200 shadow-sm">
-          <CardHeader>
-            <StepHeader 
-              stepNumber={1}
-              title="Fitzpatrick Skin Scale"
-              description="Your skin's sensitivity to UV radiation. Click on your skin type."
-              isCompleted={!!skinType}
-            />
-          </CardHeader>
-          <CardContent>
-            <SkinTypeSelector />
-          </CardContent>
-        </Card>
-
-        {/* Step 2: Sunscreen */}
-        <Card className="mb-8 bg-stone-100 border-stone-200 shadow-sm">
-          <CardHeader>
-            <StepHeader 
-              stepNumber={2}
-              title="Sunscreen Protection"
-              description="Select your sunscreen SPF level. Higher SPF provides longer protection."
-              isCompleted={!!spfLevel}
-            />
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <SPFSelector />
-
-            {showSweatLevel && (
-              <div>
-                <h4 className="font-semibold mb-3 text-slate-800">
-                  Activity Level
-                </h4>
-                <SweatLevelSelector />
+        {/* Steps Accordion */}
+        <Accordion
+          type="multiple"
+          defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3"]}
+          className="space-y-4"
+        >
+          {/* Step 1: Skin Type */}
+          <AccordionItem
+            value="step1"
+            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+          >
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex-1 text-left">
+                <StepHeader
+                  stepNumber={1}
+                  title="Fitzpatrick Skin Scale"
+                  description="Your skin's sensitivity to UV radiation. Click on your skin type."
+                  isCompleted={!!skinType}
+                  hideDescription={!!skinType}
+                />
+                {skinType && (
+                  <div className="flex items-center gap-2 mt-3 ml-12">
+                    <Badge variant="outline">Type {skinType}</Badge>
+                  </div>
+                )}
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-6">
+              <SkinTypeSelector />
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Step 3: Location & Weather */}
-        <Card className="mb-8 bg-stone-100 border-stone-200 shadow-sm">
-          <CardHeader>
-            <StepHeader 
-              stepNumber={3}
-              title="Time & Place"
-              description="Used for cloud coverage and the angle of the sun."
-              isCompleted={geolocation.status === 'completed'}
-            />
-          </CardHeader>
-          <CardContent>
-            <LocationSelector />
-          </CardContent>
-        </Card>
+          {/* Step 2: Sunscreen */}
+          <AccordionItem
+            value="step2"
+            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+          >
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex-1 text-left">
+                <StepHeader
+                  stepNumber={2}
+                  title="Sunscreen Protection"
+                  description="Select your sunscreen SPF level. Higher SPF provides longer protection."
+                  isCompleted={!!spfLevel}
+                  hideDescription={!!spfLevel}
+                />
+                {spfLevel && (
+                  <div className="flex items-center gap-2 mt-3 ml-12">
+                    <Badge variant="outline">
+                      {SPF_CONFIG[spfLevel].label}
+                    </Badge>
+                    {spfLevel !== SPFLevel.NONE && sweatLevel && (
+                      <Badge variant="outline">
+                        {SWEAT_CONFIG[sweatLevel].label} activity
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-6">
+              <div className="space-y-6">
+                <SPFSelector />
+
+                {showSweatLevel && (
+                  <div>
+                    <h4 className="font-semibold mb-3 text-slate-800">
+                      Activity Level
+                    </h4>
+                    <SweatLevelSelector />
+                  </div>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 3: Location & Weather */}
+          <AccordionItem
+            value="step3"
+            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+          >
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex-1 text-left">
+                <StepHeader
+                  stepNumber={3}
+                  title="Time & Place"
+                  description="Used for cloud coverage and the angle of the sun."
+                  isCompleted={geolocation.status === "completed"}
+                  hideDescription={geolocation.status === "completed"}
+                />
+                {geolocation.status === "completed" && geolocation.placeName &&
+                  geolocation.weather && (
+                  <div className="flex flex-col gap-2 mt-3 ml-12">
+                    <Badge variant="outline">{geolocation.placeName}</Badge>
+                    <RelativeTime
+                      timestamp={geolocation.lastFetched ||
+                        geolocation.weather.current.dt * 1000}
+                      className="text-xs text-slate-500"
+                    />
+                  </div>
+                )}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-6">
+              <LocationSelector />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         {/* Results */}
         {calculation && (
@@ -190,7 +255,6 @@ function App() {
             <SunTimer result={calculation} />
           </div>
         )}
-
       </div>
     </div>
   );
