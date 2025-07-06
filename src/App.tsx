@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { RefreshCw, Sun, Trash2 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
 import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
@@ -25,6 +24,7 @@ import { StepHeader } from "./components/StepHeader";
 import { Button } from "./components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SunTimer } from "./components/SunTimer";
+import { RelativeTime } from "./components/RelativeTime";
 
 function App() {
   const {
@@ -200,13 +200,11 @@ function App() {
                   geolocation.weather && (
                   <div className="flex flex-col gap-2 mt-3 ml-12">
                     <Badge variant="outline">{geolocation.placeName}</Badge>
-                    <span className="text-xs text-slate-500">
-                      Updated{" "}
-                      {formatDistanceToNow(
-                        new Date(geolocation.weather.current.dt * 1000),
-                        { addSuffix: true },
-                      )}
-                    </span>
+                    <RelativeTime
+                      timestamp={geolocation.lastFetched ||
+                        geolocation.weather.current.dt * 1000}
+                      className="text-xs text-slate-500"
+                    />
                   </div>
                 )}
               </div>

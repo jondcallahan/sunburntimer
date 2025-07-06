@@ -71,6 +71,7 @@ export const useAppStore = create<AppStore>()(
           geolocation: {
             ...state.geolocation,
             weather,
+            lastFetched: Date.now(),
             status: "completed",
           },
         })),
