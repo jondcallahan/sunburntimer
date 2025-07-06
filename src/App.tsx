@@ -3,7 +3,7 @@ import { RefreshCw, Sun, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
-import { SPFLevel, SKIN_TYPE_CONFIG, SPF_CONFIG, SWEAT_CONFIG } from "./types";
+import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
 
@@ -14,7 +14,12 @@ import { LocationSelector } from "./components/LocationSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/ui/accordion";
 import { StepHeader } from "./components/StepHeader";
 
 import { Button } from "./components/ui/button";
@@ -36,7 +41,7 @@ function App() {
   } = useAppStore();
 
   const isReadyToCalculate = useIsReadyToCalculate();
-  
+
   // Check if user has pre-loaded preferences (returning user)
   const hasPreloadedPrefs = !!(skinType && spfLevel);
 
@@ -102,16 +107,19 @@ function App() {
         </div>
 
         {/* Steps Accordion */}
-        <Accordion 
-          type="multiple" 
+        <Accordion
+          type="multiple"
           defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3"]}
           className="space-y-4"
         >
           {/* Step 1: Skin Type */}
-          <AccordionItem value="step1" className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4">
+          <AccordionItem
+            value="step1"
+            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+          >
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex-1 text-left">
-                <StepHeader 
+                <StepHeader
                   stepNumber={1}
                   title="Fitzpatrick Skin Scale"
                   description="Your skin's sensitivity to UV radiation. Click on your skin type."
@@ -131,10 +139,13 @@ function App() {
           </AccordionItem>
 
           {/* Step 2: Sunscreen */}
-          <AccordionItem value="step2" className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4">
+          <AccordionItem
+            value="step2"
+            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+          >
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex-1 text-left">
-                <StepHeader 
+                <StepHeader
                   stepNumber={2}
                   title="Sunscreen Protection"
                   description="Select your sunscreen SPF level. Higher SPF provides longer protection."
@@ -143,9 +154,13 @@ function App() {
                 />
                 {spfLevel && (
                   <div className="flex items-center gap-2 mt-3 ml-12">
-                    <Badge variant="outline">{SPF_CONFIG[spfLevel].label}</Badge>
+                    <Badge variant="outline">
+                      {SPF_CONFIG[spfLevel].label}
+                    </Badge>
                     {spfLevel !== SPFLevel.NONE && sweatLevel && (
-                      <Badge variant="outline">{SWEAT_CONFIG[sweatLevel].label} activity</Badge>
+                      <Badge variant="outline">
+                        {SWEAT_CONFIG[sweatLevel].label} activity
+                      </Badge>
                     )}
                   </div>
                 )}
@@ -168,21 +183,29 @@ function App() {
           </AccordionItem>
 
           {/* Step 3: Location & Weather */}
-          <AccordionItem value="step3" className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4">
+          <AccordionItem
+            value="step3"
+            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+          >
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex-1 text-left">
-                <StepHeader 
+                <StepHeader
                   stepNumber={3}
                   title="Time & Place"
                   description="Used for cloud coverage and the angle of the sun."
-                  isCompleted={geolocation.status === 'completed'}
-                  hideDescription={geolocation.status === 'completed'}
+                  isCompleted={geolocation.status === "completed"}
+                  hideDescription={geolocation.status === "completed"}
                 />
-                {geolocation.status === 'completed' && geolocation.placeName && geolocation.weather && (
+                {geolocation.status === "completed" && geolocation.placeName &&
+                  geolocation.weather && (
                   <div className="flex flex-col gap-2 mt-3 ml-12">
                     <Badge variant="outline">{geolocation.placeName}</Badge>
                     <span className="text-xs text-slate-500">
-                      Updated {formatDistanceToNow(new Date(geolocation.weather.current.dt * 1000), { addSuffix: true })}
+                      Updated{" "}
+                      {formatDistanceToNow(
+                        new Date(geolocation.weather.current.dt * 1000),
+                        { addSuffix: true },
+                      )}
                     </span>
                   </div>
                 )}
@@ -234,7 +257,6 @@ function App() {
             <SunTimer result={calculation} />
           </div>
         )}
-
       </div>
     </div>
   );
