@@ -255,6 +255,41 @@ function App() {
             <SunTimer result={calculation} />
           </div>
         )}
+
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t border-stone-200">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
+            <div className="flex items-center gap-4">
+              <span>Made by</span>
+              <a 
+                href="https://joncallahan.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-amber-600 transition-colors"
+              >
+                Jon Callahan
+              </a>
+            </div>
+            <div className="flex items-center gap-4">
+              <a 
+                href="https://github.com/jondcallahan/sunburntimer" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-amber-600 transition-colors"
+              >
+                GitHub
+              </a>
+              <a 
+                href="https://buymeacoffee.com/joncallahan" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full hover:bg-amber-200 transition-colors"
+              >
+                ☕ Buy me a coffee
+              </a>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
