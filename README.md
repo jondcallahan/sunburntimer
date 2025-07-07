@@ -7,7 +7,7 @@ A modern web application that calculates safe sun exposure time based on your sk
 - **Fitzpatrick Skin Type Selection**: Choose from 6 scientifically-based skin types
 - **SPF Protection Modeling**: Account for different sunscreen strengths and degradation over time
 - **Activity Level Consideration**: Factor in sweating that reduces SPF effectiveness
-- **Real-time Weather Data**: Uses OpenWeatherMap API for UV index and conditions
+- **Real-time Weather Data**: Uses Open-Meteo API for UV index and weather conditions
 - **Interactive Visualization**: Chart.js displays skin damage accumulation over time
 - **Location Services**: Support for both GPS location and manual address entry
 - **Responsive Design**: Beautiful UI built with shadcn/ui components
@@ -27,7 +27,7 @@ This implementation fixes critical bugs from the original OCaml version:
 - **UI Components**: shadcn/ui, Tailwind CSS
 - **State Management**: Zustand with persistence
 - **Charts**: Chart.js with react-chartjs-2
-- **APIs**: OpenWeatherMap, Mapbox Geocoding
+- **APIs**: Open-Meteo, BigDataCloud Geocoding
 - **Build Tools**: Vite, ESLint, TypeScript
 
 ## Getting Started
@@ -35,9 +35,7 @@ This implementation fixes critical bugs from the original OCaml version:
 ### Prerequisites
 
 - Node.js 18+ or Bun
-- API keys from:
-  - [OpenWeatherMap](https://openweathermap.org/api) (free tier available)
-  - [Mapbox](https://account.mapbox.com/access-tokens/) (free tier available)
+- No API keys required - uses free Open-Meteo and BigDataCloud APIs
 
 ### Installation
 
@@ -54,25 +52,14 @@ This implementation fixes critical bugs from the original OCaml version:
    npm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` and add your API keys:
-   ```env
-   VITE_OPENWEATHER_API_KEY=your_openweather_api_key_here
-   VITE_MAPBOX_API_KEY=your_mapbox_access_token_here
-   ```
-
-4. **Start the development server**
+3. **Start the development server**
    ```bash
    bun dev
    # or
    npm run dev
    ```
 
-5. **Open your browser**
+4. **Open your browser**
    Navigate to `http://localhost:5173`
 
 ### Building for Production
@@ -118,31 +105,41 @@ src/
 │   ├── SweatLevelSelector.tsx
 │   ├── LocationSelector.tsx
 │   ├── ResultsDisplay.tsx
-│   └── BurnChart.tsx
+│   ├── BurnChart.tsx
+│   ├── UVChart.tsx
+│   ├── SunTimer.tsx
+│   ├── RelativeTime.tsx
+│   └── StepHeader.tsx
+├── hooks/              # Custom React hooks
+│   ├── useCurrentTime.ts
+│   └── useLocationRefresh.ts
 ├── services/           # External API services
-│   ├── weather.ts      # OpenWeatherMap integration
-│   └── geolocation.ts  # GPS and geocoding
+│   ├── weather.ts      # Open-Meteo integration
+│   └── geolocation.ts  # GPS and BigDataCloud geocoding
+├── lib/               # Utility functions
+│   └── utils.ts
 ├── store.ts           # Zustand state management
 ├── types.ts           # TypeScript definitions
 ├── calculations.ts    # Core algorithms
+├── calculations.test.ts # Algorithm tests
 └── App.tsx           # Main application
 ```
 
 ## API Integration
 
-### OpenWeatherMap
-- **Endpoint**: One Call API 3.0
+### Open-Meteo
+- **Endpoint**: Free Weather API
 - **Data**: Current weather, hourly forecasts, UV index
-- **Rate Limits**: 1,000 calls/day (free tier)
+- **Rate Limits**: No API key required, generous free tier
 
-### Mapbox
-- **Endpoint**: Geocoding API
-- **Features**: Address search, reverse geocoding
-- **Rate Limits**: 100,000 requests/month (free tier)
+### BigDataCloud
+- **Endpoint**: Free Reverse Geocoding API
+- **Features**: Location-based city/country lookup
+- **Rate Limits**: No API key required, free tier available
 
 ## Security & Privacy
 
-- API keys are environment variables (not hardcoded)
+- No API keys required - uses free public APIs
 - No personal data is stored on servers
 - User preferences saved locally with Zustand persist
 - HTTPS enforced for all API calls
@@ -171,7 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Based on the original OCaml sunburn calculator
 - Fitzpatrick skin type scale for scientific accuracy
-- OpenWeatherMap and Mapbox for reliable data services
+- Open-Meteo and BigDataCloud for reliable, free data services
 - shadcn/ui for beautiful, accessible components
 
 ## Support
