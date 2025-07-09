@@ -226,7 +226,7 @@ export function UVChart({ result }: UVChartProps) {
   };
 
   return (
-    <Card className="bg-stone-100 border-stone-200 shadow-sm">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-slate-800">
           <span>UV Index Throughout the Day</span>

@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
 } from "./components/ui/accordion";
 import { StepHeader } from "./components/StepHeader";
+import { TechnicalDetails } from "./components/TechnicalDetails";
 
 import { Button } from "./components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -92,7 +93,7 @@ function App() {
   const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-orange-50">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
@@ -110,13 +111,10 @@ function App() {
         <Accordion
           type="multiple"
           defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3"]}
-          className="space-y-4"
+          className="space-y-4 mb-8"
         >
           {/* Step 1: Skin Type */}
-          <AccordionItem
-            value="step1"
-            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
-          >
+          <AccordionItem value="step1">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex-1 text-left">
                 <StepHeader
@@ -139,10 +137,7 @@ function App() {
           </AccordionItem>
 
           {/* Step 2: Sunscreen */}
-          <AccordionItem
-            value="step2"
-            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
-          >
+          <AccordionItem value="step2">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex-1 text-left">
                 <StepHeader
@@ -183,10 +178,7 @@ function App() {
           </AccordionItem>
 
           {/* Step 3: Location & Weather */}
-          <AccordionItem
-            value="step3"
-            className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
-          >
+          <AccordionItem value="step3">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex-1 text-left">
                 <StepHeader
@@ -225,7 +217,7 @@ function App() {
                   variant="outline"
                   onClick={handleRefresh}
                   disabled={geolocation.status === "fetching_weather"}
-                  className="text-slate-700 border-stone-300 hover:bg-stone-100"
+                  className="text-slate-700 border-zinc-300 hover:bg-zinc-100"
                 >
                   <RefreshCw
                     className={`w-4 h-4 mr-2 ${
@@ -239,7 +231,7 @@ function App() {
                 <Button
                   variant="outline"
                   onClick={clearCalculation}
-                  className="text-slate-700 border-stone-300 hover:bg-stone-100"
+                  className="text-slate-700 border-zinc-300 hover:bg-zinc-100"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Clear Results
@@ -256,14 +248,16 @@ function App() {
           </div>
         )}
 
+        <TechnicalDetails />
+
         {/* Footer */}
-        <footer className="mt-16 pt-8 border-t border-stone-200">
+        <footer className="mt-8 pt-8 border-t border-zinc-200">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
             <div className="flex items-center gap-4">
               <span>Made by</span>
-              <a 
-                href="https://joncallahan.com" 
-                target="_blank" 
+              <a
+                href="https://joncallahan.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-amber-600 transition-colors"
               >
@@ -271,17 +265,17 @@ function App() {
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <a 
-                href="https://github.com/jondcallahan/sunburntimer" 
-                target="_blank" 
+              <a
+                href="https://github.com/jondcallahan/sunburntimer"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-amber-600 transition-colors"
               >
                 GitHub
               </a>
-              <a 
-                href="https://buymeacoffee.com/joncallahan" 
-                target="_blank" 
+              <a
+                href="https://buymeacoffee.com/joncallahan"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full hover:bg-amber-200 transition-colors"
               >

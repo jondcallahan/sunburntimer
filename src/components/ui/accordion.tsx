@@ -17,7 +17,10 @@ function AccordionItem({
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn("border-b last:border-b-0", className)}
+      // Custom styling: card-like appearance instead of typical shadcn/ui stacked borders
+      // Each item gets its own background, shadow, and rounded corners
+      // Parent components use space-y-* for vertical spacing between items
+      className={cn("bg-zinc-50 shadow-sm rounded-lg border border-zinc-200", className)}
       {...props}
     />
   )
@@ -39,7 +42,7 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
+        <ChevronDownIcon className="text-zinc-500 pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )

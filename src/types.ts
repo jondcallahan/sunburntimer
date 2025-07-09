@@ -18,6 +18,7 @@ export interface SkinTypeConfig {
   hairColors: string[];
   eyeColors: string[];
   freckles: string;
+  emojiTone: string;
 }
 
 export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
@@ -28,7 +29,8 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     coefficient: 2.5, // MED: 200 J/m^2 (Baseline)
     hairColors: ['Red', 'Blond', 'Brown'],
     eyeColors: ['Blue', 'Green', 'Gray', 'Brown'],
-    freckles: 'Common'
+    freckles: 'Common',
+    emojiTone: '🖐🏻'
   },
   [FitzpatrickType.II]: {
     color: '#E7B592',
@@ -37,7 +39,8 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     coefficient: 3.125, // MED: 250 J/m^2 (1.25x Type I)
     hairColors: ['Light', 'Dark'],
     eyeColors: ['Blue', 'Green', 'Hazel', 'Brown', 'Gray'],
-    freckles: 'Rare'
+    freckles: 'Rare',
+    emojiTone: '🖐🏻'
   },
   [FitzpatrickType.III]: {
     color: '#D19F7F',
@@ -46,7 +49,8 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     coefficient: 4.375, // MED: 350 J/m^2 (1.75x Type I)
     hairColors: ['Brown'],
     eyeColors: ['Blue', 'Green', 'Brown', 'Black'],
-    freckles: 'None'
+    freckles: 'None',
+    emojiTone: '🖐🏼'
   },
   [FitzpatrickType.IV]: {
     color: '#BB7955',
@@ -55,7 +59,8 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     coefficient: 5.625, // MED: 450 J/m^2 (2.25x Type I)
     hairColors: ['Dark Brown', 'Black'],
     eyeColors: ['Blue', 'Brown', 'Green', 'Black'],
-    freckles: 'None'
+    freckles: 'None',
+    emojiTone: '🖐🏽'
   },
   [FitzpatrickType.V]: {
     color: '#A55E31',
@@ -64,7 +69,8 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     coefficient: 7.5, // MED: 600 J/m^2 (3.00x Type I)
     hairColors: ['Black'],
     eyeColors: ['Brown', 'Black'],
-    freckles: 'None'
+    freckles: 'None',
+    emojiTone: '🖐🏾'
   },
   [FitzpatrickType.VI]: {
     color: '#3A1F1C',
@@ -73,7 +79,8 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
     coefficient: 12.5, // MED: 1000 J/m^2 (5.00x Type I)
     hairColors: ['Black'],
     eyeColors: ['Black'],
-    freckles: 'None'
+    freckles: 'None',
+    emojiTone: '🖐🏿'
   }
 };
 
