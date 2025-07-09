@@ -1,40 +1,39 @@
 import { MapPin, Loader2, AlertCircle, CheckCircle, Cloud, Edit } from 'lucide-react'
 import { useAppStore } from '../store'
 import { getCurrentPosition, reverseGeocode, formatElevation } from '../services/geolocation'
-import { getUVIndexColor } from '../lib/utils'
 import { fetchWeatherData } from '../services/weather'
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Alert, AlertDescription } from './ui/alert'
 
 export function LocationSelector() {
-  const { 
-    geolocation, 
-    setGeolocationStatus, 
-    setPosition, 
-    setWeather, 
-    setGeolocationError 
+  const {
+    geolocation,
+    setGeolocationStatus,
+    setPosition,
+    setWeather,
+    setGeolocationError
   } = useAppStore()
-  
-  
+
+
   const handleCurrentLocation = async () => {
     try {
       setGeolocationStatus('fetching_location')
-      
+
       const position = await getCurrentPosition()
       const {placeName, countryCode} = await reverseGeocode(position)
       setPosition(position, placeName, countryCode)
-      
+
       setGeolocationStatus('fetching_weather')
       const weather = await fetchWeatherData(position)
       setWeather(weather)
-      
+
     } catch (error) {
       setGeolocationError(error instanceof Error ? error.message : 'Failed to get location')
     }
   }
-  
-  
+
+
   const renderStatus = () => {
     switch (geolocation.status) {
       case 'blank':
@@ -46,7 +45,7 @@ export function LocationSelector() {
             </CardContent>
           </Card>
         )
-        
+
       case 'fetching_location':
         return (
           <div className="space-y-4">
@@ -65,7 +64,7 @@ export function LocationSelector() {
                 Edit
               </Button>
             </div>
-            
+
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -85,7 +84,7 @@ export function LocationSelector() {
             </Card>
           </div>
         )
-        
+
       case 'fetching_weather':
         return (
           <div className="space-y-4">
@@ -104,7 +103,7 @@ export function LocationSelector() {
                 Edit
               </Button>
             </div>
-            
+
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -124,7 +123,7 @@ export function LocationSelector() {
             </Card>
           </div>
         )
-        
+
       case 'completed':
         return (
           <div className="space-y-4">
@@ -150,7 +149,7 @@ export function LocationSelector() {
                 Edit
               </Button>
             </div>
-            
+
             {geolocation.weather && (
               <Card>
                 <CardContent className="p-4">
@@ -178,7 +177,7 @@ export function LocationSelector() {
             )}
           </div>
         )
-        
+
       case 'error':
         return (
           <Alert variant="destructive">
@@ -191,14 +190,14 @@ export function LocationSelector() {
             </AlertDescription>
           </Alert>
         )
-        
+
       default:
         return null
     }
   }
-  
+
   const isLoading = geolocation.status === 'fetching_location' || geolocation.status === 'fetching_weather'
-  
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4">
@@ -212,7 +211,7 @@ export function LocationSelector() {
           Use Current Location
         </Button>
       </div>
-      
+
       {renderStatus()}
     </div>
   )
