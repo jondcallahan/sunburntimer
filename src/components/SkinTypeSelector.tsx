@@ -12,7 +12,9 @@ interface SkinTypeCardProps {
   cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-function SkinTypeCard({ type, selected, onSelect, cardRef }: SkinTypeCardProps) {
+function SkinTypeCard(
+  { type, selected, onSelect, cardRef }: SkinTypeCardProps,
+) {
   const config = SKIN_TYPE_CONFIG[type];
 
   // Use consistent dark text on white background
@@ -63,6 +65,7 @@ function SkinTypeCard({ type, selected, onSelect, cardRef }: SkinTypeCardProps) 
                 <div className={`font-bold text-base ${textColor} truncate`}>
                   {config.subtitle}
                 </div>
+                <div className="text-2xl">{config.emojiTone}</div>
               </div>
             </div>
 
@@ -118,7 +121,7 @@ function SkinTypeCard({ type, selected, onSelect, cardRef }: SkinTypeCardProps) 
 export function SkinTypeSelector() {
   const { skinType, setSkinType } = useAppStore();
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Create refs for each skin type - must be called outside of any loops
   const typeIRef = useRef<HTMLDivElement>(null);
   const typeIIRef = useRef<HTMLDivElement>(null);
@@ -126,7 +129,7 @@ export function SkinTypeSelector() {
   const typeIVRef = useRef<HTMLDivElement>(null);
   const typeVRef = useRef<HTMLDivElement>(null);
   const typeVIRef = useRef<HTMLDivElement>(null);
-  
+
   const cardRefs = {
     [FitzpatrickType.I]: typeIRef,
     [FitzpatrickType.II]: typeIIRef,
@@ -140,18 +143,18 @@ export function SkinTypeSelector() {
   useLayoutEffect(() => {
     if (skinType && cardRefs[skinType]?.current) {
       const selectedCard = cardRefs[skinType].current;
-      
+
       selectedCard.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center'
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
       });
     }
   }, [skinType]);
 
   return (
     <div className="w-full">
-      <div 
+      <div
         ref={containerRef}
         className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide"
       >
