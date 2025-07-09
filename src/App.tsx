@@ -5,6 +5,7 @@ import { findOptimalTimeSlicing } from "./calculations";
 import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
+import { getUVIndexColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -199,7 +200,12 @@ function App() {
                 {geolocation.status === "completed" && geolocation.placeName &&
                   geolocation.weather && (
                   <div className="flex flex-col gap-2 mt-3 ml-12">
-                    <Badge variant="outline">{geolocation.placeName}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{geolocation.placeName}</Badge>
+                      <Badge className={`${getUVIndexColor(geolocation.weather.current.uvi).bg} ${getUVIndexColor(geolocation.weather.current.uvi).text} border-0`}>
+                        UV {geolocation.weather.current.uvi}
+                      </Badge>
+                    </div>
                     <RelativeTime
                       timestamp={geolocation.lastFetched ||
                         geolocation.weather.current.dt * 1000}

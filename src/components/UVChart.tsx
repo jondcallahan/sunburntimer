@@ -18,6 +18,7 @@ import "chartjs-adapter-date-fns";
 import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
+import { getUVIndexColor } from "../lib/utils";
 
 ChartJS.register(
   CategoryScale,
@@ -253,25 +254,25 @@ export function UVChart({ result }: UVChartProps) {
 
         {/* UV Risk Legend */}
         <div className="grid grid-cols-5 gap-2 text-xs">
-          <div className="text-center p-2 bg-green-100 rounded">
-            <div className="font-semibold text-green-800">Low</div>
-            <div className="text-green-600">0-2</div>
+          <div className={`text-center p-2 rounded ${getUVIndexColor(1).bg}`}>
+            <div className={`font-semibold ${getUVIndexColor(1).text}`}>Low</div>
+            <div className={`${getUVIndexColor(1).text} opacity-75`}>0-2</div>
           </div>
-          <div className="text-center p-2 bg-yellow-100 rounded">
-            <div className="font-semibold text-yellow-800">Moderate</div>
-            <div className="text-yellow-600">3-5</div>
+          <div className={`text-center p-2 rounded ${getUVIndexColor(4).bg}`}>
+            <div className={`font-semibold ${getUVIndexColor(4).text}`}>Moderate</div>
+            <div className={`${getUVIndexColor(4).text} opacity-75`}>3-5</div>
           </div>
-          <div className="text-center p-2 bg-orange-100 rounded">
-            <div className="font-semibold text-orange-800">High</div>
-            <div className="text-orange-600">6-7</div>
+          <div className={`text-center p-2 rounded ${getUVIndexColor(7).bg}`}>
+            <div className={`font-semibold ${getUVIndexColor(7).text}`}>High</div>
+            <div className={`${getUVIndexColor(7).text} opacity-75`}>6-7</div>
           </div>
-          <div className="text-center p-2 bg-red-100 rounded">
-            <div className="font-semibold text-red-800">Very High</div>
-            <div className="text-red-600">8-10</div>
+          <div className={`text-center p-2 rounded ${getUVIndexColor(9).bg}`}>
+            <div className={`font-semibold ${getUVIndexColor(9).text}`}>Very High</div>
+            <div className={`${getUVIndexColor(9).text} opacity-75`}>8-10</div>
           </div>
-          <div className="text-center p-2 bg-purple-100 rounded">
-            <div className="font-semibold text-purple-800">Extreme</div>
-            <div className="text-purple-600">11+</div>
+          <div className={`text-center p-2 rounded ${getUVIndexColor(12).bg}`}>
+            <div className={`font-semibold ${getUVIndexColor(12).text}`}>Extreme</div>
+            <div className={`${getUVIndexColor(12).text} opacity-75`}>11+</div>
           </div>
         </div>
 

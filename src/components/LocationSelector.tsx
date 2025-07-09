@@ -1,6 +1,7 @@
 import { MapPin, Loader2, AlertCircle, CheckCircle, Cloud, Edit } from 'lucide-react'
 import { useAppStore } from '../store'
-import { getCurrentPosition, reverseGeocode } from '../services/geolocation'
+import { getCurrentPosition, reverseGeocode, formatElevation } from '../services/geolocation'
+import { getUVIndexColor } from '../lib/utils'
 import { fetchWeatherData } from '../services/weather'
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
@@ -21,8 +22,8 @@ export function LocationSelector() {
       setGeolocationStatus('fetching_location')
       
       const position = await getCurrentPosition()
-      const placeName = await reverseGeocode(position)
-      setPosition(position, placeName)
+      const {placeName, countryCode} = await reverseGeocode(position)
+      setPosition(position, placeName, countryCode)
       
       setGeolocationStatus('fetching_weather')
       const weather = await fetchWeatherData(position)
@@ -131,6 +132,11 @@ export function LocationSelector() {
               <CheckCircle className="h-5 w-5 text-green-600" />
               <div className="flex-1">
                 <span className="font-medium text-green-900">{geolocation.placeName}</span>
+                {geolocation.weather && (
+                  <p className="text-sm text-green-700">
+                    {formatElevation(geolocation.weather.elevation, geolocation.countryCode || 'US')} elevation
+                  </p>
+                )}
               </div>
               <Button
                 variant="outline"

@@ -15,7 +15,7 @@ interface AppStore extends AppState {
   setSPFLevel: (spfLevel: SPFLevel) => void;
   setSweatLevel: (sweatLevel: SweatLevel) => void;
   setGeolocationStatus: (status: GeolocationState["status"]) => void;
-  setPosition: (position: Position, placeName?: string) => void;
+  setPosition: (position: Position, placeName?: string, countryCode?: string) => void;
   setWeather: (weather: WeatherData) => void;
   setGeolocationError: (error: string) => void;
   setCalculation: (calculation: CalculationResult) => void;
@@ -54,13 +54,14 @@ export const useAppStore = create<AppStore>()(
           geolocation: { ...state.geolocation, status, error: undefined },
         })),
 
-      setPosition: (position, placeName) =>
+      setPosition: (position, placeName, countryCode) =>
         set((state) => ({
           ...state,
           geolocation: {
             ...state.geolocation,
             position,
             placeName,
+            countryCode,
             error: undefined,
           },
         })),
@@ -106,6 +107,7 @@ export const useAppStore = create<AppStore>()(
               status: "completed" as const,
               position: state.geolocation.position,
               placeName: state.geolocation.placeName,
+              countryCode: state.geolocation.countryCode,
               // Note: weather data will be refreshed on app load
             }
             : {

@@ -163,6 +163,7 @@ export interface HourlyWeather {
 export interface WeatherData {
   current: CurrentWeather;
   hourly: HourlyWeather[];
+  elevation: number; // meters above sea level
 }
 
 // Geographic Position
@@ -175,6 +176,7 @@ export interface GeolocationState {
   status: 'blank' | 'fetching_location' | 'fetching_weather' | 'completed' | 'error';
   position?: Position;
   placeName?: string;
+  countryCode?: string;
   weather?: WeatherData;
   lastFetched?: number; // timestamp when weather was last fetched
   error?: string;

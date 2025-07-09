@@ -1,6 +1,7 @@
 import type { Position, WeatherData } from "../types";
 
 interface OpenMeteoResponse {
+  elevation: number;
   current: {
     time: string;
     temperature_2m: number;
@@ -88,6 +89,7 @@ export async function fetchWeatherData(
 
   return {
     current,
-    hourly
+    hourly,
+    elevation: data.elevation
   } as WeatherData;
 }

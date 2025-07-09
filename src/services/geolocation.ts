@@ -47,7 +47,17 @@ interface BigDataCloudResponse {
   countryCode: string;
 }
 
-export async function reverseGeocode(position: Position): Promise<string> {
+export function formatElevation(elevation: number, countryCode: string): string {
+  if (countryCode === 'US') {
+    const feet = Math.round(elevation * 3.28084);
+    return `${feet.toLocaleString()}ft`;
+  } else {
+    return `${Math.round(elevation).toLocaleString()}m`;
+  }
+}
+
+
+export async function reverseGeocode(position: Position): Promise<{placeName: string, countryCode: string}> {
   try {
     // Use BigDataCloud's free reverse geocoding API (no API key required, CORS enabled)
     const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.latitude}&longitude=${position.longitude}&localityLanguage=en`
@@ -83,12 +93,18 @@ export async function reverseGeocode(position: Position): Promise<string> {
     }
     
     if (parts.length > 0) {
-      return parts.join(', ')
+      return {
+        placeName: parts.join(', '),
+        countryCode: data.countryCode || 'US'
+      }
     }
     
     // If we got data but no usable location parts, show country at least
     if (data.countryName) {
-      return data.countryName
+      return {
+        placeName: data.countryName,
+        countryCode: data.countryCode || 'US'
+      }
     }
     
   } catch (error) {
@@ -96,5 +112,8 @@ export async function reverseGeocode(position: Position): Promise<string> {
   }
 
   // Fallback to coordinates if geocoding fails
-  return `Your Current Location (${position.latitude.toFixed(2)}°, ${position.longitude.toFixed(2)}°)`
+  return {
+    placeName: `Your Current Location (${position.latitude.toFixed(2)}°, ${position.longitude.toFixed(2)}°)`,
+    countryCode: 'US'
+  }
 }
