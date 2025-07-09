@@ -8,7 +8,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --default-font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --default-font-family: 'TikTok Sans', ui-sans-serif, system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
