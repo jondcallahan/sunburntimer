@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { RefreshCw, Sun, Trash2 } from "lucide-react";
+import { RefreshCw, Sun } from "lucide-react";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
 import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
@@ -35,7 +35,6 @@ function App() {
     geolocation,
     calculation,
     setCalculation,
-    clearCalculation,
     setGeolocationStatus,
     setWeather,
     setGeolocationError,
@@ -241,14 +240,6 @@ function App() {
                     }`}
                   />
                   Refresh
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={clearCalculation}
-                  className="text-slate-700 border-stone-300 hover:bg-stone-100"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Clear Results
                 </Button>
               </div>
             </div>

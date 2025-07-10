@@ -61,7 +61,7 @@ export function LocationSelector() {
                 className="text-xs opacity-50"
               >
                 <Edit className="w-3 h-3 mr-1" />
-                Edit
+                Change
               </Button>
             </div>
 
@@ -100,7 +100,7 @@ export function LocationSelector() {
                 className="text-xs opacity-50"
               >
                 <Edit className="w-3 h-3 mr-1" />
-                Edit
+                Change
               </Button>
             </div>
 
@@ -146,7 +146,7 @@ export function LocationSelector() {
                 className="text-xs"
               >
                 <Edit className="w-3 h-3 mr-1" />
-                Edit
+                Change
               </Button>
             </div>
 
