@@ -258,9 +258,9 @@ function App() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
             <div className="flex items-center gap-4">
               <span>Made by</span>
-              <a 
-                href="https://joncallahan.com" 
-                target="_blank" 
+              <a
+                href="https://joncallahan.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-amber-600 transition-colors"
               >
@@ -268,17 +268,17 @@ function App() {
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <a 
-                href="https://github.com/jondcallahan/sunburntimer" 
-                target="_blank" 
+              <a
+                href="https://github.com/jondcallahan/sunburntimer"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-amber-600 transition-colors"
               >
                 GitHub
               </a>
-              <a 
-                href="https://buymeacoffee.com/joncallahan" 
-                target="_blank" 
+              <a
+                href="https://buymeacoffee.com/joncallahan"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full hover:bg-amber-200 transition-colors"
               >

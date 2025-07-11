@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "ci": "biome ci .",
     "preview": "vite preview",
     "test": "bun test",
     "test:watch": "bun test --watch"
@@ -36,6 +39,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.1.1",
     "@eslint/js": "^9.29.0",
     "@types/node": "^24.0.7",
     "@types/react": "^19.1.8",
