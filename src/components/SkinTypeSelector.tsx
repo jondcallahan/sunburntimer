@@ -147,7 +147,7 @@ export function SkinTypeSelector() {
 				inline: "center",
 			});
 		}
-	}, [skinType, cardRefs[skinType]?.current, cardRefs[skinType].current]);
+	}, [skinType, cardRefs]);
 
 	return (
 		<div className="w-full">

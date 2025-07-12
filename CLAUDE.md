@@ -11,3 +11,6 @@
 - Prefer Tailwind classes over inline styles when available
 - Simplify overly complex logic - step back and use simpler approaches
 - Follow React Rules of Hooks - never call hooks inside loops
+
+## Workflow
+- Remember to run bun run format after making changes
