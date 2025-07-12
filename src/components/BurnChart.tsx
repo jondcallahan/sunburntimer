@@ -80,7 +80,7 @@ export function BurnChart({ result }: BurnChartProps) {
 				},
 			],
 		};
-	}, [result.points]);
+	}, [result.points, result.startTime]);
 
 	const options = useMemo(
 		() => ({
@@ -172,7 +172,7 @@ export function BurnChart({ result }: BurnChartProps) {
 				},
 			},
 		}),
-		[result.points],
+		[result.points, result.startTime],
 	);
 
 	const burnTimeReached = useMemo(() => {
