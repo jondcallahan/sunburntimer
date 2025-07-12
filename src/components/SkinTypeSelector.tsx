@@ -127,14 +127,17 @@ export function SkinTypeSelector() {
 	const typeVRef = useRef<HTMLDivElement>(null);
 	const typeVIRef = useRef<HTMLDivElement>(null);
 
-	const cardRefs = {
-		[FitzpatrickType.I]: typeIRef,
-		[FitzpatrickType.II]: typeIIRef,
-		[FitzpatrickType.III]: typeIIIRef,
-		[FitzpatrickType.IV]: typeIVRef,
-		[FitzpatrickType.V]: typeVRef,
-		[FitzpatrickType.VI]: typeVIRef,
-	};
+	const cardRefs = useMemo(
+		() => ({
+			[FitzpatrickType.I]: typeIRef,
+			[FitzpatrickType.II]: typeIIRef,
+			[FitzpatrickType.III]: typeIIIRef,
+			[FitzpatrickType.IV]: typeIVRef,
+			[FitzpatrickType.V]: typeVRef,
+			[FitzpatrickType.VI]: typeVIRef,
+		}),
+		[typeIRef, typeIIRef, typeIIIRef, typeIVRef, typeVRef, typeVIRef],
+	);
 
 	// Scroll selected card into view
 	useLayoutEffect(() => {
