@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useMemo } from "react";
 import { FitzpatrickType, SKIN_TYPE_CONFIG } from "../types";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "./ui/card";
@@ -136,7 +136,7 @@ export function SkinTypeSelector() {
 			[FitzpatrickType.V]: typeVRef,
 			[FitzpatrickType.VI]: typeVIRef,
 		}),
-		[typeIRef, typeIIRef, typeIIIRef, typeIVRef, typeVRef, typeVIRef],
+		[],
 	);
 
 	// Scroll selected card into view
