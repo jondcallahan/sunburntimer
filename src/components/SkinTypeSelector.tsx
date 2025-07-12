@@ -26,15 +26,16 @@ function SkinTypeCard({
 	const labelColor = "text-gray-500";
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: Not going to overwrite the Card component to be a button so solve it with a11y attributes
 		<Card
 			ref={cardRef}
 			className={`
-        cursor-pointer transition-all duration-200 border relative overflow-hidden w-72 h-80 flex-shrink-0 snap-center bg-white scroll-m-12
-        ${
-					selected
-						? "shadow-inner"
-						: "border-stone-200 hover:border-slate-400 hover:shadow-md"
-				}
+			cursor-pointer transition-all duration-200 border relative overflow-hidden w-72 h-80 flex-shrink-0 snap-center bg-white scroll-m-12
+			${
+				selected
+					? "shadow-inner"
+					: "border-stone-200 hover:border-slate-400 hover:shadow-md"
+			}
       `}
 			onClick={() => onSelect(type)}
 			role="button"
@@ -146,7 +147,7 @@ export function SkinTypeSelector() {
 				inline: "center",
 			});
 		}
-	}, [skinType]);
+	}, [skinType, cardRefs[skinType]?.current, cardRefs[skinType].current]);
 
 	return (
 		<div className="w-full">

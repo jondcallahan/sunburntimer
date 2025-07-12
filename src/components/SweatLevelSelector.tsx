@@ -43,6 +43,7 @@ function SweatLevelOption({
 	const dropletCount = getDropletCount(level);
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: Not going to overwrite the Card component to be a button so solve it with a11y attributes
 		<Card
 			className={`
         cursor-pointer transition-all duration-200 hover:scale-105 border-2
@@ -76,6 +77,7 @@ function SweatLevelOption({
 							<div className="flex space-x-0.5">
 								{Array.from({ length: 3 }).map((_, i) => (
 									<Droplets
+										// biome-ignore lint/suspicious/noArrayIndexKey: we're iterating through an array of fixed length so this is fine
 										key={i}
 										className={`w-3 h-3 ${
 											i < dropletCount

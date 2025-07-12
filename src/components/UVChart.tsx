@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
 	CategoryScale,
 	Chart as ChartJS,
@@ -97,7 +97,15 @@ export function UVChart({ result }: UVChartProps) {
 				},
 			],
 		};
-	}, [result.points, geolocation.weather]);
+	}, [result.points, weatherData?.hourly.map, weatherData]);
+
+	const getUVRiskLevel = useCallback((uvIndex: number): string => {
+		if (uvIndex < 3) return "Low";
+		if (uvIndex < 6) return "Moderate";
+		if (uvIndex < 8) return "High";
+		if (uvIndex < 11) return "Very High";
+		return "Extreme";
+	}, []);
 
 	const options = useMemo(
 		() => ({
@@ -133,8 +141,8 @@ export function UVChart({ result }: UVChartProps) {
 					annotations: {
 						currentTime: {
 							type: "line" as const,
-							xMin: new Date().getTime(),
-							xMax: new Date().getTime(),
+							xMin: Date.now(),
+							xMax: Date.now(),
 							borderColor: "#dc2626", // red-600
 							borderWidth: 2,
 							borderDash: [3, 3],
@@ -207,16 +215,8 @@ export function UVChart({ result }: UVChartProps) {
 				},
 			},
 		}),
-		[maxUV],
+		[maxUV, getUVRiskLevel],
 	);
-
-	const getUVRiskLevel = (uvIndex: number): string => {
-		if (uvIndex < 3) return "Low";
-		if (uvIndex < 6) return "Moderate";
-		if (uvIndex < 8) return "High";
-		if (uvIndex < 11) return "Very High";
-		return "Extreme";
-	};
 
 	const getUVRiskColor = (uvIndex: number): string => {
 		if (uvIndex < 3) return "text-green-600";
