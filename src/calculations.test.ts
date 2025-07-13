@@ -115,9 +115,9 @@ const TEST_SCENARIOS = {
 	mediumUV: [5, 5, 5, 5, 5],
 	lowUV: [2, 2, 2, 2, 2],
 	variableUV: [4, 6, 8, 10, 12, 11, 9, 7, 5, 3, 2, 1],
-	extendedHighUV: Array(15).fill(8),
-	extendedMediumUV: Array(12).fill(6),
-} as const;
+	extendedHighUV: Array(15).fill(8) as number[],
+	extendedMediumUV: Array(12).fill(6) as number[],
+};
 
 describe("Sunburn Calculation Algorithm", () => {
 	describe("Core Algorithm Validation", () => {
