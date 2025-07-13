@@ -478,8 +478,8 @@ describe("Sunburn Calculation Algorithm", () => {
 			const executionTime = Date.now() - start;
 
 			expect(result.points.length).toBeGreaterThan(0);
-			// More realistic performance expectations
-			expect(executionTime).toBeLessThan(500); // 500ms should be plenty
+			// Should complete very quickly
+			expect(executionTime).toBeLessThan(50); // Should be under 50ms
 		});
 
 		it("should handle large datasets efficiently", () => {
