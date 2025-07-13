@@ -29,7 +29,20 @@ export async function fetchWeatherData(
 	const lat = position.latitude.toFixed(4);
 	const lon = position.longitude.toFixed(4);
 
-	const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,uv_index,weather_code&hourly=temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,uv_index,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`;
+	const url = new URL("https://api.open-meteo.com/v1/forecast");
+	const params = new URLSearchParams({
+		latitude: lat,
+		longitude: lon,
+		current:
+			"temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,uv_index,weather_code",
+		hourly:
+			"temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,uv_index,weather_code",
+		temperature_unit: "fahrenheit",
+		wind_speed_unit: "mph",
+		timezone: "auto",
+		forecast_days: "3",
+	});
+	url.search = params.toString();
 
 	const response = await fetch(url);
 
