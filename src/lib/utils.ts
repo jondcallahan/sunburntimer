@@ -40,3 +40,36 @@ export function getUVIndexColor(uvIndex: number): {
 		border: "border-purple-200",
 	};
 }
+
+export function formatDuration(diffMs: number): string {
+	const hours = Math.floor(diffMs / (1000 * 60 * 60));
+	const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+	if (hours === 0) {
+		return `${minutes} minutes`;
+	} else if (minutes === 0) {
+		return `${hours} hour${hours > 1 ? "s" : ""}`;
+	} else {
+		return `${hours}h ${minutes}m`;
+	}
+}
+
+/**
+ * Environmental UV multipliers based on scientific research
+ * Snow: 88% reflection, Sand: 15% reflection, Shade: 50% reduction
+ */
+export const ENVIRONMENTAL_MULTIPLIERS = {
+	SNOW: 1.88,
+	SAND: 1.15,
+	SHADE: 0.5,
+} as const;
+
+export function calculateEnvironmentalTimes(startTime: Date, burnTime: Date) {
+	const baseDiffMs = burnTime.getTime() - startTime.getTime();
+
+	return {
+		snow: formatDuration(baseDiffMs / ENVIRONMENTAL_MULTIPLIERS.SNOW),
+		sand: formatDuration(baseDiffMs / ENVIRONMENTAL_MULTIPLIERS.SAND),
+		shade: formatDuration(baseDiffMs / ENVIRONMENTAL_MULTIPLIERS.SHADE),
+	};
+}

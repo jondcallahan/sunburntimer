@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Card, CardContent } from "./ui/card";
 import type { CalculationResult } from "../types";
 import { CALCULATION_CONSTANTS } from "../types";
+import { formatDuration, calculateEnvironmentalTimes } from "../lib/utils";
 
 interface ResultsDisplayProps {
 	result: CalculationResult;
@@ -32,17 +33,13 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 		}
 
 		const diffMs = burnTime.getTime() - startTime.getTime();
-		const hours = Math.floor(diffMs / (1000 * 60 * 60));
-		const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-		if (hours === 0) {
-			return `${minutes} minutes`;
-		} else if (minutes === 0) {
-			return `${hours} hour${hours > 1 ? "s" : ""}`;
-		} else {
-			return `${hours}h ${minutes}m`;
-		}
+		return formatDuration(diffMs);
 	}, [startTime, burnTime]);
+
+	const environmentalTimes = useMemo(() => {
+		if (!startTime || !burnTime || safeTime === "unlikely") return null;
+		return calculateEnvironmentalTimes(startTime, burnTime);
+	}, [startTime, burnTime, safeTime]);
 
 	const isHighRisk = useMemo(() => {
 		// If sunburn is unlikely, it's not high risk
@@ -82,15 +79,20 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 							{burnTime && safeTime && safeTime !== "unlikely" ? (
 								<div>
 									<p className="text-2xl font-bold text-slate-800">
-										{isHighRisk
-											? `Safe for ${safeTime}`
-											: `Safe for ${safeTime}`}
+										Safe for {safeTime}
 									</p>
 									<p className="text-slate-600">
 										{isHighRisk
 											? `Use sunscreen by ${format(burnTime, "h:mm a")}, sun damage may occur after`
 											: `Until ${format(burnTime, "h:mm a")}`}
 									</p>
+									{environmentalTimes && (
+										<p className="text-sm text-slate-500 mt-2">
+											Full shade: {environmentalTimes.shade} • Beach:{" "}
+											{environmentalTimes.sand} • Snow:{" "}
+											{environmentalTimes.snow}
+										</p>
+									)}
 								</div>
 							) : (
 								<p className="text-2xl font-bold text-green-600">
