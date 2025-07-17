@@ -1,0 +1,2804 @@
+{
+	"present": {
+		"0": {
+			"day": {
+				"bg_image": "0_day.jpg",
+				"bg_alt": "",
+				"short": "Sunny",
+				"long": "Cloud development not observed",
+				"comment": "looks pretty fine for a vacation",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-sun-bright",
+					"emoji": "\ud83c\udf1e"
+				}
+			},
+			"night": {
+				"bg_image": "0_night.jpg",
+				"bg_alt": "",
+				"short": "Clear",
+				"long": "Cloud development not observed",
+				"comment": "looks pretty fine for walk outside and see stars",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-moon",
+					"emoji": "\ud83c\udf19"
+				}
+			}
+		},
+		"1": {
+			"day": {
+				"bg_image": "1_day.webp",
+				"bg_alt": "",
+				"short": "Partly Cloudy",
+				"long": "Clouds generally dissolving or becoming less developed",
+				"comment": "skies are opening up\u2014nice weather ahead!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds-sun",
+					"emoji": "\ud83c\udf24"
+				}
+			},
+			"night": {
+				"bg_image": "1_night.jpg",
+				"bg_alt": "",
+				"short": "Partly Cloudy",
+				"long": "Clouds generally dissolving or becoming less developed",
+				"comment": "night sky getting clearer\u2014perfect for stargazing",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds-moon",
+					"emoji": "\ud83c\udf24"
+				}
+			}
+		},
+		"2": {
+			"day": {
+				"bg_image": "",
+				"bg_alt": "",
+				"short": "Partly Cloudy",
+				"long": "State of sky on the whole unchanged",
+				"comment": "same skies as before\u2014steady and predictable",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds-sun",
+					"emoji": "\u26c5"
+				}
+			},
+			"night": {
+				"bg_image": "",
+				"bg_alt": "",
+				"short": "Partly Cloudy",
+				"long": "State of sky on the whole unchanged",
+				"comment": "no surprises tonight\u2014sky remains as it was",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds-moon",
+					"emoji": "\u2601\ufe0f"
+				}
+			}
+		},
+		"3": {
+			"day": {
+				"bg_image": "3_day.webp",
+				"bg_alt": "",
+				"short": "Cloudy",
+				"long": "Clouds generally forming or developing",
+				"comment": "clouds are building\u2014might want to keep an umbrella handy",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds",
+					"emoji": "\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "3_night.webp",
+				"bg_alt": "",
+				"short": "Cloudy",
+				"long": "Clouds generally forming or developing",
+				"comment": "clouds creeping in\u2014maybe a cozy night indoors",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds",
+					"emoji": "\u2601\ufe0f"
+				}
+			}
+		},
+		"4": {
+			"day": {
+				"bg_image": "4_day.webp",
+				"bg_alt": "",
+				"short": "Smoky",
+				"long": "Visibility reduced by smoke from fires or pollution",
+				"comment": "air's a bit harsh\u2014consider wearing a mask outside",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smog",
+					"emoji": "\ud83c\udf2b\ud83d\udd25"
+				}
+			},
+			"night": {
+				"bg_image": "4_night.jpg",
+				"bg_alt": "",
+				"short": "Smoky",
+				"long": "Visibility reduced by smoke from fires or pollution",
+				"comment": "smoky night\u2014might want to stay in and keep windows closed",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smog",
+					"emoji": "\ud83c\udf2b"
+				}
+			}
+		},
+		"5": {
+			"day": {
+				"bg_image": "5_day.jpg",
+				"bg_alt": "",
+				"short": "Hazy",
+				"long": "Visibility reduced due to haze",
+				"comment": "soft haze over the day\u2014not the clearest view",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-sun-haze",
+					"emoji": "\ud83c\udf2b"
+				}
+			},
+			"night": {
+				"bg_image": "5_night.webp",
+				"bg_alt": "",
+				"short": "Hazy",
+				"long": "Visibility reduced due to haze",
+				"comment": "hazy night\u2014city lights might look a bit dreamy",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smoke",
+					"emoji": "\ud83c\udf2b"
+				}
+			}
+		},
+		"6": {
+			"day": {
+				"bg_image": "6_day.png",
+				"bg_alt": "",
+				"short": "Dusty Air",
+				"long": "Widespread dust suspended in air, not wind-raised locally",
+				"comment": "dust hangs in the air\u2014might feel dry and gritty outside",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-sun-dust",
+					"emoji": "\ud83c\udf2b\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "6_night.jpg",
+				"bg_alt": "",
+				"short": "Dust Susp.",
+				"long": "Widespread dust suspended in air, not wind-raised locally",
+				"comment": "dusty conditions tonight\u2014keep windows shut if sensitive",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-mask",
+					"emoji": "\ud83c\udf2b"
+				}
+			}
+		},
+		"7": {
+			"day": {
+				"bg_image": "7_day.jpg",
+				"bg_alt": "",
+				"short": "Blowing Dust",
+				"long": "Dust or sand raised by wind, no whirl or storm observed",
+				"comment": "wind's kicking up dust\u2014might want goggles if you're out",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83d\udca8\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "7_night.png",
+				"bg_alt": "",
+				"short": "Dusty Wind",
+				"long": "Dust or sand raised by wind, no whirl or storm observed",
+				"comment": "dusty breezes tonight\u2014best to avoid long walks",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83d\udca8"
+				}
+			}
+		},
+		"8": {
+			"day": {
+				"bg_image": "8_day.jpg",
+				"bg_alt": "",
+				"short": "Dust Whirls",
+				"long": "Well-developed dust or sand whirls observed, no storm",
+				"comment": "spinning dust devils around\u2014watch your eyes out there",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-tornado",
+					"emoji": "\ud83c\udf2a\ufe0f\ud83c\udf2b"
+				}
+			},
+			"night": {
+				"bg_image": "8_night.webp",
+				"bg_alt": "",
+				"short": "Dust Whirls",
+				"long": "Well-developed dust or sand whirls observed, no storm",
+				"comment": "whirls under moonlight\u2014dusty but surreal",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-tornado",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"9": {
+			"day": {
+				"bg_image": "9_day.jpg",
+				"bg_alt": "",
+				"short": "Duststorm",
+				"long": "Duststorm or sandstorm within sight or at station",
+				"comment": "severe visibility loss\u2014better stay indoors for safety",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-circle-exclamation",
+					"emoji": "\ud83c\udf2a\ufe0f\ud83c\udf2b"
+				}
+			},
+			"night": {
+				"bg_image": "9_night.jpg",
+				"bg_alt": "",
+				"short": "Duststorm",
+				"long": "Duststorm or sandstorm within sight or at station",
+				"comment": "sandstorm or duststorm obscuring the night sky\u2014stay indoors",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-circle-exclamation",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"10": {
+			"day": {
+				"bg_image": "10_day.jpg",
+				"bg_alt": "",
+				"short": "Mist",
+				"long": "Visibility reduced by mist",
+				"comment": "misty conditions\u2014visibility is poor, drive safely",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-fog",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "10_night.jpg",
+				"bg_alt": "",
+				"short": "Night Mist",
+				"long": "Visibility reduced by mist",
+				"comment": "misty night\u2014might be eerie outside with low visibility",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-fog",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"11": {
+			"day": {
+				"bg_image": "11_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Shallow fog or ice fog, not deeper than 2 meters on land or 10 meters at sea",
+				"comment": "patchy fog making things look a little mystical\u2014be careful on the roads",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-fog",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "11_night.webp",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Shallow fog or ice fog, not deeper than 2 meters on land or 10 meters at sea",
+				"comment": "the night is foggy, adding a bit of mystery to the evening",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-fog",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"12": {
+			"day": {
+				"bg_image": "fog_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "More or less continuous shallow fog or ice fog, not deeper than 2 meters on land or 10 meters at sea",
+				"comment": "continuous fog over the area\u2014visibility is quite limited, stay cautious",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-fog",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "fog_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "More or less continuous shallow fog or ice fog, not deeper than 2 meters on land or 10 meters at sea",
+				"comment": "fog is thick tonight\u2014visibility is very low, take care when out and about",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-fog",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"13": {
+			"day": {
+				"bg_image": "lightning_visible_day.jpg",
+				"bg_alt": "",
+				"short": "Lightning",
+				"long": "Lightning visible, but no thunder heard",
+				"comment": "Lightning flashing in the sky\u2014no thunder yet, but it looks intense!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-bolt-sun",
+					"emoji": "\u26a1"
+				}
+			},
+			"night": {
+				"bg_image": "lightning_visible_night.jpg",
+				"bg_alt": "",
+				"short": "Lightning",
+				"long": "Lightning visible, but no thunder heard",
+				"comment": "Lightning in the night sky\u2014quite eerie without the rumble of thunder",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-bolt-moon",
+					"emoji": "\u26a1"
+				}
+			}
+		},
+		"14": {
+			"day": {
+				"bg_image": "precipitation_visible_day.jpg",
+				"bg_alt": "",
+				"short": "Visible Precipitation",
+				"long": "Precipitation visible, but not reaching the ground or sea",
+				"comment": "You can see the rain or snow falling, but it's not hitting the ground yet\u2014strange, but still interesting to watch!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sun-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "precipitation_visible_night.jpg",
+				"bg_alt": "",
+				"short": "Night Precipitation",
+				"long": "Precipitation visible, but not reaching the ground or sea",
+				"comment": "Light rain or snow is visible, but it's not touching the ground\u2014mysterious!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-moon-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"15": {
+			"day": {
+				"bg_image": "precipitation_distant_day.jpg",
+				"bg_alt": "",
+				"short": "Distant Rain",
+				"long": "Precipitation visible and reaching the ground or sea, but distant (more than 5 km away)",
+				"comment": "You can see rain or snow far off in the distance, but it's not near enough to affect you just yet!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sun-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "precipitation_distant_night.jpg",
+				"bg_alt": "",
+				"short": "Distant Rain",
+				"long": "Precipitation visible and reaching the ground or sea, but distant (more than 5 km away)",
+				"comment": "It\u2019s raining far off in the distance\u2014no need to worry, but it's still an impressive sight!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-moon-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"16": {
+			"day": {
+				"bg_image": "precipitation_near_day.jpg",
+				"bg_alt": "",
+				"short": "Nearby Rain",
+				"long": "Precipitation visible and reaching the ground or sea, near to the station but not at it",
+				"comment": "Rain or snow is close by, but not quite reaching your location\u2014looks like it might come your way soon!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sun-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "precipitation_near_night.jpg",
+				"bg_alt": "",
+				"short": "Nearby Rain",
+				"long": "Precipitation visible and reaching the ground or sea, near to the station but not at it",
+				"comment": "Rain or snow is very close\u2014might get to you soon, so prepare!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-moon-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"17": {
+			"day": {
+				"bg_image": "thunderstorm_no_precipitation_day.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "Thunderstorm observed, but no precipitation at the time of observation",
+				"comment": "The storm is rumbling with thunder, but the sky remains dry for now\u2014brace for possible rain!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-bolt",
+					"emoji": "\u26a1"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_no_precipitation_night.jpg",
+				"bg_alt": "",
+				"short": "Night Thunderstorm",
+				"long": "Thunderstorm observed, but no precipitation at the time of observation",
+				"comment": "The night sky lights up with thunder, but there\u2019s no rain yet\u2014quite a sight!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-bolt",
+					"emoji": "\u26a1"
+				}
+			}
+		},
+		"18": {
+			"day": {
+				"bg_image": "squalls_day.jpg",
+				"bg_alt": "",
+				"short": "Windy",
+				"long": "Squalls observed at or within sight of the station during the preceding hour or at the time of observation",
+				"comment": "Strong, sudden gusts of wind with a brief intensity\u2014could get breezy outside!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind",
+					"emoji": "\ud83c\udf2c\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "squalls_night.jpg",
+				"bg_alt": "",
+				"short": "Windy",
+				"long": "Squalls observed at or within sight of the station during the preceding hour or at the time of observation",
+				"comment": "The wind\u2019s picking up with strong gusts\u2014watch out for sudden bursts of wind!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind",
+					"emoji": "\ud83c\udf2c\ufe0f"
+				}
+			}
+		},
+		"19": {
+			"day": {
+				"bg_image": "funnel_cloud_day.jpg",
+				"bg_alt": "",
+				"short": "Funnel Cloud",
+				"long": "Funnel cloud(s) observed at or within sight of the station during the preceding hour or at the time of observation (Tornado cloud or water-spout)",
+				"comment": "A dangerous sight\u2014tornado or waterspout forming nearby. Stay safe and keep an eye on the sky!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-tornado",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "funnel_cloud_night.jpg",
+				"bg_alt": "",
+				"short": "Funnel Cloud",
+				"long": "Funnel cloud(s) observed at or within sight of the station during the preceding hour or at the time of observation (Tornado cloud or water-spout)",
+				"comment": "Tornado or waterspout is visible\u2014stay alert and take cover if necessary!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-tornado",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"20": {
+			"day": {
+				"bg_image": "drizzle_snow_grains_day.jpg",
+				"bg_alt": "",
+				"short": "Drizzle/Snow Grains",
+				"long": "Drizzle (not freezing) or snow grains, not falling as showers",
+				"comment": "Light drizzle or tiny snow grains are falling, not intense, but still a bit wet outside!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_snow_grains_night.jpg",
+				"bg_alt": "",
+				"short": "Drizzle/Snow Grains",
+				"long": "Drizzle (not freezing) or snow grains, not falling as showers",
+				"comment": "It's a light drizzle or snowflakes in the air\u2014nothing too heavy, but you might want a coat!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"21": {
+			"day": {
+				"bg_image": "rain_day.jpg",
+				"bg_alt": "",
+				"short": "Light Rain",
+				"long": "Rain (not freezing), not falling as showers",
+				"comment": "Light rain falling steadily\u2014perfect weather for a walk with an umbrella!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_night.jpg",
+				"bg_alt": "",
+				"short": "Light Rain",
+				"long": "Rain (not freezing), not falling as showers",
+				"comment": "Steady rain through the night\u2014bring an umbrella if you're heading out!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"22": {
+			"day": {
+				"bg_image": "snow_day.jpg",
+				"bg_alt": "",
+				"short": "Light Snow",
+				"long": "Snow (not falling as showers)",
+				"comment": "Light snow falling steadily\u2014looks like a winter wonderland outside!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snow_night.jpg",
+				"bg_alt": "",
+				"short": "Light Snow",
+				"long": "Snow (not falling as showers)",
+				"comment": "Gentle snowflakes in the air, not too heavy but still enough to make the night magical!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"23": {
+			"day": {
+				"bg_image": "rain_snow_day.jpg",
+				"bg_alt": "",
+				"short": "Snowing",
+				"long": "Rain and snow or ice pellets (not falling as showers)",
+				"comment": "A mix of rain and snow or ice pellets, adding a bit of wintery chill to the day!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_snow_night.jpg",
+				"bg_alt": "",
+				"short": "Snowing",
+				"long": "Rain and snow or ice pellets (not falling as showers)",
+				"comment": "Mixed rain and snow, creating a quiet, wintry night. Be careful on the roads!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"24": {
+			"day": {
+				"bg_image": "freezing_drizzle_day.jpg",
+				"bg_alt": "",
+				"short": "Freezing Drizzle",
+				"long": "Freezing drizzle or freezing rain (not falling as showers)",
+				"comment": "Light freezing drizzle or rain, be cautious as it may create icy surfaces!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowman",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "freezing_drizzle_night.jpg",
+				"bg_alt": "",
+				"short": "Freezing Drizzle",
+				"long": "Freezing drizzle or freezing rain (not falling as showers)",
+				"comment": "Light freezing drizzle continuing through the night\u2014watch out for icy patches on the ground!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowman",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"25": {
+			"day": {
+				"bg_image": "rain_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Rain Showers",
+				"long": "Shower(s) of rain",
+				"comment": "Occasional showers of rain throughout the day\u2014bring an umbrella, just in case!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-raindrops",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Rain Showers",
+				"long": "Shower(s) of rain",
+				"comment": "Light rain showers continuing through the night\u2014perfect weather for cozy indoor time.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-raindrops",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"26": {
+			"day": {
+				"bg_image": "rain_snow_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Snow Showers",
+				"long": "Shower(s) of snow, or of rain and snow",
+				"comment": "Intermittent snow and rain showers\u2014watch for slippery roads!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_snow_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Snow Showers",
+				"long": "Shower(s) of snow, or of rain and snow",
+				"comment": "A mix of snow and rain showers through the night\u2014be cautious of icy patches on the ground!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"27": {
+			"day": {
+				"bg_image": "hail_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Hail Showers",
+				"long": "Shower(s) of hail, or of rain and hail",
+				"comment": "Hail showers expected\u2014be careful of the icy pellets!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "hail_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Hail Showers",
+				"long": "Shower(s) of hail, or of rain and hail",
+				"comment": "Hail showers continuing through the night\u2014keep an eye out for damage from the hail!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"28": {
+			"day": {
+				"bg_image": "fog_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog",
+				"comment": "Visibility is low due to fog\u2014drive carefully and stay safe!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "fog_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog",
+				"comment": "Fog persists through the night\u2014visibility will remain poor, be cautious.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"29": {
+			"day": {
+				"bg_image": "thunderstorm_day.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "Thunderstorm (with or without precipitation)",
+				"comment": "Expect thunderstorms\u2014stay safe and avoid being outdoors during lightning!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-bolt",
+					"emoji": "\ud83c\udf29\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_night.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "Thunderstorm (with or without precipitation)",
+				"comment": "Thunderstorms are active tonight\u2014make sure you're indoors and safe from lightning.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-bolt",
+					"emoji": "\ud83c\udf29\ufe0f"
+				}
+			}
+		},
+		"30": {
+			"day": {
+				"bg_image": "duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Light Duststorm",
+				"long": "Slight or moderate duststorm or sandstorm (has decreased during the preceding hour)",
+				"comment": "A duststorm has weakened, but conditions might still be dusty\u2014proceed with caution!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Light Duststorm",
+				"long": "Slight or moderate duststorm or sandstorm (has decreased during the preceding hour)",
+				"comment": "Duststorm conditions persist through the night, but intensity has lessened.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"31": {
+			"day": {
+				"bg_image": "duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Duststorm",
+				"long": "Slight or moderate duststorm or sandstorm (no appreciable change during the preceding hour)",
+				"comment": "Duststorm conditions remain steady\u2014be cautious as visibility may be low.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Duststorm",
+				"long": "Slight or moderate duststorm or sandstorm (no appreciable change during the preceding hour)",
+				"comment": "The duststorm conditions persist with no significant changes\u2014continue to stay indoors if possible.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"32": {
+			"day": {
+				"bg_image": "duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Duststorm",
+				"long": "Slight or moderate duststorm or sandstorm (has begun or has increased during the preceding hour)",
+				"comment": "Duststorm conditions are worsening\u2014take precautions and limit outdoor activities.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Duststorm",
+				"long": "Slight or moderate duststorm or sandstorm (has begun or has increased during the preceding hour)",
+				"comment": "Duststorm intensity is increasing\u2014visibility may continue to decline throughout the night.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"33": {
+			"day": {
+				"bg_image": "severe_duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Severe Duststorm",
+				"long": "Severe duststorm or sandstorm (has decreased during the preceding hour)",
+				"comment": "The severe duststorm has weakened, but conditions may still be hazardous. Caution is advised.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "severe_duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Severe Duststorm",
+				"long": "Severe duststorm or sandstorm (has decreased during the preceding hour)",
+				"comment": "Although the severe duststorm is weakening, visibility is still compromised, and it\u2019s best to stay indoors.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"34": {
+			"day": {
+				"bg_image": "severe_duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Severe Duststorm",
+				"long": "Severe duststorm or sandstorm (no appreciable change during the preceding hour)",
+				"comment": "The severe duststorm continues unabated. Conditions remain hazardous with low visibility.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "severe_duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Severe Duststorm",
+				"long": "Severe duststorm or sandstorm (no appreciable change during the preceding hour)",
+				"comment": "The severe duststorm persists through the night with no significant change, continuing to limit visibility.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"35": {
+			"day": {
+				"bg_image": "severe_duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Severe Duststorm",
+				"long": "Severe duststorm or sandstorm (has begun or has increased during the preceding hour)",
+				"comment": "The severe duststorm has intensified\u2014conditions are deteriorating, with rapidly decreasing visibility.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "severe_duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Severe Duststorm",
+				"long": "Severe duststorm or sandstorm (has begun or has increased during the preceding hour)",
+				"comment": "The duststorm has escalated during the night\u2014conditions are worsening, and outdoor visibility is extremely low.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-wind-warning",
+					"emoji": "\ud83c\udf2a\ufe0f"
+				}
+			}
+		},
+		"36": {
+			"day": {
+				"bg_image": "blowing_snow_day_low.jpg",
+				"bg_alt": "",
+				"short": "Blowing Snow",
+				"long": "Slight or moderate blowing snow (generally low, below eye level)",
+				"comment": "Snow is blowing at ground level, creating a subtle but persistent drift. Be cautious when walking outside.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "blowing_snow_night_low.jpg",
+				"bg_alt": "",
+				"short": "Blowing Snow",
+				"long": "Slight or moderate blowing snow (generally low, below eye level)",
+				"comment": "Snow is blowing along the ground, reducing visibility at ground level. Use extra caution when walking.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"37": {
+			"day": {
+				"bg_image": "heavy_drifting_snow_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Snow",
+				"long": "Heavy drifting snow (generally low, below eye level)",
+				"comment": "Drifting snow is intense, with large drifts forming close to the ground. Visibility is greatly reduced, and travel conditions are hazardous.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "heavy_drifting_snow_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Snow",
+				"long": "Heavy drifting snow (generally low, below eye level)",
+				"comment": "Snow is drifting heavily, significantly reducing visibility and making outdoor conditions difficult. Travel should be avoided if possible.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"38": {
+			"day": {
+				"bg_image": "blowing_snow_high_day.jpg",
+				"bg_alt": "",
+				"short": "Blowing Snow",
+				"long": "Slight or moderate blowing snow (generally high, above eye level)",
+				"comment": "Snow is blowing above eye level, which may cause some visibility issues, especially for drivers.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "blowing_snow_high_night.jpg",
+				"bg_alt": "",
+				"short": "Blowing Snow",
+				"long": "Slight or moderate blowing snow (generally high, above eye level)",
+				"comment": "Snow is drifting at higher altitudes, reducing visibility for high-level observers, but ground conditions remain manageable.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"39": {
+			"day": {
+				"bg_image": "heavy_drifting_snow_high_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Snowfall",
+				"long": "Heavy drifting snow (generally high, above eye level)",
+				"comment": "Snow is drifting heavily at higher altitudes, causing severe visibility issues. Outdoor conditions are difficult, and travel should be avoided.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "heavy_drifting_snow_high_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Snowfall",
+				"long": "Heavy drifting snow (generally high, above eye level)",
+				"comment": "Snow drifting at high levels is intense, with significantly reduced visibility. It is dangerous to be outside due to extreme conditions.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"40": {
+			"day": {
+				"bg_image": "fog_ice_fog_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog at a distance, not at the station during the preceding hour, extending above the observer's level.",
+				"comment": "Fog is present at a distance, creating reduced visibility, but not at the station itself. It may cause haze over long distances.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "fog_ice_fog_night.jpg",
+				"bg_alt": "",
+				"short": "Fog (distant)",
+				"long": "Fog or ice fog at a distance, not at the station during the preceding hour, extending above the observer's level.",
+				"comment": "While the fog is not at the station, it can still reduce visibility over large distances. Visibility could improve later in the day.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"41": {
+			"day": {
+				"bg_image": "fog_patches_day.jpg",
+				"bg_alt": "",
+				"short": "Patchy Fog",
+				"long": "Fog or ice fog in patches",
+				"comment": "Patchy fog forming in areas\u2014visibility may come and go, so drive carefully.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "fog_patches_night.jpg",
+				"bg_alt": "",
+				"short": "Patchy Fog",
+				"long": "Fog or ice fog in patches",
+				"comment": "Patchy fog at night\u2014visibility varies, so be cautious when stepping out.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"42": {
+			"day": {
+				"bg_image": "fog_thinning_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky visible (has become thinner during the preceding hour)",
+				"comment": "Fog is lifting\u2014sky is clearing up, so visibility is improving.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smoke",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf24\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "fog_thinning_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky visible (has become thinner during the preceding hour)",
+				"comment": "Fog has thinned overnight\u2014visibility is better but still use caution.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smoke",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"43": {
+			"day": {
+				"bg_image": "fog_thinning_sky_invisible_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky invisible (has become thinner during the preceding hour)",
+				"comment": "Fog is lifting but sky still obscured\u2014visibility improving though sky remains hidden.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smoke",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "fog_thinning_sky_invisible_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky invisible (has become thinner during the preceding hour)",
+				"comment": "Fog is less dense but sky remains hidden\u2014visibility is better, yet sky still not visible.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-smoke",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"44": {
+			"day": {
+				"bg_image": "fog_stable_sky_visible_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky visible (no appreciable change during the preceding hour)",
+				"comment": "Stable fog with sky still visible\u2014visibility remains limited but consistent.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf24\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "fog_stable_sky_visible_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky visible (no appreciable change during the preceding hour)",
+				"comment": "Fog remains unchanged overnight and sky is still faintly visible\u2014drive with caution.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"45": {
+			"day": {
+				"bg_image": "fog_stable_sky_invisible_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky invisible (no appreciable change during the preceding hour)",
+				"comment": "Fog remains thick and sky is completely obscured\u2014visibility consistently low, stay cautious.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "45_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky invisible (no appreciable change during the preceding hour)",
+				"comment": "Dense fog persists through the night and completely hides the sky\u2014visibility remains very poor.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"46": {
+			"day": {
+				"bg_image": "fog_thickening_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky visible (has begun or become thicker during the preceding hour)",
+				"comment": "Fog is getting denser while you watch\u2014visibility is worsening, so drive carefully.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-circle-exclamation",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "fog_thickening_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky visible (has begun or become thicker during the preceding hour)",
+				"comment": "Night fog is deepening\u2014visibility is dropping fast, so use extra caution if you're out.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-circle-exclamation",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"47": {
+			"day": {
+				"bg_image": "fog_thickening_sky_invisible_day.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky invisible (has begun or become thicker during the preceding hour)",
+				"comment": "Fog is intensifying and sky remains hidden\u2014visibility is dropping fast, stay extra cautious.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83c\udf25"
+				}
+			},
+			"night": {
+				"bg_image": "fog_thickening_sky_invisible_night.jpg",
+				"bg_alt": "",
+				"short": "Foggy",
+				"long": "Fog or ice fog, sky invisible (has begun or become thicker during the preceding hour)",
+				"comment": "Night fog is growing denser and sky is fully obscured\u2014visibility is very poor, avoid travel if possible.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-face-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f"
+				}
+			}
+		},
+		"48": {
+			"day": {
+				"bg_image": "fog_rime_day.jpg",
+				"bg_alt": "",
+				"short": "Rime Foggy",
+				"long": "Fog depositing rime, sky visible",
+				"comment": "Fog is leaving frost on surfaces\u2014visibility is fair but watch for icy patches",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds-sun",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83e\uddca"
+				}
+			},
+			"night": {
+				"bg_image": "fog_rime_night.jpg",
+				"bg_alt": "",
+				"short": "Rime Foggy",
+				"long": "Fog depositing rime, sky visible",
+				"comment": "Night fog is frosting everything\u2014visibility OK but surfaces are slippery",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds-moon",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83e\uddca"
+				}
+			}
+		},
+		"49": {
+			"day": {
+				"bg_image": "fog_rime_sky_invisible_day.jpg",
+				"bg_alt": "",
+				"short": "Rime Foggy",
+				"long": "Fog depositing rime, sky invisible",
+				"comment": "Rime-laden fog is thick\u2014sky completely hidden and surfaces frosted, visibility very poor.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83e\uddca"
+				}
+			},
+			"night": {
+				"bg_image": "fog_rime_sky_invisible_night.jpg",
+				"bg_alt": "",
+				"short": "Rime Foggy",
+				"long": "Fog depositing rime, sky invisible",
+				"comment": "Night rime fog is dense and frosty\u2014sky is hidden and everything is icy, stay indoors if possible.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-clouds",
+					"emoji": "\ud83c\udf2b\ufe0f\ud83e\uddca"
+				}
+			}
+		},
+		"50": {
+			"day": {
+				"bg_image": "drizzle_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Light Drizzle",
+				"long": "Drizzle (not freezing), intermittent, slight at time of observation",
+				"comment": "Occasional light drizzle\u2014umbrella handy but still pleasant outdoors.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Light Drizzle",
+				"long": "Drizzle (not freezing), intermittent, slight at time of observation",
+				"comment": "Nighttime drizzle\u2014streets may be slick, but it\u2019s gentle enough for a calm walk.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"51": {
+			"day": {
+				"bg_image": "drizzle_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Light Drizzle",
+				"long": "Drizzle, not freezing, continuous (slight at time of observation)",
+				"comment": "A steady light drizzle\u2014ideal for a cozy day inside or a quick stroll with an umbrella.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Light Drizzle",
+				"long": "Drizzle, not freezing, continuous (slight at time of observation)",
+				"comment": "Gentle drizzle tonight\u2014streets glisten under streetlights, a peaceful ambiance for an evening walk.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"52": {
+			"day": {
+				"bg_image": "drizzle_moderate_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Moderate Drizzle",
+				"long": "Drizzle, not freezing, intermittent (moderate at time of observation)",
+				"comment": "Moderate drizzle falling off and on\u2014umbrella definitely recommended today.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_moderate_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Moderate Drizzle",
+				"long": "Drizzle, not freezing, intermittent (moderate at time of observation)",
+				"comment": "Moderate drizzle through the night\u2014streets will stay slick, so tread carefully.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"53": {
+			"day": {
+				"bg_image": "drizzle_moderate_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Moderate Drizzle",
+				"long": "Drizzle, not freezing, continuous (moderate at time of observation)",
+				"comment": "Steady moderate drizzle\u2014perfect umbrella weather, roads may be slippery.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_moderate_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Moderate Drizzle",
+				"long": "Drizzle, not freezing, continuous (moderate at time of observation)",
+				"comment": "Moderate drizzle through the night\u2014streets glisten under streetlights, drive carefully.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"54": {
+			"day": {
+				"bg_image": "drizzle_heavy_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Drizzle",
+				"long": "Drizzle, not freezing, intermittent (heavy at time of observation)",
+				"comment": "Heavy intermittent drizzle\u2014expect significant dampness, an umbrella is a must!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_heavy_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Drizzle",
+				"long": "Drizzle, not freezing, intermittent (heavy at time of observation)",
+				"comment": "Heavy drizzle at night\u2014streets can get very slippery, so take extra care.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"55": {
+			"day": {
+				"bg_image": "drizzle_heavy_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Drizzle",
+				"long": "Drizzle, not freezing, continuous (heavy at time of observation)",
+				"comment": "Persistent heavy drizzle\u2014roads and sidewalks will be very wet. An umbrella is essential!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_heavy_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Drizzle",
+				"long": "Drizzle, not freezing, continuous (heavy at time of observation)",
+				"comment": "Steady heavy drizzle through the night\u2014visibility low and surfaces slippery. Drive carefully!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"56": {
+			"day": {
+				"bg_image": "freezing_drizzle_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Freezing Drizzle",
+				"long": "Drizzle, freezing, slight",
+				"comment": "Light freezing drizzle\u2014surfaces may start to glaze over with a thin layer of ice, use caution!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "freezing_drizzle_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Freezing Drizzle",
+				"long": "Drizzle, freezing, slight",
+				"comment": "Light freezing drizzle overnight\u2014roads and paths may be slick, take it slow if you must be out.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"57": {
+			"day": {
+				"bg_image": "freezing_drizzle_heavy_day.jpg",
+				"bg_alt": "",
+				"short": "Freezing Drizzle",
+				"long": "Drizzle, freezing, moderate or heavy (dense)",
+				"comment": "Heavy freezing drizzle\u2014surfaces will glaze over quickly, travel only if necessary!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "freezing_drizzle_heavy_night.jpg",
+				"bg_alt": "",
+				"short": "Freezing Drizzle",
+				"long": "Drizzle, freezing, moderate or heavy (dense)",
+				"comment": "Dense freezing drizzle at night\u2014watch out for icy roads and pathways, visibility very low.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"58": {
+			"day": {
+				"bg_image": "drizzle_rain_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Drizzle & Rain",
+				"long": "Drizzle and rain, slight",
+				"comment": "Light mix of drizzle and rain\u2014umbrella recommended but it\u2019s still pleasant outside.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_rain_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Drizzle & Rain",
+				"long": "Drizzle and rain, slight",
+				"comment": "Gentle drizzle and rain at night\u2014streets glisten under lights, take care walking.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-drizzle",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"59": {
+			"day": {
+				"bg_image": "drizzle_rain_heavy_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Drizzle and rain, moderate or heavy",
+				"comment": "Heavy rain mixed with drizzle\u2014better to stay indoors or use a sturdy umbrella!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "drizzle_rain_heavy_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Drizzle and rain, moderate or heavy",
+				"comment": "Heavy rain and drizzle tonight\u2014visibility low and surfaces slick. Stay safe indoors!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"60": {
+			"day": {
+				"bg_image": "rain_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Light Rain",
+				"long": "Rain, not freezing, intermittent (slight at time of observation)",
+				"comment": "Occasional light rain\u2014umbrella handy but still nice for a stroll.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sun-rain",
+					"emoji": "\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Light Rain",
+				"long": "Rain, not freezing, intermittent (slight at time of observation)",
+				"comment": "Light evening rain\u2014streets glisten under lights, a calm night for a walk.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-moon-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"61": {
+			"day": {
+				"bg_image": "rain_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Steady Light Rain",
+				"long": "Rain, not freezing, continuous (slight at time of observation)",
+				"comment": "A gentle, steady rain \u2014 perfect for a cozy day indoors or under an umbrella.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Steady Light Rain",
+				"long": "Rain, not freezing, continuous (slight at time of observation)",
+				"comment": "A quiet night with a soft, continuous rain \u2014 ideal for sleeping with the windows open.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-rain",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"62": {
+			"day": {
+				"bg_image": "moderate_rain_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Sudden Rain",
+				"long": "Rain, not freezing, intermittent (moderate at time of observation)",
+				"comment": "Moderate rain on and off \u2014 you might dodge some drops, but not for long.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "moderate_rain_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Sudden Rain",
+				"long": "Rain, not freezing, intermittent (moderate at time of observation)",
+				"comment": "Bursts of rain throughout the night \u2014 be ready for damp pavement and drizzle in the air.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"63": {
+			"day": {
+				"bg_image": "moderate_rain_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Steady Rain",
+				"long": "Rain, not freezing, continuous (moderate at time of observation)",
+				"comment": "A steady, moderate rainfall \u2014 the kind that fills gutters and calls for waterproof gear.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "moderate_rain_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Steady Rain",
+				"long": "Rain, not freezing, continuous (moderate at time of observation)",
+				"comment": "Persistent, moderate rainfall through the night \u2014 expect steady pitter-patter on the roof.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"64": {
+			"day": {
+				"bg_image": "heavy_rain_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Intermittent Rain",
+				"long": "Rain, not freezing, intermittent (heavy at time of observation)",
+				"comment": "Sudden downpours followed by pauses \u2014 carry an umbrella, but expect surprises.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-water",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "heavy_rain_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Intermittent Rain",
+				"long": "Rain, not freezing, intermittent (heavy at time of observation)",
+				"comment": "Heavy bursts of rain through the night \u2014 windows may rattle from intense showers.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-water",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"65": {
+			"day": {
+				"bg_image": "heavy_rain_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Continuous Rain",
+				"long": "Rain, not freezing, continuous (heavy at time of observation)",
+				"comment": "Relentless downpour \u2014 roads may flood, and visibility is poor. Take precautions.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-water",
+					"emoji": "\ud83c\udf27\ufe0f\u2614"
+				}
+			},
+			"night": {
+				"bg_image": "heavy_rain_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Continuous Rain",
+				"long": "Rain, not freezing, continuous (heavy at time of observation)",
+				"comment": "Torrential rain through the night \u2014 stay indoors if possible. Slippery conditions expected.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-water",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf0c"
+				}
+			}
+		},
+		"66": {
+			"day": {
+				"bg_image": "freezing_rain_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain",
+				"long": "Rain, freezing, slight",
+				"comment": "Light freezing rain \u2014 roads and surfaces may become icy. Drive cautiously.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-rain",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "freezing_rain_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain",
+				"long": "Rain, freezing, slight",
+				"comment": "Freezing rain at night \u2014 expect slippery sidewalks and black ice.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-rain",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"67": {
+			"day": {
+				"bg_image": "freezing_rain_heavy_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Rain, freezing, moderate or heavy (dense)",
+				"comment": "Heavy freezing rain \u2014 hazardous travel, power line and tree damage possible. Take extreme caution.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-water",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f\u26a0\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "freezing_rain_heavy_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Rain, freezing, moderate or heavy (dense)",
+				"comment": "Severe freezing rain at night \u2014 travel not advised. Risk of ice buildup.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-water",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f\u26a0\ufe0f"
+				}
+			}
+		},
+		"68": {
+			"day": {
+				"bg_image": "rain_snow_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain-Snow",
+				"long": "Rain or drizzle and snow, slight",
+				"comment": "A light mix of rain and snow \u2014 expect mild conditions but some slipperiness on surfaces.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sleet",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_snow_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain-Snow",
+				"long": "Rain or drizzle and snow, slight",
+				"comment": "Light mix of rain and snow \u2014 some wet surfaces, but not too intense.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sleet",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"69": {
+			"day": {
+				"bg_image": "rain_snow_moderate_day.jpg",
+				"bg_alt": "",
+				"short": "Moderate Rain-Snow",
+				"long": "Rain or drizzle and snow, moderate or heavy",
+				"comment": "Moderate mix of rain and snow, be cautious of slippery roads and reduced visibility.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sleet",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_snow_moderate_night.jpg",
+				"bg_alt": "",
+				"short": "Moderate Rain-Snow",
+				"long": "Rain or drizzle and snow, moderate or heavy",
+				"comment": "Moderate rain and snow, roads and visibility may be impacted \u2014 stay cautious.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-sleet",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"70": {
+			"day": {
+				"bg_image": "snowflakes_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Snowflakes",
+				"long": "Intermittent fall of snowflakes, slight at time of observation",
+				"comment": "Light snowflakes falling intermittently, creating a light winter atmosphere.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflakes",
+					"emoji": "\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snowflakes_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Snowflakes",
+				"long": "Intermittent fall of snowflakes, slight at time of observation",
+				"comment": "Soft snowflakes gently falling, adding a peaceful night atmosphere.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflakes",
+					"emoji": "\ud83c\udf28\ufe0f"
+				}
+			}
+		},
+		"71": {
+			"day": {
+				"bg_image": "snowflakes_continuous_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Snowfall",
+				"long": "Continuous fall of snowflakes, slight at time of observation",
+				"comment": "A steady, light snowfall throughout the day, perfect for a quiet winter scene.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflakes",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snowflakes_continuous_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Snowfall",
+				"long": "Continuous fall of snowflakes, slight at time of observation",
+				"comment": "The soft snow continues to fall steadily through the night, adding a tranquil winter vibe.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflakes",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"72": {
+			"day": {
+				"bg_image": "snowflakes_intermittent_moderate_day.jpg",
+				"bg_alt": "",
+				"short": "Moderate Snowfall",
+				"long": "Intermittent fall of snowflakes, moderate at time of observation",
+				"comment": "Snowflakes falling in intervals, with moderate intensity. It's a perfect time for winter sports!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snowflakes_intermittent_moderate_night.jpg",
+				"bg_alt": "",
+				"short": "Moderate Snowfall",
+				"long": "Intermittent fall of snowflakes, moderate at time of observation",
+				"comment": "A moderate snow continues to fall intermittently under the peaceful night sky. Bundle up!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"73": {
+			"day": {
+				"bg_image": "snowflakes_continuous_moderate_day.jpg",
+				"bg_alt": "",
+				"short": "Snow Storm",
+				"long": "Continuous fall of snowflakes, moderate at time of observation",
+				"comment": "Continuous moderate snow is falling, creating a winter wonderland. A great day for snowball fights!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snowflakes_continuous_moderate_night.jpg",
+				"bg_alt": "",
+				"short": "Snow Storm",
+				"long": "Continuous fall of snowflakes, moderate at time of observation",
+				"comment": "Moderate snow is falling continuously, giving the night a serene, snowy look. Perfect for cozying up indoors!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"74": {
+			"day": {
+				"bg_image": "snowflakes_heavy_intermittent_day.jpg",
+				"bg_alt": "",
+				"short": "Flurry",
+				"long": "Intermittent fall of snowflakes, heavy at time of observation",
+				"comment": "Heavy snowflakes are falling intermittently, creating a beautiful winter scene. Be cautious on the roads!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snowflakes_heavy_intermittent_night.jpg",
+				"bg_alt": "",
+				"short": "Flurry",
+				"long": "Intermittent fall of snowflakes, heavy at time of observation",
+				"comment": "Heavy snowflakes are intermittently falling, turning the night into a snowy wonderland. It might be difficult to see far.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"75": {
+			"day": {
+				"bg_image": "snowflakes_heavy_continuous_day.jpg",
+				"bg_alt": "",
+				"short": "Snowfall",
+				"long": "Continuous fall of snowflakes, heavy at time of observation",
+				"comment": "Snow is falling heavily without pause. A winter storm is in full swing. Make sure to bundle up!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snowflakes_heavy_continuous_night.jpg",
+				"bg_alt": "",
+				"short": "Snowfall",
+				"long": "Continuous fall of snowflakes, heavy at time of observation",
+				"comment": "It's snowing heavily and continuously, creating a thick blanket of snow. Visibility is reduced.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake-droplets",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"76": {
+			"day": {
+				"bg_image": "diamond_dust_day.jpg",
+				"bg_alt": "",
+				"short": "Diamond Dust",
+				"long": "Diamond dust present, with or without fog",
+				"comment": "A shimmering phenomenon in the air, creating a sparkling effect. It's like tiny diamonds floating in the atmosphere!",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake",
+					"emoji": "\u2744\ufe0f\u2728"
+				}
+			},
+			"night": {
+				"bg_image": "diamond_dust_night.jpg",
+				"bg_alt": "",
+				"short": "Diamond Dust",
+				"long": "Diamond dust present, with or without fog",
+				"comment": "The night is sparkling with diamond dust, creating a mystical and enchanting atmosphere.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowflake",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"77": {
+			"day": {
+				"bg_image": "snow_grains_day.jpg",
+				"bg_alt": "",
+				"short": "Tiny Snowfall",
+				"long": "Snow grains falling, with or without fog",
+				"comment": "Tiny, soft snowflakes gently falling from the sky. A light, delicate snow event.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snow_grains_night.jpg",
+				"bg_alt": "",
+				"short": "Tiny Snowfall",
+				"long": "Snow grains falling, with or without fog",
+				"comment": "A serene night with delicate snow grains falling. A peaceful winter scene.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"78": {
+			"day": {
+				"bg_image": "isolated_snow_crystals_day.jpg",
+				"bg_alt": "",
+				"short": "Snowflakes",
+				"long": "Isolated star-like snow crystals, with or without fog",
+				"comment": "Beautiful, delicate snowflakes resembling tiny stars. A calm, crisp winter day.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowman",
+					"emoji": "\u2744\ufe0f\u2b50"
+				}
+			},
+			"night": {
+				"bg_image": "isolated_snow_crystals_night.jpg",
+				"bg_alt": "",
+				"short": "Snowflakes",
+				"long": "Isolated star-like snow crystals, with or without fog",
+				"comment": "A magical night with tiny star-like snow crystals drifting down gently.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-snowman",
+					"emoji": "\u2744\ufe0f\u2b50"
+				}
+			}
+		},
+		"79": {
+			"day": {
+				"bg_image": "ice_pellets_day.jpg",
+				"bg_alt": "",
+				"short": "Ice Pellets",
+				"long": "Ice pellets falling from the sky",
+				"comment": "A chilly day with small ice pellets creating a crunchy texture on the ground.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail",
+					"emoji": "\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "ice_pellets_night.jpg",
+				"bg_alt": "",
+				"short": "Ice Pellets",
+				"long": "Ice pellets falling from the sky",
+				"comment": "A crisp night with ice pellets gently falling, creating a shimmering effect.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail",
+					"emoji": "\u2744\ufe0f"
+				}
+			}
+		},
+		"80": {
+			"day": {
+				"bg_image": "slight_rain_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain",
+				"long": "Light rain shower with minimal intensity, expect some brief wet conditions.",
+				"comment": "A slight rain shower, so keep an umbrella handy.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "slight_rain_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain",
+				"long": "A mild rain shower in the night with a light drizzle.",
+				"comment": "Expect some wet surfaces and a gentle rain, perfect for a calm night.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"81": {
+			"day": {
+				"bg_image": "moderate_heavy_rain_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "A moderate to heavy rain shower, expect consistent rainfall and potential for puddles and wet roads.",
+				"comment": "Keep an umbrella ready and watch out for wet conditions while traveling.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "moderate_heavy_rain_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Moderate to heavy rain in the night with consistent downpours, leading to wet conditions.",
+				"comment": "Expect possible flooding in low-lying areas and slippery roads.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"82": {
+			"day": {
+				"bg_image": "violent_rain_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rainfall",
+				"long": "A violent rain shower with heavy downpours, accompanied by strong winds and possible thunderstorms.",
+				"comment": "Seek shelter immediately, as the heavy rainfall and potential for flash flooding pose a significant risk.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf29\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "violent_rain_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rainfall",
+				"long": "A violent rain shower at night, characterized by torrential downpours, strong winds, and possible thunderstorms.",
+				"comment": "Dangerous conditions with high risk of flash flooding and strong winds. Stay indoors.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf29\ufe0f"
+				}
+			}
+		},
+		"83": {
+			"day": {
+				"bg_image": "rain_snow_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain & Snow",
+				"long": "A slight shower of rain mixed with snow, resulting in light precipitation. Roads may become slippery.",
+				"comment": "Be cautious on the roads as the mixed precipitation may cause slick surfaces.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_snow_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain & Snow",
+				"long": "A slight rain and snow mixed shower at night, with light precipitation and possibly slippery surfaces.",
+				"comment": "Roads may become slippery, exercise caution when driving or walking.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"84": {
+			"day": {
+				"bg_image": "rain_snow_heavy_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain & Snow",
+				"long": "Moderate to heavy shower of rain mixed with snow, causing potential accumulation of snow and slick roads.",
+				"comment": "Prepare for potentially slippery conditions on the road as snow and rain mix. Visibility may also be reduced.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "rain_snow_heavy_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain & Snow",
+				"long": "Moderate to heavy rain and snow mixed shower at night, with increased risk of snow accumulation and slippery surfaces.",
+				"comment": "Expect reduced visibility and icy roads. Be cautious while traveling.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f\ud83c\udf28\ufe0f"
+				}
+			}
+		},
+		"85": {
+			"day": {
+				"bg_image": "snow_shower_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Snow",
+				"long": "A light snow shower, potentially leaving a light dusting of snow. It may create brief reductions in visibility and slick patches on roads.",
+				"comment": "Snow accumulation will be minimal, but roads may still be slick. Drive carefully, especially in shaded areas.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f\ud83c\udf26\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snow_shower_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Snow",
+				"long": "A slight snow shower during the night, with the possibility of a light dusting of snow. Conditions may still be slippery.",
+				"comment": "Drive with caution as roads may become slippery overnight, especially in areas prone to freezing.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f\ud83c\udf26\ufe0f"
+				}
+			}
+		},
+		"86": {
+			"day": {
+				"bg_image": "snow_shower_moderate_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Snowr",
+				"long": "Moderate to heavy snow showers with reduced visibility and accumulation. Road conditions may become slippery and hazardous.",
+				"comment": "Expect moderate to heavy snow accumulation, which could affect visibility and create slick roads. Exercise caution when traveling.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snow_shower_moderate_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Snow",
+				"long": "Moderate to heavy snow showers overnight, with reduced visibility and snow accumulation. Conditions may become hazardous on the roads.",
+				"comment": "Be cautious of icy roads and poor visibility during snow showers. Road conditions could worsen overnight.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-snow",
+					"emoji": "\u2744\ufe0f\ud83c\udf28\ufe0f"
+				}
+			}
+		},
+		"87": {
+			"day": {
+				"bg_image": "snow_pellets_small_hail_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Hail",
+				"long": "Slight snow pellets or small hail shower with light rain or rain and snow mixed. Visibility may be slightly reduced, and there could be minor accumulation on surfaces.",
+				"comment": "Expect light snow pellets or small hail mixed with rain. Road surfaces could become slick in places, but accumulation should be minimal.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snow_pellets_small_hail_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Hail",
+				"long": "Slight snow pellets or small hail shower with light rain or rain and snow mixed. Visibility may be reduced, and surfaces could become slippery overnight.",
+				"comment": "Conditions may worsen overnight with slick roads and reduced visibility. Expect minimal accumulation of snow pellets or small hail.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"88": {
+			"day": {
+				"bg_image": "snow_pellets_small_hail_moderate_heavy_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Hail",
+				"long": "Moderate to heavy snow pellets or small hail shower, possibly mixed with rain or rain and snow. Expect significant reduction in visibility and accumulation on roads and surfaces.",
+				"comment": "Expect heavier snow pellets or small hail mixed with rain. Accumulation may cause hazardous travel conditions and reduced visibility.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "snow_pellets_small_hail_moderate_heavy_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Hail",
+				"long": "Moderate to heavy snow pellets or small hail shower, mixed with rain or rain and snow. Hazardous conditions expected with significant accumulation and poor visibility, especially at night.",
+				"comment": "Roads will be slippery, visibility poor, and accumulation on surfaces may be significant overnight.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"89": {
+			"day": {
+				"bg_image": "hail_shower_slight_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Hail Shower",
+				"long": "Slight shower of hail, possibly mixed with rain or snow, but no thunder present. Expect brief hail accumulations and reduced visibility. Conditions should be temporary.",
+				"comment": "Expect slight hail with or without rain or snow, without thunder. The shower will be brief, but surface accumulation and slick conditions may briefly occur.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf27\ufe0f\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "hail_shower_slight_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Hail Shower",
+				"long": "Slight hail shower with or without rain or snow, no thunder present. Reduced visibility and slippery roads expected for a short period.",
+				"comment": "Temporary conditions with a brief hail shower, possible slick surfaces. No thunder during this event.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f"
+				}
+			}
+		},
+		"90": {
+			"day": {
+				"bg_image": "heavy_hail_shower_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Hail Shower",
+				"long": "Heavy shower of hail, possibly mixed with rain or snow, but no thunder. Expect strong winds, reduced visibility, and significant accumulation of hail. Potential for slippery surfaces.",
+				"comment": "A more intense hail shower without thunder, with possible rain or snow. Hazardous conditions due to strong winds and substantial hail accumulation. Drive with caution.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf27\ufe0f\u2744\ufe0f\ud83c\udf29\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "heavy_hail_shower_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Hail Shower",
+				"long": "A heavy hail shower with or without rain or snow, but no thunder. Strong winds, poor visibility, and significant hail accumulation are expected.",
+				"comment": "Heavy conditions with reduced visibility and hail accumulation. Slippery roads and strong winds may pose risks.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf28\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"91": {
+			"day": {
+				"bg_image": "slight_rain_thunderstorm_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain",
+				"long": "Slight rain at the time of observation, with a thunderstorm occurring during the preceding hour. Expect brief showers, possible residual thunder, and variable cloud cover.",
+				"comment": "The thunderstorm has passed, but the weather remains unsettled with light rain. Some lingering thunder may still be heard.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-raindrops",
+					"emoji": "\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "slight_rain_thunderstorm_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Rain",
+				"long": "A slight rain at the time of observation, with a thunderstorm having occurred during the preceding hour. Expect lingering showers, intermittent thunder, and cloudy skies.",
+				"comment": "The storm has passed, but residual rain and occasional thunder may still be heard. Roads may be slippery.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-raindrops",
+					"emoji": "\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			}
+		},
+		"92": {
+			"day": {
+				"bg_image": "moderate_heavy_rain_thunderstorm_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Moderate to heavy rain at the time of observation, following a thunderstorm during the preceding hour. The storm has passed, but rain continues with possible residual impacts like wet roads and reduced visibility.",
+				"comment": "The storm has moved on, but conditions remain wet and potentially hazardous. Caution is advised on the roads.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "moderate_heavy_rain_thunderstorm_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain ",
+				"long": "Moderate to heavy rain at the time of observation, with a thunderstorm during the preceding hour. The thunderstorm has passed, but the rain continues with residual effects such as wet surfaces and limited visibility.",
+				"comment": "The storm has passed, but conditions remain dangerous due to persistent rain and wet roads.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			}
+		},
+		"93": {
+			"day": {
+				"bg_image": "slight_snow_rain_snow_mixed_thunderstorm_day.jpg",
+				"bg_alt": "",
+				"short": "Slight Snow",
+				"long": "Slight snow, or rain and snow mixed, or hail at the time of observation, following a thunderstorm during the preceding hour. While the thunderstorm has passed, mixed precipitation continues to fall, possibly with some residual storm effects.",
+				"comment": "The storm has moved on, but mixed precipitation continues. Roads may be slick, and visibility can be reduced in the falling snow or mixed precipitation.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "slight_snow_rain_snow_mixed_thunderstorm_night.jpg",
+				"bg_alt": "",
+				"short": "Slight Snow",
+				"long": "Slight snow, or rain and snow mixed, or hail at the time of observation, with a thunderstorm during the preceding hour. Although the thunderstorm has passed, the weather remains unsettled with continued light mixed precipitation.",
+				"comment": "The storm has passed, but conditions are still hazardous with light snow or mixed precipitation. Be cautious, especially on the roads.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-hail-mixed",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			}
+		},
+		"94": {
+			"day": {
+				"bg_image": "moderate_heavy_snow_rain_snow_mixed_thunderstorm_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Moderate or heavy snow, or rain and snow mixed, or hail at the time of observation, following a thunderstorm during the preceding hour. Though the thunderstorm has passed, heavy precipitation continues, leading to poor visibility and potential hazardous conditions.",
+				"comment": "The storm has passed, but the precipitation is still significant. Travel should be avoided or done with caution, especially on icy or snowy roads.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "moderate_heavy_snow_rain_snow_mixed_thunderstorm_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Rain",
+				"long": "Moderate or heavy snow, or rain and snow mixed, or hail at the time of observation, with a thunderstorm during the preceding hour. The weather remains intense with significant precipitation, despite the storm having passed.",
+				"comment": "Travel conditions are hazardous, and caution is advised due to continued heavy snow or mixed precipitation.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\ud83c\udf28\ufe0f\ud83c\udf27\ufe0f\u26c8\ufe0f"
+				}
+			}
+		},
+		"95": {
+			"day": {
+				"bg_image": "thunderstorm_moderate_snow_rain_day.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "A slight or moderate thunderstorm currently occurring, with rain and/or snow at the time of observation. Hail is absent, but the weather is still severe with the storm present at the moment.",
+				"comment": "Expect stormy conditions with rain or snow in the area. Lightning, gusty winds, and moderate to heavy precipitation are likely, making it hazardous to be outside.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_moderate_snow_rain_night.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "A thunderstorm is actively occurring with slight or moderate rain and/or snow at the time of observation. The storm is continuing to develop, bringing dangerous weather conditions.",
+				"comment": "Expect ongoing lightning and precipitation. Conditions are hazardous, especially outdoors during the night.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf27\ufe0f\u2744\ufe0f"
+				}
+			}
+		},
+		"96": {
+			"day": {
+				"bg_image": "thunderstorm_with_hail_moderate_day.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "A thunderstorm is occurring at the time of observation with slight or moderate hail along with rain and/or snow. Expect hazardous conditions due to the combination of hail and severe weather.",
+				"comment": "Severe weather with hail and storm activity. Stay indoors, as hail can cause damage to property and pose a risk to safety.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf27\ufe0f\ud83c\udf28\ufe0f"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_with_hail_moderate_night.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "A thunderstorm with hail is currently happening at the time of observation. Expect a combination of hail, rain, and possibly snow. Dangerous weather conditions are ongoing.",
+				"comment": "The storm is active, and hail can cause significant damage. It is best to remain indoors until the storm passes.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf27\ufe0f\ud83c\udf28\ufe0f"
+				}
+			}
+		},
+		"97": {
+			"day": {
+				"bg_image": "thunderstorm_heavy_without_hail_day.jpg",
+				"bg_alt": "",
+				"short": "Heavy Thunderstorm",
+				"long": "A heavy thunderstorm is currently occurring at the time of observation, with rain and/or snow, but no hail. Expect intense weather with strong winds and heavy precipitation.",
+				"comment": "This storm is likely to cause disruption. Seek shelter and avoid being outdoors during the thunderstorm. Heavy rainfall or snow could lead to hazardous conditions.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf27\ufe0f\ud83c\udf28\ufe0f\u26a1"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_heavy_without_hail_night.jpg",
+				"bg_alt": "",
+				"short": "Heavy Thunderstorm",
+				"long": "A heavy thunderstorm with rain and/or snow, but no hail, is occurring at the time of observation. Expect severe weather conditions with the potential for flooding and hazardous driving conditions.",
+				"comment": "Stay indoors and avoid travel, as this storm could bring strong winds, heavy rain or snow, and lightning. Flooding may occur in low-lying areas.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf27\ufe0f\ud83c\udf28\ufe0f\u26a1"
+				}
+			}
+		},
+		"98": {
+			"day": {
+				"bg_image": "thunderstorm_duststorm_day.jpg",
+				"bg_alt": "",
+				"short": "Mixed Storm",
+				"long": "A thunderstorm combined with a duststorm or sandstorm is occurring at the time of observation. Expect strong winds, intense lightning, and low visibility due to blowing dust or sand.",
+				"comment": "This extreme weather condition is hazardous. Stay indoors, away from windows, and avoid driving as dust or sand could severely reduce visibility. The thunderstorm brings the risk of lightning strikes.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf2a\ufe0f\u26a1"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_duststorm_night.jpg",
+				"bg_alt": "",
+				"short": "Mixed Storm",
+				"long": "A thunderstorm combined with a duststorm or sandstorm is currently taking place. Expect severe winds, poor visibility due to dust or sand, and the risk of lightning strikes.",
+				"comment": "Remain indoors to stay safe. This weather condition is dangerous, with possible electrical hazards and difficulty breathing due to airborne particles.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf2a\ufe0f\u26a1"
+				}
+			}
+		},
+		"99": {
+			"day": {
+				"bg_image": "thunderstorm_heavy_hail_day.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "A heavy thunderstorm with hail is currently happening. Expect intense lightning, strong winds, and falling hailstones that could cause damage.",
+				"comment": "This weather condition is very dangerous. Stay indoors and away from windows. Hail can cause damage to cars, roofs, and crops. Thunderstorms may bring severe lightning strikes.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf28\ufe0f\u26a1"
+				}
+			},
+			"night": {
+				"bg_image": "thunderstorm_heavy_hail_night.jpg",
+				"bg_alt": "",
+				"short": "Thunderstorm",
+				"long": "A heavy thunderstorm with hail is occurring at night. Expect intense lightning, strong winds, and the possibility of hail causing damage.",
+				"comment": "This weather condition poses a serious risk. Seek shelter immediately and stay away from windows and glass. The hail could cause significant damage to property and vehicles.",
+				"level": null,
+				"icon": {
+					"svg": "",
+					"fa": "fas fa-cloud-showers-heavy",
+					"emoji": "\u26c8\ufe0f\ud83c\udf28\ufe0f\u26a1"
+				}
+			}
+		}
+	}
+}

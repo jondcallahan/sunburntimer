@@ -1,3 +1,6 @@
+## About this project
+- This is a Sunburn Timer application that calculates safe sun exposure based on your skin type, weather conditions, and protection level.
+
 ## Package Management
 - Always use bun install for package management
 
