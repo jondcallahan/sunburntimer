@@ -93,7 +93,7 @@ function App() {
 	const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
 
 	return (
-		<div className="min-h-screen bg-stone-50">
+		<div className="min-h-screen bg-orange-50">
 			<div className="container mx-auto px-4 py-8 max-w-4xl">
 				{/* Header */}
 				<div className="text-center mb-8">
@@ -114,10 +114,7 @@ function App() {
 					className="space-y-4"
 				>
 					{/* Step 1: Skin Type */}
-					<AccordionItem
-						value="step1"
-						className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
-					>
+					<AccordionItem value="step1" className="shadow-sm rounded-lg mb-4">
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
 								<StepHeader
@@ -140,10 +137,7 @@ function App() {
 					</AccordionItem>
 
 					{/* Step 2: Sunscreen */}
-					<AccordionItem
-						value="step2"
-						className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
-					>
+					<AccordionItem value="step2" className="shadow-sm rounded-lg mb-4">
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
 								<StepHeader
@@ -184,10 +178,7 @@ function App() {
 					</AccordionItem>
 
 					{/* Step 3: Location & Weather */}
-					<AccordionItem
-						value="step3"
-						className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
-					>
+					<AccordionItem value="step3" className="shadow-sm rounded-lg mb-4">
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
 								<StepHeader
@@ -236,7 +227,7 @@ function App() {
 									variant="outline"
 									onClick={handleRefresh}
 									disabled={geolocation.status === "fetching_weather"}
-									className="text-slate-700 border-stone-300 hover:bg-stone-100"
+									className="text-slate-700 border-zinc-300 hover:bg-zinc-100"
 								>
 									<RefreshCw
 										className={`w-4 h-4 mr-2 ${
@@ -262,7 +253,7 @@ function App() {
 				<TechnicalDetails />
 
 				{/* Footer */}
-				<footer className="mt-16 pt-8 border-t border-stone-200">
+				<footer className="mt-8 pt-8 border-t border-zinc-200">
 					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
 						<div className="flex items-center gap-4">
 							<span>Made by</span>
