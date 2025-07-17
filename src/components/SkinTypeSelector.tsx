@@ -66,6 +66,7 @@ function SkinTypeCard({
 								>
 									Type {type}
 								</Badge>
+								<div className="text-2xl flex-shrink-0">{config.emojiTone}</div>
 								<div className={`font-bold text-base ${textColor} truncate`}>
 									{config.subtitle}
 								</div>
