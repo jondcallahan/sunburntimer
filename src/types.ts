@@ -167,10 +167,15 @@ export interface HourlyWeather {
 	pop: number;
 }
 
+export interface AQIData {
+	us_aqi: number;
+}
+
 export interface WeatherData {
 	current: CurrentWeather;
 	hourly: HourlyWeather[];
 	elevation: number; // meters above sea level
+	aqi?: AQIData;
 }
 
 // Geographic Position

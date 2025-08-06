@@ -1,5 +1,6 @@
 import type { Position, WeatherData } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
+import { fetchAQIData } from "./aqi";
 
 interface OpenMeteoResponse {
 	elevation: number;
@@ -115,9 +116,19 @@ export async function fetchWeatherData(
 		pop: 0, // Not provided by Open-Meteo free tier
 	}));
 
+	// Fetch AQI data
+	let aqi;
+	try {
+		aqi = await fetchAQIData(position);
+	} catch (error) {
+		console.warn("Failed to fetch AQI data:", error);
+		// AQI data is optional, so we continue without it
+	}
+
 	return {
 		current,
 		hourly,
 		elevation: data.elevation,
+		aqi,
 	} as WeatherData;
 }
