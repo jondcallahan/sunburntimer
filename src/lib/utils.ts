@@ -83,7 +83,7 @@ export function getAQIColor(aqi: number): {
 	}
 	return {
 		bg: "bg-red-900",
-		text: "text-red-100",
+		text: "text-red-50",
 		border: "border-red-800",
 	};
 }
