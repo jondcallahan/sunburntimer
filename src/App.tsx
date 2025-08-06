@@ -5,7 +5,7 @@ import { findOptimalTimeSlicing } from "./calculations";
 import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
-import { getUVIndexColor } from "./lib/utils";
+import { getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -207,6 +207,13 @@ function App() {
 												>
 													UV {geolocation.weather.current.uvi}
 												</Badge>
+												{geolocation.weather.aqi && (
+													<Badge
+														className={`${getAQIColor(geolocation.weather.aqi.us_aqi).bg} ${getAQIColor(geolocation.weather.aqi.us_aqi).text} border-0`}
+													>
+														AQI {geolocation.weather.aqi.us_aqi}
+													</Badge>
+												)}
 											</div>
 											<RelativeTime
 												timestamp={
