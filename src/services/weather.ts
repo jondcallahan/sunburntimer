@@ -1,4 +1,4 @@
-import type { Position, WeatherData } from "../types";
+import type { Position, WeatherData, AQIData } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
 
@@ -117,7 +117,7 @@ export async function fetchWeatherData(
 	}));
 
 	// Fetch AQI data
-	let aqi;
+	let aqi: AQIData | undefined;
 	try {
 		aqi = await fetchAQIData(position);
 	} catch (error) {
