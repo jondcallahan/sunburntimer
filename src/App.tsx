@@ -191,9 +191,13 @@ function App() {
 							<div className="flex-1 text-left">
 								<StepHeader
 									stepNumber={3}
-									title="Time & Place"
+									title="Location & Weather"
 									description="Used for cloud coverage and the angle of the sun."
 									isCompleted={geolocation.status === "completed"}
+									isLoading={
+										geolocation.status === "fetching_location" ||
+										geolocation.status === "fetching_weather"
+									}
 									hideDescription={geolocation.status === "completed"}
 								/>
 								{geolocation.status === "completed" &&
