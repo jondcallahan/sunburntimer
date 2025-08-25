@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { RefreshCw, Sun, Loader2 } from "lucide-react";
+import { RefreshCw, Sun } from "lucide-react";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
 import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
@@ -194,19 +194,12 @@ function App() {
 									title="Location & Weather"
 									description="Used for cloud coverage and the angle of the sun."
 									isCompleted={geolocation.status === "completed"}
+									isLoading={
+										geolocation.status === "fetching_location" ||
+										geolocation.status === "fetching_weather"
+									}
 									hideDescription={geolocation.status === "completed"}
 								/>
-								{(geolocation.status === "fetching_location" ||
-									geolocation.status === "fetching_weather") && (
-									<div className="flex items-center gap-2 mt-3 ml-12">
-										<Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
-										<span className="text-sm text-slate-600">
-											{geolocation.status === "fetching_location"
-												? "Getting location..."
-												: "Loading weather..."}
-										</span>
-									</div>
-								)}
 								{geolocation.status === "completed" &&
 									geolocation.placeName &&
 									geolocation.weather && (
