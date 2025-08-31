@@ -98,12 +98,17 @@ function App() {
 				<div className="text-center mb-8">
 					<div className="flex items-center justify-center mb-2">
 						<Sun className="w-8 h-8 text-amber-600 mr-3" />
-						<h1 className="text-3xl font-bold text-slate-800">Sunburn Calculator</h1>
+						<h1 className="text-3xl font-bold text-slate-800">
+							Sunburn Calculator
+						</h1>
 					</div>
 					<p className="text-slate-600 mb-1">
-						Estimate time to sunburn by UV index, skin type, and SPF using live weather.
+						Estimate time to sunburn by UV index, skin type, and SPF using live
+						weather.
 					</p>
-					<p className="text-slate-500 text-sm">by <span className="font-medium">SunburnTimer</span></p>
+					<p className="text-slate-500 text-sm">
+						by <span className="font-medium">SunburnTimer</span>
+					</p>
 				</div>
 
 				{/* Steps Accordion */}
@@ -240,7 +245,9 @@ function App() {
 				{calculation && (
 					<div className="space-y-6">
 						<div className="flex items-center justify-between">
-							<h2 className="text-2xl font-bold text-slate-800">Safe Sun Exposure Time</h2>
+							<h2 className="text-2xl font-bold text-slate-800">
+								Safe Sun Exposure Time
+							</h2>
 							<div className="flex space-x-2">
 								<Button
 									variant="outline"

@@ -176,23 +176,8 @@ export function BurnChart({ result }: BurnChartProps) {
 	);
 
 	const burnTimeReached = useMemo(() => {
-		const startDate = result.startTime
-			? new Date(result.startTime)
-			: new Date();
-		const cutoffTime = new Date(startDate);
-		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
-
-		const filteredPoints = result.points.filter(
-			(point) => point.slice.datetime <= cutoffTime,
-		);
-
-		return filteredPoints.some((_, i) => {
-			const cumulativeDamage = filteredPoints
-				.slice(0, i + 1)
-				.reduce((sum, point) => sum + point.burnCost, 0);
-			return cumulativeDamage >= 100;
-		});
-	}, [result.points, result.startTime]);
+		return result.burnTime !== undefined;
+	}, [result.burnTime]);
 
 	return (
 		<Card>

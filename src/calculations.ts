@@ -12,7 +12,30 @@ import {
 	SKIN_TYPE_CONFIG,
 	SPF_CONFIG,
 	SWEAT_CONFIG,
+	TIME_SLICE_OPTIONS,
 } from "./types";
+
+// Numeric helpers
+function clamp(value: number, min: number, max: number): number {
+	return Math.max(min, Math.min(max, value));
+}
+
+function isSafelyBelow(
+	a: number,
+	b: number,
+	tol = CALCULATION_CONSTANTS.FLOAT_TOLERANCE,
+): boolean {
+	return a < b - tol;
+}
+
+function crossesThreshold(
+	prev: number,
+	next: number,
+	threshold: number,
+	tol = CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
+): boolean {
+	return prev < threshold - tol && next >= threshold - tol;
+}
 
 // Core sunburn calculation formula
 function calculateBurnTime(
@@ -40,7 +63,8 @@ function interpolateUV(
 	sliceIndex: number,
 	totalSlices: number,
 ): number {
-	const gradient = sliceIndex / totalSlices; // Fixed: proper float division
+	// Supports fractional sliceIndex for midpoint sampling
+	const gradient = sliceIndex / totalSlices;
 	return startUV * (1.0 - gradient) + endUV * gradient;
 }
 
@@ -59,14 +83,15 @@ function createTimeSlices(
 
 		for (let j = 0; j < slicesPerHour; j++) {
 			const sliceTime = new Date(
-				currentHour.dt * 1000 + j * sliceMinutes * 60000,
+				currentHour.dt * 1000 + (j + 1) * sliceMinutes * 60000,
 			);
 
 			if (sliceTime >= startTime) {
+				// Sample UV at slice midpoint for better integration accuracy
 				const interpolatedUV = interpolateUV(
 					currentHour.uvi,
 					nextHour.uvi,
-					j,
+					j + 0.5,
 					slicesPerHour,
 				);
 
@@ -109,15 +134,7 @@ function calculateSPFAtTime(
 }
 
 // Check stopping conditions
-function shouldStopCalculation(
-	totalDamage: number,
-	currentTime: Date,
-	pointCount: number,
-): boolean {
-	if (totalDamage >= CALCULATION_CONSTANTS.DAMAGE_THRESHOLD) {
-		return true;
-	}
-
+function shouldStopCalculation(currentTime: Date, pointCount: number): boolean {
 	const hour = currentTime.getHours();
 	if (
 		pointCount > CALCULATION_CONSTANTS.MIN_POINTS_FOR_EVENING_STOP &&
@@ -136,7 +153,7 @@ function generateAdvice(
 ): string[] {
 	const advice: string[] = [];
 
-	if (input.spfLevel !== "NONE") {
+	if (input.spfLevel !== SPFLevel.NONE) {
 		advice.push(
 			"Reapply sunscreen every 2 hours, after swimming, or excessive sweating",
 		);
@@ -145,8 +162,15 @@ function generateAdvice(
 	const lastPoint = points[points.length - 1];
 	if (!lastPoint) return advice;
 
-	if (lastPoint.totalDamageAtStart < CALCULATION_CONSTANTS.SAFETY_THRESHOLD) {
-		if (input.spfLevel === "NONE") {
+	const finalDamage = lastPoint.totalDamageAtStart + lastPoint.burnCost;
+	if (
+		isSafelyBelow(
+			finalDamage,
+			CALCULATION_CONSTANTS.SAFETY_THRESHOLD,
+			CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
+		)
+	) {
+		if (input.spfLevel === SPFLevel.NONE) {
 			return advice;
 		} else {
 			advice.push(
@@ -154,9 +178,9 @@ function generateAdvice(
 			);
 		}
 	} else {
-		if (input.spfLevel === "NONE") {
+		if (input.spfLevel === SPFLevel.NONE) {
 			advice.push("You should try again with sunscreen");
-		} else if (input.spfLevel === "SPF_50_PLUS") {
+		} else if (input.spfLevel === SPFLevel.SPF_50_PLUS) {
 			advice.push("Limit your time in the sun today");
 		} else {
 			advice.push(
@@ -168,7 +192,9 @@ function generateAdvice(
 	return advice;
 }
 
-// Main calculation function
+// Main calculation function - processes time slices to find burn time
+// TODO: This function is complex (140 lines) and should be refactored into smaller functions
+// See refactoring-notes.md for detailed breakdown suggestions
 function calculateBurnTimeWithSlices(
 	input: CalculationInput,
 	slicesPerHour: number,
@@ -183,8 +209,16 @@ function calculateBurnTimeWithSlices(
 	const points: CalculationPoint[] = [];
 	let totalDamage = 0;
 	let pointCount = 0;
+	let burnTime: Date | undefined;
+
+	let isFirstSlice = true;
 
 	for (const slice of timeSlices) {
+		// Safety net: prevent infinite loops with max calculation points
+		if (pointCount >= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS) {
+			break;
+		}
+
 		// Skip calculation for low UV periods (< 2.0 UV index)
 		if (slice.uvIndex < CALCULATION_CONSTANTS.MEANINGFUL_UV_THRESHOLD) {
 			const point: CalculationPoint = {
@@ -194,8 +228,20 @@ function calculateBurnTimeWithSlices(
 			};
 			points.push(point);
 			pointCount++;
+			// After the first processed slice (even if low UV), subsequent slices are full-length
+			isFirstSlice = false;
 			continue;
 		}
+
+		// Prorate first partial slice if starting mid-slice
+		// effectiveSliceMinutes = actual time spent in this slice (may be less than full slice for first slice)
+		const effectiveSliceMinutes = isFirstSlice
+			? clamp(
+					(slice.datetime.getTime() - input.currentTime.getTime()) / 60000,
+					0,
+					sliceMinutes,
+				)
+			: sliceMinutes;
 
 		const hoursElapsed =
 			(slice.datetime.getTime() - input.currentTime.getTime()) /
@@ -212,8 +258,61 @@ function calculateBurnTimeWithSlices(
 			slice.uvIndex,
 			skinCoeff,
 			spfAtTime,
-			sliceMinutes,
+			effectiveSliceMinutes,
 		);
+
+		// Skip slices with zero or negligible damage to prevent division by zero
+		if (damagePercent <= CALCULATION_CONSTANTS.FLOAT_TOLERANCE) {
+			const point: CalculationPoint = {
+				slice,
+				burnCost: 0,
+				totalDamageAtStart: totalDamage,
+			};
+			points.push(point);
+			pointCount++;
+			isFirstSlice = false;
+			continue;
+		}
+
+		// Check if damage threshold would be reached during this slice
+		const damageBeforeSlice = totalDamage;
+		const damageAfterSlice = totalDamage + damagePercent;
+
+		if (
+			crossesThreshold(
+				damageBeforeSlice,
+				damageAfterSlice,
+				CALCULATION_CONSTANTS.DAMAGE_THRESHOLD,
+				CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
+			)
+		) {
+			// Interpolate the exact time when threshold is reached within this slice
+			// TODO: Extract this interpolation logic into a separate function for clarity
+			const damageNeeded =
+				CALCULATION_CONSTANTS.DAMAGE_THRESHOLD - damageBeforeSlice;
+			const sliceDamageRatio = Math.min(damageNeeded / damagePercent, 1.0); // Fraction of slice when threshold reached
+			const sliceDurationMs = effectiveSliceMinutes * 60 * 1000;
+			const burnTimeOffsetMs = sliceDurationMs * sliceDamageRatio;
+
+			// burnTime = slice start + (fraction of slice duration)
+			burnTime = new Date(
+				slice.datetime.getTime() - sliceDurationMs + burnTimeOffsetMs,
+			);
+
+			// Add a point at the interpolated burn time
+			const interpolatedPoint: CalculationPoint = {
+				slice: {
+					...slice,
+					datetime: burnTime,
+				},
+				burnCost: damageNeeded,
+				totalDamageAtStart: damageBeforeSlice,
+			};
+			points.push(interpolatedPoint);
+			totalDamage = CALCULATION_CONSTANTS.DAMAGE_THRESHOLD;
+			pointCount++;
+			break;
+		}
 
 		const point: CalculationPoint = {
 			slice,
@@ -224,18 +323,16 @@ function calculateBurnTimeWithSlices(
 		points.push(point);
 		totalDamage += damagePercent;
 		pointCount++;
+		isFirstSlice = false;
 
-		if (shouldStopCalculation(totalDamage, slice.datetime, pointCount)) {
+		if (shouldStopCalculation(slice.datetime, pointCount)) {
 			break;
 		}
 	}
 
 	return {
-		startTime: timeSlices[0]?.datetime,
-		burnTime:
-			totalDamage >= CALCULATION_CONSTANTS.DAMAGE_THRESHOLD
-				? points[points.length - 1]?.slice.datetime
-				: undefined,
+		startTime: input.currentTime,
+		burnTime,
 		points,
 		timeSlices: slicesPerHour,
 		advice: generateAdvice(input, points),
@@ -244,17 +341,41 @@ function calculateBurnTimeWithSlices(
 
 // Find optimal time slicing
 export function findOptimalTimeSlicing(
-	input: CalculationInput,
+    input: CalculationInput,
 ): CalculationResult {
-	const sliceOptions = [30, 12, 6, 4]; // 2, 5, 10, 15 minute intervals
+    const sliceOptions = TIME_SLICE_OPTIONS; // 2, 5, 10, 15 minute intervals
 
-	for (const slicesPerHour of sliceOptions) {
-		const result = calculateBurnTimeWithSlices(input, slicesPerHour);
+    // Prefer the highest resolution that both fits within the point cap
+    // and finds a burn time. If a configuration fits within the cap but
+    // doesn't find a burn time (likely due to truncation), keep searching
+    // with coarser slicing to cover a longer real-time window.
+    let fallback: CalculationResult | undefined;
 
-		if (result.points.length <= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS) {
-			return result;
-		}
-	}
+    for (const slicesPerHour of sliceOptions) {
+        const result = calculateBurnTimeWithSlices(input, slicesPerHour);
 
-	return calculateBurnTimeWithSlices(input, 4);
+        // Always remember the first result within the cap as a fallback
+        if (
+            result.points.length <= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS &&
+            !fallback
+        ) {
+            fallback = result;
+        }
+
+        // If within cap AND we found a burn time, return immediately
+        if (
+            result.points.length <= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS &&
+            result.burnTime
+        ) {
+            return result;
+        }
+        // Otherwise, try a coarser slicing option to extend the time horizon
+    }
+
+    // If none of the options produced a burn time within the cap,
+    // return the best available within-cap result (may indicate "unlikely").
+    if (fallback) return fallback;
+
+    // As a last resort, compute with the coarsest option.
+    return calculateBurnTimeWithSlices(input, sliceOptions[sliceOptions.length - 1]);
 }
