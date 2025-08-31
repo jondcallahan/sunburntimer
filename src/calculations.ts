@@ -20,7 +20,11 @@ function clamp(value: number, min: number, max: number): number {
 	return Math.max(min, Math.min(max, value));
 }
 
-function lessThanWithTol(a: number, b: number, tol = CALCULATION_CONSTANTS.FLOAT_TOLERANCE): boolean {
+function lessThanWithTol(
+	a: number,
+	b: number,
+	tol = CALCULATION_CONSTANTS.FLOAT_TOLERANCE,
+): boolean {
 	return a < b - tol;
 }
 
@@ -77,14 +81,14 @@ function createTimeSlices(
 		const currentHour = hourlyWeather[i];
 		const nextHour = hourlyWeather[i + 1];
 
-        for (let j = 0; j < slicesPerHour; j++) {
-            const sliceTime = new Date(
-                currentHour.dt * 1000 + j * sliceMinutes * 60000,
-            );
+		for (let j = 0; j < slicesPerHour; j++) {
+			const sliceTime = new Date(
+				currentHour.dt * 1000 + j * sliceMinutes * 60000,
+			);
 
-            if (sliceTime >= startTime) {
-                // Sample UV at slice midpoint for better integration accuracy
-                const interpolatedUV = interpolateUV(
+			if (sliceTime >= startTime) {
+				// Sample UV at slice midpoint for better integration accuracy
+				const interpolatedUV = interpolateUV(
 					currentHour.uvi,
 					nextHour.uvi,
 					j + 0.5,
@@ -144,8 +148,8 @@ function shouldStopCalculation(currentTime: Date, pointCount: number): boolean {
 
 // Generate safety advice
 function generateAdvice(
-    input: CalculationInput,
-    points: CalculationPoint[],
+	input: CalculationInput,
+	points: CalculationPoint[],
 ): string[] {
 	const advice: string[] = [];
 
@@ -158,40 +162,40 @@ function generateAdvice(
 	const lastPoint = points[points.length - 1];
 	if (!lastPoint) return advice;
 
-    const finalDamage = lastPoint.totalDamageAtStart + lastPoint.burnCost;
-    if (
+	const finalDamage = lastPoint.totalDamageAtStart + lastPoint.burnCost;
+	if (
 		lessThanWithTol(
 			finalDamage,
 			CALCULATION_CONSTANTS.SAFETY_THRESHOLD,
 			CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
 		)
 	) {
-        if (input.spfLevel === SPFLevel.NONE) {
-            return advice;
-        } else {
-            advice.push(
-                "With these precautions you can spend the rest of the day out in the sun, enjoy! ☀️",
-            );
-        }
-    } else {
-        if (input.spfLevel === SPFLevel.NONE) {
-            advice.push("You should try again with sunscreen");
-        } else if (input.spfLevel === SPFLevel.SPF_50_PLUS) {
-            advice.push("Limit your time in the sun today");
-        } else {
-            advice.push(
-                "Try using a stronger sunscreen or limit your time in the sun today",
-            );
-        }
-    }
+		if (input.spfLevel === SPFLevel.NONE) {
+			return advice;
+		} else {
+			advice.push(
+				"With these precautions you can spend the rest of the day out in the sun, enjoy! ☀️",
+			);
+		}
+	} else {
+		if (input.spfLevel === SPFLevel.NONE) {
+			advice.push("You should try again with sunscreen");
+		} else if (input.spfLevel === SPFLevel.SPF_50_PLUS) {
+			advice.push("Limit your time in the sun today");
+		} else {
+			advice.push(
+				"Try using a stronger sunscreen or limit your time in the sun today",
+			);
+		}
+	}
 
 	return advice;
 }
 
 // Main calculation function
 function calculateBurnTimeWithSlices(
-    input: CalculationInput,
-    slicesPerHour: number,
+	input: CalculationInput,
+	slicesPerHour: number,
 ): CalculationResult {
 	const sliceMinutes = 60 / slicesPerHour;
 	const timeSlices = createTimeSlices(
@@ -205,90 +209,90 @@ function calculateBurnTimeWithSlices(
 	let pointCount = 0;
 	let burnTime: Date | undefined;
 
-    let isFirstSlice = true;
+	let isFirstSlice = true;
 
-    for (const slice of timeSlices) {
-        // Safety net: prevent infinite loops with max calculation points
-        if (pointCount >= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS) {
-            break;
-        }
+	for (const slice of timeSlices) {
+		// Safety net: prevent infinite loops with max calculation points
+		if (pointCount >= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS) {
+			break;
+		}
 
-        // Skip calculation for low UV periods (< 2.0 UV index)
-        if (slice.uvIndex < CALCULATION_CONSTANTS.MEANINGFUL_UV_THRESHOLD) {
-            const point: CalculationPoint = {
-                slice,
-                burnCost: 0, // No meaningful damage at low UV
-                totalDamageAtStart: totalDamage,
-            };
-            points.push(point);
-            pointCount++;
-            // After the first processed slice (even if low UV), subsequent slices are full-length
-            isFirstSlice = false;
-            continue;
-        }
+		// Skip calculation for low UV periods (< 2.0 UV index)
+		if (slice.uvIndex < CALCULATION_CONSTANTS.MEANINGFUL_UV_THRESHOLD) {
+			const point: CalculationPoint = {
+				slice,
+				burnCost: 0, // No meaningful damage at low UV
+				totalDamageAtStart: totalDamage,
+			};
+			points.push(point);
+			pointCount++;
+			// After the first processed slice (even if low UV), subsequent slices are full-length
+			isFirstSlice = false;
+			continue;
+		}
 
-        // Prorate first partial slice if starting mid-slice
-        const effectiveSliceMinutes = isFirstSlice
-            ? clamp(
-                    (slice.datetime.getTime() - input.currentTime.getTime()) / 60000,
-                    0,
-                    sliceMinutes,
-              )
-            : sliceMinutes;
+		// Prorate first partial slice if starting mid-slice
+		const effectiveSliceMinutes = isFirstSlice
+			? clamp(
+					(slice.datetime.getTime() - input.currentTime.getTime()) / 60000,
+					0,
+					sliceMinutes,
+				)
+			: sliceMinutes;
 
-        const hoursElapsed =
-            (slice.datetime.getTime() - input.currentTime.getTime()) /
-            (1000 * 60 * 60);
-        const spfConfig = SPF_CONFIG[input.spfLevel] || SPF_CONFIG[SPFLevel.NONE];
-        const spfAtTime = calculateSPFAtTime(
-            spfConfig.coefficient,
-            input.sweatLevel,
-            hoursElapsed,
-        );
+		const hoursElapsed =
+			(slice.datetime.getTime() - input.currentTime.getTime()) /
+			(1000 * 60 * 60);
+		const spfConfig = SPF_CONFIG[input.spfLevel] || SPF_CONFIG[SPFLevel.NONE];
+		const spfAtTime = calculateSPFAtTime(
+			spfConfig.coefficient,
+			input.sweatLevel,
+			hoursElapsed,
+		);
 
-        const skinCoeff = SKIN_TYPE_CONFIG[input.skinType].coefficient;
-        const damagePercent = calculateBurnTime(
-            slice.uvIndex,
-            skinCoeff,
-            spfAtTime,
-            effectiveSliceMinutes,
-        );
+		const skinCoeff = SKIN_TYPE_CONFIG[input.skinType].coefficient;
+		const damagePercent = calculateBurnTime(
+			slice.uvIndex,
+			skinCoeff,
+			spfAtTime,
+			effectiveSliceMinutes,
+		);
 
-        // Skip slices with zero or negligible damage to prevent division by zero
-        if (damagePercent <= CALCULATION_CONSTANTS.FLOAT_TOLERANCE) {
-            const point: CalculationPoint = {
-                slice,
-                burnCost: 0,
-                totalDamageAtStart: totalDamage,
-            };
-            points.push(point);
-            pointCount++;
-            isFirstSlice = false;
-            continue;
-        }
+		// Skip slices with zero or negligible damage to prevent division by zero
+		if (damagePercent <= CALCULATION_CONSTANTS.FLOAT_TOLERANCE) {
+			const point: CalculationPoint = {
+				slice,
+				burnCost: 0,
+				totalDamageAtStart: totalDamage,
+			};
+			points.push(point);
+			pointCount++;
+			isFirstSlice = false;
+			continue;
+		}
 
-        // Check if damage threshold would be reached during this slice
-        const damageBeforeSlice = totalDamage;
-        const damageAfterSlice = totalDamage + damagePercent;
+		// Check if damage threshold would be reached during this slice
+		const damageBeforeSlice = totalDamage;
+		const damageAfterSlice = totalDamage + damagePercent;
 
-        if (
-            crossesThreshold(
-                damageBeforeSlice,
-                damageAfterSlice,
-                CALCULATION_CONSTANTS.DAMAGE_THRESHOLD,
-                CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
-            )
-        ) {
-            // Interpolate the exact time when threshold is reached
-            const damageNeeded =
-                CALCULATION_CONSTANTS.DAMAGE_THRESHOLD - damageBeforeSlice;
-            const sliceDamageRatio = Math.min(damageNeeded / damagePercent, 1.0);
-            const sliceDurationMs = effectiveSliceMinutes * 60 * 1000;
-            const burnTimeOffsetMs = sliceDurationMs * sliceDamageRatio;
+		if (
+			crossesThreshold(
+				damageBeforeSlice,
+				damageAfterSlice,
+				CALCULATION_CONSTANTS.DAMAGE_THRESHOLD,
+				CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
+			)
+		) {
+			// Interpolate the exact time when threshold is reached
+			const damageNeeded =
+				CALCULATION_CONSTANTS.DAMAGE_THRESHOLD - damageBeforeSlice;
+			const sliceDamageRatio = Math.min(damageNeeded / damagePercent, 1.0);
+			const sliceDurationMs = effectiveSliceMinutes * 60 * 1000;
+			const burnTimeOffsetMs = sliceDurationMs * sliceDamageRatio;
 
-            burnTime = new Date(
-                slice.datetime.getTime() - sliceDurationMs + burnTimeOffsetMs,
-            );
+			burnTime = new Date(
+				slice.datetime.getTime() - sliceDurationMs + burnTimeOffsetMs,
+			);
 
 			// Add a point at the interpolated burn time
 			const interpolatedPoint: CalculationPoint = {
@@ -299,11 +303,11 @@ function calculateBurnTimeWithSlices(
 				burnCost: damageNeeded,
 				totalDamageAtStart: damageBeforeSlice,
 			};
-            points.push(interpolatedPoint);
-            totalDamage = CALCULATION_CONSTANTS.DAMAGE_THRESHOLD;
-            pointCount++;
-            break;
-        }
+			points.push(interpolatedPoint);
+			totalDamage = CALCULATION_CONSTANTS.DAMAGE_THRESHOLD;
+			pointCount++;
+			break;
+		}
 
 		const point: CalculationPoint = {
 			slice,
@@ -311,30 +315,30 @@ function calculateBurnTimeWithSlices(
 			totalDamageAtStart: totalDamage,
 		};
 
-        points.push(point);
-        totalDamage += damagePercent;
-        pointCount++;
-        isFirstSlice = false;
+		points.push(point);
+		totalDamage += damagePercent;
+		pointCount++;
+		isFirstSlice = false;
 
-        if (shouldStopCalculation(slice.datetime, pointCount)) {
-            break;
-        }
-    }
+		if (shouldStopCalculation(slice.datetime, pointCount)) {
+			break;
+		}
+	}
 
-    return {
-        startTime: input.currentTime,
-        burnTime,
-        points,
-        timeSlices: slicesPerHour,
-        advice: generateAdvice(input, points),
-    };
+	return {
+		startTime: input.currentTime,
+		burnTime,
+		points,
+		timeSlices: slicesPerHour,
+		advice: generateAdvice(input, points),
+	};
 }
 
 // Find optimal time slicing
 export function findOptimalTimeSlicing(
-    input: CalculationInput,
+	input: CalculationInput,
 ): CalculationResult {
-    const sliceOptions = TIME_SLICE_OPTIONS; // 2, 5, 10, 15 minute intervals
+	const sliceOptions = TIME_SLICE_OPTIONS; // 2, 5, 10, 15 minute intervals
 
 	for (const slicesPerHour of sliceOptions) {
 		const result = calculateBurnTimeWithSlices(input, slicesPerHour);

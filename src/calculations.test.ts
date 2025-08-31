@@ -354,7 +354,7 @@ describe("Sunburn Calculation Algorithm", () => {
 		});
 	});
 
-		describe("Real-World Scenarios", () => {
+	describe("Real-World Scenarios", () => {
 		it("should handle typical beach day scenario safely", () => {
 			// Miami beach: Type II skin, SPF 30, moderate UV throughout day
 			const input = createTestScenario(
@@ -495,7 +495,10 @@ describe("Sunburn Calculation Algorithm", () => {
 				sweatLevel: SweatLevel.LOW,
 			};
 
-			const inputMid: CalculationInput = { ...inputBoundary, currentTime: midSliceStart };
+			const inputMid: CalculationInput = {
+				...inputBoundary,
+				currentTime: midSliceStart,
+			};
 
 			const resultBoundary = findOptimalTimeSlicing(inputBoundary);
 			const resultMid = findOptimalTimeSlicing(inputMid);
@@ -531,7 +534,8 @@ describe("Sunburn Calculation Algorithm", () => {
 				const elapsedMinutes =
 					(result.burnTime.getTime() - input.currentTime.getTime()) / 60000;
 				const remainder = Math.abs(elapsedMinutes % sliceMinutes);
-				const nearBoundary = remainder < 0.001 || Math.abs(remainder - sliceMinutes) < 0.001;
+				const nearBoundary =
+					remainder < 0.001 || Math.abs(remainder - sliceMinutes) < 0.001;
 				expect(nearBoundary).toBe(false);
 			}
 		});
