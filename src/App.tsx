@@ -5,7 +5,7 @@ import { findOptimalTimeSlicing } from "./calculations";
 import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
-import { getUVIndexColor } from "./lib/utils";
+import { getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -97,13 +97,18 @@ function App() {
 			<div className="container mx-auto px-4 py-8 max-w-4xl">
 				{/* Header */}
 				<div className="text-center mb-8">
-					<div className="flex items-center justify-center mb-4">
+					<div className="flex items-center justify-center mb-2">
 						<Sun className="w-8 h-8 text-amber-600 mr-3" />
-						<h1 className="text-3xl font-bold text-slate-800">SunburnTimer</h1>
+						<h1 className="text-3xl font-bold text-slate-800">
+							Sunburn Calculator
+						</h1>
 					</div>
-					<p className="text-slate-600">
-						Calculate safe sun exposure time based on your skin type,
-						protection, and real-time weather
+					<p className="text-slate-600 mb-1">
+						Estimate time to sunburn by UV index, skin type, and SPF using live
+						weather.
+					</p>
+					<p className="text-slate-500 text-sm">
+						by <span className="font-medium">SunburnTimer</span>
 					</p>
 				</div>
 
@@ -183,9 +188,13 @@ function App() {
 							<div className="flex-1 text-left">
 								<StepHeader
 									stepNumber={3}
-									title="Time & Place"
+									title="Location & Weather"
 									description="Used for cloud coverage and the angle of the sun."
 									isCompleted={geolocation.status === "completed"}
+									isLoading={
+										geolocation.status === "fetching_location" ||
+										geolocation.status === "fetching_weather"
+									}
 									hideDescription={geolocation.status === "completed"}
 								/>
 								{geolocation.status === "completed" &&
@@ -199,6 +208,13 @@ function App() {
 												>
 													UV {geolocation.weather.current.uvi}
 												</Badge>
+												{geolocation.weather.aqi && (
+													<Badge
+														className={`${getAQIColor(geolocation.weather.aqi.us_aqi).bg} ${getAQIColor(geolocation.weather.aqi.us_aqi).text} border-0`}
+													>
+														AQI {geolocation.weather.aqi.us_aqi}
+													</Badge>
+												)}
 											</div>
 											<RelativeTime
 												timestamp={
@@ -221,7 +237,9 @@ function App() {
 				{calculation && (
 					<div className="space-y-6">
 						<div className="flex items-center justify-between">
-							<h2 className="text-2xl font-bold text-slate-800">Results</h2>
+							<h2 className="text-2xl font-bold text-slate-800">
+								Safe Sun Exposure Time
+							</h2>
 							<div className="flex space-x-2">
 								<Button
 									variant="outline"

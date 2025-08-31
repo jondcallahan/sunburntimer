@@ -41,6 +41,53 @@ export function getUVIndexColor(uvIndex: number): {
 	};
 }
 
+export function getAQIColor(aqi: number): {
+	bg: string;
+	text: string;
+	border: string;
+} {
+	if (aqi <= 50) {
+		return {
+			bg: "bg-green-100",
+			text: "text-green-800",
+			border: "border-green-200",
+		};
+	}
+	if (aqi <= 100) {
+		return {
+			bg: "bg-yellow-100",
+			text: "text-yellow-800",
+			border: "border-yellow-200",
+		};
+	}
+	if (aqi <= 150) {
+		return {
+			bg: "bg-orange-100",
+			text: "text-orange-800",
+			border: "border-orange-200",
+		};
+	}
+	if (aqi <= 200) {
+		return {
+			bg: "bg-red-100",
+			text: "text-red-800",
+			border: "border-red-200",
+		};
+	}
+	if (aqi <= 300) {
+		return {
+			bg: "bg-purple-100",
+			text: "text-purple-800",
+			border: "border-purple-200",
+		};
+	}
+	return {
+		bg: "bg-red-900",
+		text: "text-red-50",
+		border: "border-red-800",
+	};
+}
+
 export function formatDuration(diffMs: number): string {
 	const hours = Math.floor(diffMs / (1000 * 60 * 60));
 	const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
