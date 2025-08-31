@@ -20,7 +20,7 @@ function clamp(value: number, min: number, max: number): number {
 	return Math.max(min, Math.min(max, value));
 }
 
-function lessThanWithTol(
+function isSafelyBelow(
 	a: number,
 	b: number,
 	tol = CALCULATION_CONSTANTS.FLOAT_TOLERANCE,
@@ -83,7 +83,7 @@ function createTimeSlices(
 
 		for (let j = 0; j < slicesPerHour; j++) {
 			const sliceTime = new Date(
-				currentHour.dt * 1000 + j * sliceMinutes * 60000,
+				currentHour.dt * 1000 + (j + 1) * sliceMinutes * 60000,
 			);
 
 			if (sliceTime >= startTime) {
@@ -153,7 +153,7 @@ function generateAdvice(
 ): string[] {
 	const advice: string[] = [];
 
-	if (input.spfLevel !== "NONE") {
+	if (input.spfLevel !== SPFLevel.NONE) {
 		advice.push(
 			"Reapply sunscreen every 2 hours, after swimming, or excessive sweating",
 		);
@@ -164,7 +164,7 @@ function generateAdvice(
 
 	const finalDamage = lastPoint.totalDamageAtStart + lastPoint.burnCost;
 	if (
-		lessThanWithTol(
+		isSafelyBelow(
 			finalDamage,
 			CALCULATION_CONSTANTS.SAFETY_THRESHOLD,
 			CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
@@ -192,7 +192,9 @@ function generateAdvice(
 	return advice;
 }
 
-// Main calculation function
+// Main calculation function - processes time slices to find burn time
+// TODO: This function is complex (140 lines) and should be refactored into smaller functions
+// See refactoring-notes.md for detailed breakdown suggestions
 function calculateBurnTimeWithSlices(
 	input: CalculationInput,
 	slicesPerHour: number,
@@ -232,6 +234,7 @@ function calculateBurnTimeWithSlices(
 		}
 
 		// Prorate first partial slice if starting mid-slice
+		// effectiveSliceMinutes = actual time spent in this slice (may be less than full slice for first slice)
 		const effectiveSliceMinutes = isFirstSlice
 			? clamp(
 					(slice.datetime.getTime() - input.currentTime.getTime()) / 60000,
@@ -283,13 +286,15 @@ function calculateBurnTimeWithSlices(
 				CALCULATION_CONSTANTS.THRESHOLD_TOLERANCE,
 			)
 		) {
-			// Interpolate the exact time when threshold is reached
+			// Interpolate the exact time when threshold is reached within this slice
+			// TODO: Extract this interpolation logic into a separate function for clarity
 			const damageNeeded =
 				CALCULATION_CONSTANTS.DAMAGE_THRESHOLD - damageBeforeSlice;
-			const sliceDamageRatio = Math.min(damageNeeded / damagePercent, 1.0);
+			const sliceDamageRatio = Math.min(damageNeeded / damagePercent, 1.0); // Fraction of slice when threshold reached
 			const sliceDurationMs = effectiveSliceMinutes * 60 * 1000;
 			const burnTimeOffsetMs = sliceDurationMs * sliceDamageRatio;
 
+			// burnTime = slice start + (fraction of slice duration)
 			burnTime = new Date(
 				slice.datetime.getTime() - sliceDurationMs + burnTimeOffsetMs,
 			);
