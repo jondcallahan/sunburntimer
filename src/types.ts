@@ -250,6 +250,9 @@ export const CALCULATION_CONSTANTS = {
 	MEANINGFUL_UV_THRESHOLD: 2.0,
 	HIGH_RISK_TIME_LIMIT_HOURS: 4,
 	EVENING_RISK_CUTOFF_HOUR: 18,
+	// Numeric tolerances for robust floating point comparisons
+	FLOAT_TOLERANCE: 1e-6,
+	THRESHOLD_TOLERANCE: 1e-3,
 };
 
 export const TIME_SLICE_OPTIONS = [30, 12, 6, 4];

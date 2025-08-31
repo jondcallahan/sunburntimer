@@ -46,15 +46,24 @@ export function SunTimer({ result }: SunTimerProps) {
 				} else {
 					// Interpolate partial damage for current time slice
 					const prevPoint = result.points[result.points.indexOf(point) - 1];
-					if (prevPoint && prevPoint.slice.datetime <= startTime) {
-						const sliceDuration =
-							point.slice.datetime.getTime() -
-							prevPoint.slice.datetime.getTime();
+					if (prevPoint) {
+						const sliceStart = prevPoint.slice.datetime;
+						const sliceEnd = point.slice.datetime;
+						const sliceDuration = sliceEnd.getTime() - sliceStart.getTime();
+
+						// Calculate the effective start time for this slice
+						const effectiveSliceStart =
+							sliceStart.getTime() < startTime.getTime()
+								? startTime
+								: sliceStart;
 						const elapsedInSlice =
-							currentTime.getTime() - prevPoint.slice.datetime.getTime();
-						const partialDamage =
-							(elapsedInSlice / sliceDuration) * point.burnCost;
-						totalDamage += Math.min(partialDamage, point.burnCost);
+							currentTime.getTime() - effectiveSliceStart.getTime();
+
+						if (elapsedInSlice > 0) {
+							const partialDamage =
+								(elapsedInSlice / sliceDuration) * point.burnCost;
+							totalDamage += Math.min(partialDamage, point.burnCost);
+						}
 					}
 					break;
 				}
