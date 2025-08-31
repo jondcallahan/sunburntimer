@@ -341,17 +341,41 @@ function calculateBurnTimeWithSlices(
 
 // Find optimal time slicing
 export function findOptimalTimeSlicing(
-	input: CalculationInput,
+    input: CalculationInput,
 ): CalculationResult {
-	const sliceOptions = TIME_SLICE_OPTIONS; // 2, 5, 10, 15 minute intervals
+    const sliceOptions = TIME_SLICE_OPTIONS; // 2, 5, 10, 15 minute intervals
 
-	for (const slicesPerHour of sliceOptions) {
-		const result = calculateBurnTimeWithSlices(input, slicesPerHour);
+    // Prefer the highest resolution that both fits within the point cap
+    // and finds a burn time. If a configuration fits within the cap but
+    // doesn't find a burn time (likely due to truncation), keep searching
+    // with coarser slicing to cover a longer real-time window.
+    let fallback: CalculationResult | undefined;
 
-		if (result.points.length <= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS) {
-			return result;
-		}
-	}
+    for (const slicesPerHour of sliceOptions) {
+        const result = calculateBurnTimeWithSlices(input, slicesPerHour);
 
-	return calculateBurnTimeWithSlices(input, 4);
+        // Always remember the first result within the cap as a fallback
+        if (
+            result.points.length <= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS &&
+            !fallback
+        ) {
+            fallback = result;
+        }
+
+        // If within cap AND we found a burn time, return immediately
+        if (
+            result.points.length <= CALCULATION_CONSTANTS.MAX_CALCULATION_POINTS &&
+            result.burnTime
+        ) {
+            return result;
+        }
+        // Otherwise, try a coarser slicing option to extend the time horizon
+    }
+
+    // If none of the options produced a burn time within the cap,
+    // return the best available within-cap result (may indicate "unlikely").
+    if (fallback) return fallback;
+
+    // As a last resort, compute with the coarsest option.
+    return calculateBurnTimeWithSlices(input, sliceOptions[sliceOptions.length - 1]);
 }
