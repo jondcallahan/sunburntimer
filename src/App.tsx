@@ -115,7 +115,7 @@ function App() {
 					{/* Step 1: Skin Type */}
 					<AccordionItem
 						value="step1"
-						className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+						className="bg-white/75 border-stone-200 shadow-sm rounded-lg mb-4"
 					>
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
@@ -141,7 +141,7 @@ function App() {
 					{/* Step 2: Sunscreen */}
 					<AccordionItem
 						value="step2"
-						className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+						className="bg-white/75 border-stone-200 shadow-sm rounded-lg mb-4"
 					>
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
@@ -185,7 +185,7 @@ function App() {
 					{/* Step 3: Location & Weather */}
 					<AccordionItem
 						value="step3"
-						className="bg-stone-100 border-stone-200 shadow-sm rounded-lg mb-4"
+						className="bg-white/75 border-stone-200 shadow-sm rounded-lg mb-4"
 					>
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
