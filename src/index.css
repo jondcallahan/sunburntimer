@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fontsource/tiktok-sans";
 
 @custom-variant dark (&:is(.dark *));
 
