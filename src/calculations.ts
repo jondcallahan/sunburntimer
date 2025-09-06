@@ -37,11 +37,14 @@ function spfAtTime(
 	sweatLevel: SweatLevel,
 	hoursFromStart: number,
 ): number {
-	if (sweatLevel === SweatLevel.LOW || baseSpfValue === 1.0) return baseSpfValue;
+	if (sweatLevel === SweatLevel.LOW || baseSpfValue === 1.0)
+		return baseSpfValue;
 	const sweatConfig = SWEAT_CONFIG[sweatLevel];
 	if (hoursFromStart <= sweatConfig.startHours) return baseSpfValue;
-	if (hoursFromStart >= sweatConfig.startHours + sweatConfig.durationHours) return 1.0;
-	const decayProgress = (hoursFromStart - sweatConfig.startHours) / sweatConfig.durationHours;
+	if (hoursFromStart >= sweatConfig.startHours + sweatConfig.durationHours)
+		return 1.0;
+	const decayProgress =
+		(hoursFromStart - sweatConfig.startHours) / sweatConfig.durationHours;
 	const remainingSpfValue = baseSpfValue * (1.0 - decayProgress);
 	return Math.max(1.0, remainingSpfValue);
 }
@@ -56,7 +59,10 @@ function lowUvWeight(uvi: number): number {
 	const lowThreshold = LOW_UV_RAMP_LOW;
 	const highThreshold = LOW_UV_RAMP_HIGH;
 	if (!(highThreshold > lowThreshold)) return 1;
-	const normalizedUvi = Math.max(0, Math.min(1, (uvi - lowThreshold) / (highThreshold - lowThreshold)));
+	const normalizedUvi = Math.max(
+		0,
+		Math.min(1, (uvi - lowThreshold) / (highThreshold - lowThreshold)),
+	);
 	return normalizedUvi * normalizedUvi * (3 - 2 * normalizedUvi); // smoothstep formula: cubic curve for smooth start/end.
 }
 
@@ -89,8 +95,12 @@ function createSlices(
 			sliceWindows.push({
 				start: new Date(sliceStartMs),
 				end: new Date(sliceEndMs),
-				uviStart: currentHourWeather.uvi * (1 - interpFractionStart) + nextHourWeather.uvi * interpFractionStart,
-				uviEnd: currentHourWeather.uvi * (1 - interpFractionEnd) + nextHourWeather.uvi * interpFractionEnd,
+				uviStart:
+					currentHourWeather.uvi * (1 - interpFractionStart) +
+					nextHourWeather.uvi * interpFractionStart,
+				uviEnd:
+					currentHourWeather.uvi * (1 - interpFractionEnd) +
+					nextHourWeather.uvi * interpFractionEnd,
 			});
 		}
 	}
@@ -132,7 +142,8 @@ function generateAdvice(
 	const lastCalculationPoint = points[points.length - 1];
 	if (!lastCalculationPoint) return advice;
 	const estimatedFinalDamage =
-		(lastCalculationPoint?.totalDamageAtStart ?? 0) + (lastCalculationPoint?.burnCost ?? 0);
+		(lastCalculationPoint?.totalDamageAtStart ?? 0) +
+		(lastCalculationPoint?.burnCost ?? 0);
 	if (estimatedFinalDamage < CALCULATION_CONSTANTS.SAFETY_THRESHOLD) {
 		if (input.spfLevel === "NONE") {
 			return advice;
@@ -176,28 +187,52 @@ function calculateBurnTimeWithSlices(
 		// Skip windows fully before the current time
 		if (currentSlice.end.getTime() <= startTimestampMs) continue;
 		// Effective window after current time
-		const effectiveStartMs = Math.max(currentSlice.start.getTime(), startTimestampMs);
+		const effectiveStartMs = Math.max(
+			currentSlice.start.getTime(),
+			startTimestampMs,
+		);
 		const effectiveEndMs = currentSlice.end.getTime();
 		const minutes = (effectiveEndMs - effectiveStartMs) / 60000;
 		if (minutes <= 0) continue;
 		// UV at effective start (if starting mid-slice)
-		const sliceDurationMs = currentSlice.end.getTime() - currentSlice.start.getTime();
-		const startFraction = sliceDurationMs > 0 ? (effectiveStartMs - currentSlice.start.getTime()) / sliceDurationMs : 0;
-		const uviAtEffectiveStart = currentSlice.uviStart * (1 - startFraction) + currentSlice.uviEnd * startFraction;
+		const sliceDurationMs =
+			currentSlice.end.getTime() - currentSlice.start.getTime();
+		const startFraction =
+			sliceDurationMs > 0
+				? (effectiveStartMs - currentSlice.start.getTime()) / sliceDurationMs
+				: 0;
+		const uviAtEffectiveStart =
+			currentSlice.uviStart * (1 - startFraction) +
+			currentSlice.uviEnd * startFraction;
 		const uviAtEnd = currentSlice.uviEnd;
 		// SPF at endpoints (hours since application)
-		const hoursFromStartAtEffective = (effectiveStartMs - startTimestampMs) / 3600000;
+		const hoursFromStartAtEffective =
+			(effectiveStartMs - startTimestampMs) / 3600000;
 		const hoursFromStartAtEnd = (effectiveEndMs - startTimestampMs) / 3600000;
-		const spfAtEffectiveStart = spfAtTime(baseSpfValue, input.sweatLevel, hoursFromStartAtEffective);
-		const spfAtEnd = spfAtTime(baseSpfValue, input.sweatLevel, hoursFromStartAtEnd);
+		const spfAtEffectiveStart = spfAtTime(
+			baseSpfValue,
+			input.sweatLevel,
+			hoursFromStartAtEffective,
+		);
+		const spfAtEnd = spfAtTime(
+			baseSpfValue,
+			input.sweatLevel,
+			hoursFromStartAtEnd,
+		);
 		// Trapezoid on effective irradiance (UVI/SPF)
 		// **Effective irradiance: UV strength divided by SPF, weighted for low UV. Average start/end for smooth integration.**
-		const effectiveIrradianceStart = (uviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) * lowUvWeight(uviAtEffectiveStart);
-		const effectiveIrradianceEnd = (uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
-		const averageEffectiveIrradiance = 0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
+		const effectiveIrradianceStart =
+			(uviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) *
+			lowUvWeight(uviAtEffectiveStart);
+		const effectiveIrradianceEnd =
+			(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
+		const averageEffectiveIrradiance =
+			0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
 		// Damage% added in this (possibly partial) window
 		// **Core formula: Converts average effective UV to damage % based on time and skin's MED.**
-		let damageAddedInSlice = (UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance * minutes) / medInJm2;
+		let damageAddedInSlice =
+			(UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance * minutes) /
+			medInJm2;
 		// For display, record midpoint UV
 		const displayTimeSlice: TimeSlice = {
 			datetime: new Date(effectiveStartMs),
@@ -207,7 +242,8 @@ function calculateBurnTimeWithSlices(
 		// **If damage would exceed threshold mid-slice, calculate exact time to hit 100% (linear approximation).**
 		if (!burnTime && totalDamage + damageAddedInSlice >= threshold) {
 			const damageRatePerMinute = damageAddedInSlice / minutes; // approx uniform within window
-			const minutesToThreshold = (threshold - totalDamage) / damageRatePerMinute;
+			const minutesToThreshold =
+				(threshold - totalDamage) / damageRatePerMinute;
 			damageAddedInSlice = threshold - totalDamage; // clamp to reach exactly 100%
 			burnTime = new Date(effectiveStartMs + minutesToThreshold * 60000);
 		}
