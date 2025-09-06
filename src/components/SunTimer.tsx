@@ -174,7 +174,7 @@ export function SunTimer({ result }: SunTimerProps) {
 			: null;
 
 	return (
-		<Card className="bg-white/75 border-stone-200 shadow-sm">
+		<Card className="border-stone-200 shadow-sm">
 			<CardHeader>
 				<CardTitle className="flex items-center justify-between text-slate-800">
 					<div className="flex items-center">
