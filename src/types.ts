@@ -143,28 +143,15 @@ export interface WeatherOverview {
 export interface CurrentWeather {
 	dt: number;
 	temp: number;
-	feels_like: number;
-	pressure: number;
-	humidity: number;
 	uvi: number;
-	clouds: number;
-	wind_speed: number;
-	wind_gust?: number;
 	weather: WeatherOverview[];
 }
 
 export interface HourlyWeather {
 	dt: number;
 	temp: number;
-	feels_like: number;
-	pressure: number;
-	humidity: number;
 	uvi: number;
-	clouds: number;
-	wind_speed: number;
-	wind_gust?: number;
 	weather: WeatherOverview[];
-	pop: number;
 }
 
 export interface AQIData {
