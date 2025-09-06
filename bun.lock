@@ -4,6 +4,7 @@
     "": {
       "name": "sunburn-calc",
       "dependencies": {
+        "@fontsource/tiktok-sans": "^5.2.2",
         "@radix-ui/react-accordion": "^1.2.11",
         "@radix-ui/react-label": "^2.1.7",
         "@radix-ui/react-progress": "^1.1.7",
@@ -177,6 +178,8 @@
     "@floating-ui/react-dom": ["@floating-ui/react-dom@2.1.4", "", { "dependencies": { "@floating-ui/dom": "^1.7.2" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-JbbpPhp38UmXDDAu60RJmbeme37Jbgsm7NrHGgzYYFKmblzRUh6Pa641dII6LsjwF4XlScDrde2UAzDo/b9KPw=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.10", "", {}, "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="],
+
+    "@fontsource/tiktok-sans": ["@fontsource/tiktok-sans@5.2.2", "", {}, "sha512-L2MKMXpYc3WsnHVpa4AUqzXonKYdsUqcIGILA0Kkoxwa/Xdh1aJuck+a0j6jXoaFK0Zlj1LSbYugc0jtVDh3Ag=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 
