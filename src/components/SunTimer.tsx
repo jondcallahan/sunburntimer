@@ -72,7 +72,7 @@ export function SunTimer({ result }: SunTimerProps) {
 		if (timer.isRunning && timer.startTime) {
 			interval = setInterval(() => {
 				setTimer((prev) => {
-					const newElapsedMs = Date.now() - prev.startTime?.getTime();
+					const newElapsedMs = Date.now() - prev.startTime!.getTime();
 					const newDamage = calculateRealTimeDamage(
 						newElapsedMs,
 						prev.startTime!,

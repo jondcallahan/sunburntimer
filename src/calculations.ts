@@ -17,8 +17,9 @@ import {
 
 // ---- Physics-grounded damage model ----
 // UVI = 40 * E_ery(W/m²) -> dose per minute = 1.5 * UVI (J/m²)
-// damage% per minute = (150 * UVI) / (SPF_eff * MED)
-const UVI_DAMAGE_FACTOR_PER_MIN = 150;
+// damage% per minute = (k * UVI) / (SPF_eff * MED)
+// Use k = 120 to align with prior model (BASE_DAMAGE_TIME=200, UV_SCALING_FACTOR=3, MED=80*coeff).
+const UVI_DAMAGE_FACTOR_PER_MIN = 120;
 
 // Derive MED (J/m²) from your existing coefficients:
 // (your config's comments match MED = 80 * coefficient)
