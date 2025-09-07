@@ -49,10 +49,12 @@ function createTestScenario(
 	uvValues: number[],
 	currentTime?: Date,
 ): CalculationInput {
+	const now = currentTime || new Date();
+	const baseTime = Math.floor(now.getTime() / 1000);
 	return {
-		weather: createMockWeatherData(uvValues),
+		weather: createMockWeatherData(uvValues, baseTime),
 		placeName: "Test Location",
-		currentTime: currentTime || new Date(),
+		currentTime: now,
 		skinType,
 		spfLevel,
 		sweatLevel,
@@ -143,11 +145,13 @@ describe("Sunburn Calculation Algorithm", () => {
 
 		it("should calculate much longer burn times with SPF protection", () => {
 			// Same conditions but with SPF 30 - should extend time significantly
+			const fixedTime = new Date("2025-09-06T09:00:00");
 			const input = createTestScenario(
 				FitzpatrickType.I,
 				SPFLevel.SPF_30,
 				SweatLevel.LOW,
 				TEST_SCENARIOS.extendedHighUV,
+				fixedTime,
 			);
 
 			const result = findOptimalTimeSlicing(input);
@@ -543,11 +547,13 @@ describe("Sunburn Calculation Algorithm", () => {
 		});
 
 		it("should handle rapid UV changes", () => {
+			const fixedTime = new Date("2025-09-06T09:00:00");
 			const rapidChange = createTestScenario(
 				FitzpatrickType.II,
 				SPFLevel.NONE,
 				SweatLevel.LOW,
 				[1, 8, 2, 9, 3, 8, 1], // Rapid UV fluctuations
+				fixedTime,
 			);
 
 			const result = findOptimalTimeSlicing(rapidChange);

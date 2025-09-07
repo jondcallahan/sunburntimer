@@ -143,28 +143,15 @@ export interface WeatherOverview {
 export interface CurrentWeather {
 	dt: number;
 	temp: number;
-	feels_like: number;
-	pressure: number;
-	humidity: number;
 	uvi: number;
-	clouds: number;
-	wind_speed: number;
-	wind_gust?: number;
 	weather: WeatherOverview[];
 }
 
 export interface HourlyWeather {
 	dt: number;
 	temp: number;
-	feels_like: number;
-	pressure: number;
-	humidity: number;
 	uvi: number;
-	clouds: number;
-	wind_speed: number;
-	wind_gust?: number;
 	weather: WeatherOverview[];
-	pop: number;
 }
 
 export interface AQIData {
@@ -250,6 +237,10 @@ export const CALCULATION_CONSTANTS = {
 	MEANINGFUL_UV_THRESHOLD: 2.0,
 	HIGH_RISK_TIME_LIMIT_HOURS: 4,
 	EVENING_RISK_CUTOFF_HOUR: 18,
+	// Low UVI soft ramp (smoothstep) to reduce perceived over-estimation at UVI 1–2
+	LOW_UV_SMOOTHSTEP_ENABLED: true,
+	LOW_UV_RAMP_LOW: 1.0,
+	LOW_UV_RAMP_HIGH: 3.0,
 };
 
 export const TIME_SLICE_OPTIONS = [30, 12, 6, 4];

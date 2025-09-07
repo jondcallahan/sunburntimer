@@ -7,18 +7,12 @@ interface OpenMeteoResponse {
 	current: {
 		time: string;
 		temperature_2m: number;
-		relative_humidity_2m: number;
-		cloud_cover: number;
-		wind_speed_10m: number;
 		uv_index: number;
 		weather_code: number;
 	};
 	hourly: {
 		time: string[];
 		temperature_2m: number[];
-		relative_humidity_2m: number[];
-		cloud_cover: number[];
-		wind_speed_10m: number[];
 		uv_index: number[];
 		weather_code: number[];
 	};
@@ -34,10 +28,8 @@ export async function fetchWeatherData(
 	const params = new URLSearchParams({
 		latitude: lat,
 		longitude: lon,
-		current:
-			"temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,uv_index,weather_code",
-		hourly:
-			"temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,uv_index,weather_code",
+		current: "temperature_2m,uv_index,weather_code",
+		hourly: "temperature_2m,uv_index,weather_code",
 		temperature_unit: "fahrenheit",
 		wind_speed_unit: "mph",
 		timezone: "auto",
@@ -68,12 +60,7 @@ export async function fetchWeatherData(
 	const current = {
 		dt: Math.floor(new Date(data.current.time).getTime() / 1000),
 		temp: data.current.temperature_2m,
-		feels_like: data.current.temperature_2m, // Open-Meteo doesn't provide feels_like in free tier
-		pressure: 1013, // Default value
-		humidity: data.current.relative_humidity_2m,
 		uvi: data.current.uv_index,
-		clouds: data.current.cloud_cover,
-		wind_speed: data.current.wind_speed_10m,
 		weather: [
 			{
 				id: 800,
@@ -94,12 +81,7 @@ export async function fetchWeatherData(
 	const hourly = Array.from({ length: maxHours }, (_, i) => ({
 		dt: Math.floor(new Date(hourlyData.time[i]).getTime() / 1000),
 		temp: hourlyData.temperature_2m[i],
-		feels_like: hourlyData.temperature_2m[i],
-		pressure: 1013,
-		humidity: hourlyData.relative_humidity_2m[i],
 		uvi: hourlyData.uv_index[i],
-		clouds: hourlyData.cloud_cover[i],
-		wind_speed: hourlyData.wind_speed_10m[i],
 		weather: [
 			{
 				id: 800,
@@ -113,7 +95,6 @@ export async function fetchWeatherData(
 				icon: "01d",
 			},
 		],
-		pop: 0, // Not provided by Open-Meteo free tier
 	}));
 
 	// Fetch AQI data
