@@ -19,6 +19,7 @@ export interface SkinTypeConfig {
 	hairColors: string[];
 	eyeColors: string[];
 	freckles: string;
+	emoji: string;
 }
 
 export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
@@ -30,6 +31,7 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
 		hairColors: ["Red", "Blond", "Brown"],
 		eyeColors: ["Blue", "Green", "Gray", "Brown"],
 		freckles: "Common",
+		emoji: "✋🏻",
 	},
 	[FitzpatrickType.II]: {
 		color: "#E7B592",
@@ -39,6 +41,7 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
 		hairColors: ["Light", "Dark"],
 		eyeColors: ["Blue", "Green", "Hazel", "Brown", "Gray"],
 		freckles: "Rare",
+		emoji: "✋🏻",
 	},
 	[FitzpatrickType.III]: {
 		color: "#D19F7F",
@@ -48,6 +51,7 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
 		hairColors: ["Brown"],
 		eyeColors: ["Blue", "Green", "Brown", "Black"],
 		freckles: "None",
+		emoji: "✋🏼",
 	},
 	[FitzpatrickType.IV]: {
 		color: "#BB7955",
@@ -57,6 +61,7 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
 		hairColors: ["Dark Brown", "Black"],
 		eyeColors: ["Blue", "Brown", "Green", "Black"],
 		freckles: "None",
+		emoji: "✋🏽",
 	},
 	[FitzpatrickType.V]: {
 		color: "#A55E31",
@@ -66,6 +71,7 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
 		hairColors: ["Black"],
 		eyeColors: ["Brown", "Black"],
 		freckles: "None",
+		emoji: "✋🏾",
 	},
 	[FitzpatrickType.VI]: {
 		color: "#3A1F1C",
@@ -75,6 +81,7 @@ export const SKIN_TYPE_CONFIG: Record<FitzpatrickType, SkinTypeConfig> = {
 		hairColors: ["Black"],
 		eyeColors: ["Black"],
 		freckles: "None",
+		emoji: "✋🏿",
 	},
 };
 

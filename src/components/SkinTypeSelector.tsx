@@ -60,6 +60,9 @@ function SkinTypeCard({
 					<div className="flex items-start justify-between">
 						<div className="flex-1 min-w-0">
 							<div className="flex items-center space-x-2 mb-2">
+								<div className="text-3xl leading-none" aria-hidden="true">
+									{config.emoji}
+								</div>
 								<Badge
 									variant="secondary"
 									className="font-bold text-sm px-2 py-1 flex-shrink-0 bg-gray-100 text-gray-800"
