@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { useLayoutEffect, useRef, useMemo } from "react";
+import { haptic } from "ios-haptics";
 import { FitzpatrickType, SKIN_TYPE_CONFIG } from "../types";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "./ui/card";
@@ -37,7 +38,10 @@ function SkinTypeCard({
 					: "border-stone-200 hover:border-slate-400 hover:shadow-md"
 			}
       `}
-			onClick={() => onSelect(type)}
+			onClick={() => {
+				haptic();
+				onSelect(type);
+			}}
 			role="button"
 			tabIndex={0}
 			aria-pressed={selected}
@@ -45,6 +49,7 @@ function SkinTypeCard({
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
+					haptic();
 					onSelect(type);
 				}
 			}}
