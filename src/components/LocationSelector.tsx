@@ -38,8 +38,8 @@ export function LocationSelector() {
 
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(position);
-			setWeather(weather);
 			haptic.confirm();
+			setWeather(weather);
 		} catch (error) {
 			setGeolocationError(
 				error instanceof Error ? error.message : "Failed to get location",
