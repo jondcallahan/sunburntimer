@@ -81,8 +81,8 @@ function App() {
 		try {
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(geolocation.position);
-			haptic.confirm();
 			setWeather(weather);
+			setTimeout(() => haptic.confirm(), 0);
 		} catch (error) {
 			setGeolocationError(
 				error instanceof Error
