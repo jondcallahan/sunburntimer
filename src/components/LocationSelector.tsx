@@ -6,6 +6,7 @@ import {
 	Cloud,
 	Edit,
 } from "lucide-react";
+import { haptic } from "ios-haptics";
 import { useAppStore } from "../store";
 import {
 	getCurrentPosition,
@@ -28,6 +29,7 @@ export function LocationSelector() {
 
 	const handleCurrentLocation = async () => {
 		try {
+			haptic();
 			setGeolocationStatus("fetching_location");
 
 			const position = await getCurrentPosition();
@@ -37,6 +39,7 @@ export function LocationSelector() {
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(position);
 			setWeather(weather);
+			haptic.confirm();
 		} catch (error) {
 			setGeolocationError(
 				error instanceof Error ? error.message : "Failed to get location",
