@@ -210,8 +210,10 @@ function App() {
 									geolocation.placeName &&
 									geolocation.weather && (
 										<div className="flex flex-col gap-2 mt-3 ml-12">
-											<div className="flex items-center gap-2">
-												<Badge variant="outline">{geolocation.placeName}</Badge>
+											<div className="flex items-center gap-2 flex-wrap">
+												<Badge variant="outline" className="max-w-full truncate">
+													{geolocation.placeName}
+												</Badge>
 												<Badge
 													className={`${getUVIndexColor(geolocation.weather.current.uvi).bg} ${getUVIndexColor(geolocation.weather.current.uvi).text} border-0`}
 												>
