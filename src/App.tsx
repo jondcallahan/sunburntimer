@@ -27,6 +27,7 @@ import { Button } from "./components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SunTimer } from "./components/SunTimer";
 import { RelativeTime } from "./components/RelativeTime";
+import { MathExplanation } from "./components/MathExplanation";
 
 function App() {
 	const {
@@ -280,6 +281,10 @@ function App() {
 				)}
 
 				{/* FAQ and Resources temporarily removed */}
+
+				<div className="mt-8">
+					<MathExplanation />
+				</div>
 
 				{/* Footer */}
 				<footer className="mt-16 pt-8 border-t border-stone-200">
