@@ -82,7 +82,7 @@ export function MathExplanation() {
 								<strong>1/30th</strong> of the UV energy reaches your skin.
 							</p>
 							<p className="text-xs text-blue-700 mt-2">
-								*We also model sunscreen degradation over time based on your
+								*Sunscreen degradation is also modeled over time based on your
 								sweat level.
 							</p>
 						</div>
@@ -101,9 +101,13 @@ export function MathExplanation() {
 								</div>
 							</div>
 							<p className="text-sm text-slate-600 mt-3">
-								We integrate this formula minute-by-minute using live forecast
-								data. When the accumulated damage hits 100%, that's your burn
-								time.
+								This formula is integrated minute-by-minute using live forecast
+								data, interpolating between hourly updates for precision.
+							</p>
+							<p className="text-xs text-slate-500 mt-2 italic">
+								*For low UV levels (UVI &lt; 3), a smoothing curve is applied to
+								account for reduced exposure at lower sun angles (dawn/dusk).
+								When the accumulated damage hits 100%, that's your burn time.
 							</p>
 						</div>
 						<div className="border-t pt-4">
