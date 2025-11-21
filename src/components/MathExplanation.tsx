@@ -95,7 +95,7 @@ export function MathExplanation() {
 							</h3>
 							<div className="bg-slate-900 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
 								<div className="mb-2 text-slate-400">
-									// Damage accumulated per minute
+									Damage accumulated per minute:
 								</div>
 								<div>Damage % = (UV_Energy_Per_Min / (MED * SPF)) * 100</div>
 							</div>
