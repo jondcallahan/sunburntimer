@@ -53,7 +53,8 @@ export function MathExplanation() {
 							</h3>
 							<p className="text-sm text-slate-700 mb-2">
 								Every skin type has a "Minimal Erythemal Dose" (MED), the total
-								energy required to cause first signs of redness, represented as Joules per square meter (J/m²).
+								energy required to cause first signs of redness, represented as
+								Joules per square meter (J/m²).
 							</p>
 							<ul className="list-disc list-inside text-sm text-slate-600 space-y-1 ml-2">
 								<li>
@@ -61,7 +62,7 @@ export function MathExplanation() {
 									J/m²
 								</li>
 								<li>
-									<span className="font-medium">Type III (Medium):</span  > ~350
+									<span className="font-medium">Type III (Medium):</span> ~350
 									J/m²
 								</li>
 								<li>
@@ -96,9 +97,7 @@ export function MathExplanation() {
 								<div className="mb-2 text-slate-400">
 									// Damage accumulated per minute
 								</div>
-								<div>
-									Damage % = (UV_Energy_Per_Min / (MED * SPF)) * 100
-								</div>
+								<div>Damage % = (UV_Energy_Per_Min / (MED * SPF)) * 100</div>
 							</div>
 							<p className="text-sm text-slate-600 mt-3">
 								This formula is integrated minute-by-minute using live forecast
@@ -123,7 +122,9 @@ export function MathExplanation() {
 										className="text-slate-600 hover:text-amber-600 hover:underline flex items-center gap-1 transition-colors"
 									>
 										World Health Organization (WHO)
-										<span className="text-slate-400">- UV Index Definition</span>
+										<span className="text-slate-400">
+											- UV Index Definition
+										</span>
 									</a>
 								</li>
 								<li>

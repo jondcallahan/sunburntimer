@@ -212,7 +212,10 @@ function App() {
 									geolocation.weather && (
 										<div className="flex flex-col gap-2 mt-3 ml-12">
 											<div className="flex items-center gap-2 flex-wrap">
-												<Badge variant="outline" className="max-w-full truncate">
+												<Badge
+													variant="outline"
+													className="max-w-full truncate"
+												>
 													{geolocation.placeName}
 												</Badge>
 												<Badge
