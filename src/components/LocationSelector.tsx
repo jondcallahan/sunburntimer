@@ -61,11 +61,11 @@ export function LocationSelector() {
 			case "fetching_location":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+						<div className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+							<Loader2 className="h-5 w-5 text-amber-600 animate-spin" />
 							<div className="flex-1">
-								<span className="font-medium text-blue-900">
-									Getting your location...
+								<span className="font-medium text-amber-900">
+									Finding you on the map...
 								</span>
 							</div>
 							<Button
@@ -106,11 +106,11 @@ export function LocationSelector() {
 			case "fetching_weather":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+						<div className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+							<Loader2 className="h-5 w-5 text-amber-600 animate-spin" />
 							<div className="flex-1">
-								<span className="font-medium text-blue-900">
-									Fetching weather data...
+								<span className="font-medium text-amber-900">
+									Checking the forecast...
 								</span>
 							</div>
 							<Button
