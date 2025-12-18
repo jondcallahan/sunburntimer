@@ -67,7 +67,7 @@ function SweatLevelOption({
 		>
 			<CardContent className="p-4">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-3">
+					<div className="flex items-center space-x-4">
 						<div
 							className={`
               flex items-center justify-center w-12 h-12 rounded-full
@@ -127,7 +127,7 @@ export function SweatLevelSelector() {
 				wears off.
 			</p>
 
-			<div className="space-y-3">
+			<div className="space-y-4">
 				{Object.values(SweatLevel).map((level) => (
 					<SweatLevelOption
 						key={level}

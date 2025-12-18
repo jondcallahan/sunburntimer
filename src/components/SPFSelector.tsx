@@ -39,7 +39,7 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 		>
 			<CardContent className="p-4">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-3">
+					<div className="flex items-center space-x-4">
 						<Badge
 							variant={selected ? "default" : "secondary"}
 							className="text-sm font-bold min-w-[2.5rem] justify-center"
@@ -68,7 +68,7 @@ export function SPFSelector() {
 
 	return (
 		<div className="space-y-4">
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 				{Object.values(SPFLevel).map((level) => (
 					<SPFOption
 						key={level}

@@ -19,13 +19,13 @@ export function StepHeader({
 }: StepHeaderProps) {
 	return (
 		<div>
-			<div className="flex items-center text-slate-800 text-xl font-semibold mb-2">
+			<div className="flex items-center text-stone-800 text-xl font-semibold mb-2">
 				<span
 					className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-base font-bold mr-4 ${
 						isCompleted
-							? "bg-green-600 text-white"
+							? "bg-emerald-600 text-white"
 							: isLoading
-								? "bg-blue-600 text-white"
+								? "bg-amber-500 text-white"
 								: "bg-amber-600 text-white"
 					}`}
 				>
@@ -40,7 +40,7 @@ export function StepHeader({
 				{title}
 			</div>
 			{description && !hideDescription && (
-				<p className="text-slate-600 ml-12">{description}</p>
+				<p className="text-stone-600 ml-12">{description}</p>
 			)}
 		</div>
 	);

@@ -99,16 +99,16 @@ function App() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-3" />
-						<h1 className="text-3xl font-bold text-slate-800">
+						<Sun className="w-8 h-8 text-amber-600 mr-4" />
+						<h1 className="text-3xl font-bold text-stone-800">
 							Sunburn Calculator
 						</h1>
 					</div>
-					<p className="text-slate-600 mb-1">
+					<p className="text-stone-600 mb-1">
 						Estimate time to sunburn by UV index, skin type, and SPF using live
 						weather.
 					</p>
-					<p className="text-slate-500 text-sm">
+					<p className="text-stone-500 text-sm">
 						by <span className="font-medium">SunburnTimer</span>
 					</p>
 				</div>
@@ -134,7 +134,7 @@ function App() {
 									hideDescription={!!skinType}
 								/>
 								{skinType && (
-									<div className="flex items-center gap-2 mt-3 ml-12">
+									<div className="flex items-center gap-2 mt-4 ml-12">
 										<Badge variant="outline">Type {skinType}</Badge>
 									</div>
 								)}
@@ -160,7 +160,7 @@ function App() {
 									hideDescription={!!spfLevel}
 								/>
 								{spfLevel && (
-									<div className="flex items-center gap-2 mt-3 ml-12">
+									<div className="flex items-center gap-2 mt-4 ml-12">
 										<Badge variant="outline">
 											{SPF_CONFIG[spfLevel].label}
 										</Badge>
@@ -179,7 +179,7 @@ function App() {
 
 								{showSweatLevel && (
 									<div>
-										<h4 className="font-semibold mb-3 text-slate-800">
+										<h4 className="font-semibold mb-4 text-stone-800">
 											Activity Level
 										</h4>
 										<SweatLevelSelector />
@@ -210,7 +210,7 @@ function App() {
 								{geolocation.status === "completed" &&
 									geolocation.placeName &&
 									geolocation.weather && (
-										<div className="flex flex-col gap-2 mt-3 ml-12">
+										<div className="flex flex-col gap-2 mt-4 ml-12">
 											<div className="flex items-center gap-2 flex-wrap">
 												<Badge
 													variant="outline"
@@ -236,7 +236,7 @@ function App() {
 													geolocation.lastFetched ||
 													geolocation.weather.current.dt * 1000
 												}
-												className="text-xs text-slate-500"
+												className="text-xs text-stone-500"
 											/>
 										</div>
 									)}
@@ -252,7 +252,7 @@ function App() {
 				{calculation && (
 					<div className="space-y-6">
 						<div className="flex items-center justify-between">
-							<h2 className="text-2xl font-bold text-slate-800">
+							<h2 className="text-2xl font-bold text-stone-800">
 								Safe Sun Exposure Time
 							</h2>
 							<div className="flex space-x-2">
@@ -260,7 +260,7 @@ function App() {
 									variant="outline"
 									onClick={handleRefresh}
 									disabled={geolocation.status === "fetching_weather"}
-									className="text-slate-700 border-stone-300 hover:bg-stone-100"
+									className="text-stone-700 border-stone-300 hover:bg-stone-100"
 								>
 									<RefreshCw
 										className={`w-4 h-4 mr-2 ${
@@ -291,7 +291,7 @@ function App() {
 
 				{/* Footer */}
 				<footer className="mt-16 pt-8 border-t border-stone-200">
-					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
+					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-stone-600">
 						<div className="flex items-center gap-4">
 							<span>Made by</span>
 							<a
