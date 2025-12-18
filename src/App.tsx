@@ -94,8 +94,10 @@ function App() {
 	const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
 
 	return (
-		<div className="min-h-screen bg-orange-50">
-			<div className="container mx-auto px-4 py-8 max-w-4xl">
+		<div className="min-h-screen sun-glow relative overflow-hidden">
+			{/* Subtle sun rays decoration */}
+			<div className="sun-rays absolute inset-0" aria-hidden="true" />
+			<div className="container mx-auto px-4 py-8 max-w-4xl relative">
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center mb-2">
@@ -122,7 +124,7 @@ function App() {
 					{/* Step 1: Skin Type */}
 					<AccordionItem
 						value="step1"
-						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
+						className="bg-card border-stone-200 shadow-sun rounded-lg mb-4"
 					>
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
@@ -148,7 +150,7 @@ function App() {
 					{/* Step 2: Sunscreen */}
 					<AccordionItem
 						value="step2"
-						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
+						className="bg-card border-stone-200 shadow-sun rounded-lg mb-4"
 					>
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
@@ -192,7 +194,7 @@ function App() {
 					{/* Step 3: Location & Weather */}
 					<AccordionItem
 						value="step3"
-						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
+						className="bg-card border-stone-200 shadow-sun rounded-lg mb-4"
 					>
 						<AccordionTrigger className="px-6 py-4 hover:no-underline">
 							<div className="flex-1 text-left">
