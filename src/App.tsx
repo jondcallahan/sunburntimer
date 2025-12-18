@@ -99,7 +99,7 @@ function App() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-3" />
+						<Sun className="w-8 h-8 text-amber-600 mr-4" />
 						<h1 className="text-3xl font-bold text-slate-800">
 							Sunburn Calculator
 						</h1>
@@ -134,7 +134,7 @@ function App() {
 									hideDescription={!!skinType}
 								/>
 								{skinType && (
-									<div className="flex items-center gap-2 mt-3 ml-12">
+									<div className="flex items-center gap-2 mt-4 ml-12">
 										<Badge variant="outline">Type {skinType}</Badge>
 									</div>
 								)}
@@ -160,7 +160,7 @@ function App() {
 									hideDescription={!!spfLevel}
 								/>
 								{spfLevel && (
-									<div className="flex items-center gap-2 mt-3 ml-12">
+									<div className="flex items-center gap-2 mt-4 ml-12">
 										<Badge variant="outline">
 											{SPF_CONFIG[spfLevel].label}
 										</Badge>
@@ -179,7 +179,7 @@ function App() {
 
 								{showSweatLevel && (
 									<div>
-										<h4 className="font-semibold mb-3 text-slate-800">
+										<h4 className="font-semibold mb-4 text-slate-800">
 											Activity Level
 										</h4>
 										<SweatLevelSelector />
@@ -210,7 +210,7 @@ function App() {
 								{geolocation.status === "completed" &&
 									geolocation.placeName &&
 									geolocation.weather && (
-										<div className="flex flex-col gap-2 mt-3 ml-12">
+										<div className="flex flex-col gap-2 mt-4 ml-12">
 											<div className="flex items-center gap-2 flex-wrap">
 												<Badge
 													variant="outline"
@@ -250,7 +250,7 @@ function App() {
 
 				{/* Results */}
 				{calculation && (
-					<div className="space-y-6">
+					<div className="mt-8 space-y-6">
 						<div className="flex items-center justify-between">
 							<h2 className="text-2xl font-bold text-slate-800">
 								Safe Sun Exposure Time

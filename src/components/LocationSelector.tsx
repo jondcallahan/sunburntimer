@@ -61,7 +61,7 @@ export function LocationSelector() {
 			case "fetching_location":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+						<div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
 							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
 							<div className="flex-1">
 								<span className="font-medium text-blue-900">
@@ -74,7 +74,7 @@ export function LocationSelector() {
 								disabled
 								className="text-xs opacity-50"
 							>
-								<Edit className="w-3 h-3 mr-1" />
+								<Edit className="w-4 h-4 mr-2" />
 								Change
 							</Button>
 						</div>
@@ -82,7 +82,7 @@ export function LocationSelector() {
 						<Card>
 							<CardContent className="p-4">
 								<div className="flex items-center justify-between">
-									<div className="flex items-center space-x-3">
+									<div className="flex items-center space-x-4">
 										<Cloud className="w-8 h-8 text-gray-300" />
 										<div>
 											<p className="text-sm text-muted-foreground">
@@ -106,7 +106,7 @@ export function LocationSelector() {
 			case "fetching_weather":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+						<div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
 							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
 							<div className="flex-1">
 								<span className="font-medium text-blue-900">
@@ -119,7 +119,7 @@ export function LocationSelector() {
 								disabled
 								className="text-xs opacity-50"
 							>
-								<Edit className="w-3 h-3 mr-1" />
+								<Edit className="w-4 h-4 mr-2" />
 								Change
 							</Button>
 						</div>
@@ -127,7 +127,7 @@ export function LocationSelector() {
 						<Card>
 							<CardContent className="p-4">
 								<div className="flex items-center justify-between">
-									<div className="flex items-center space-x-3">
+									<div className="flex items-center space-x-4">
 										<Loader2 className="w-8 h-8 text-primary animate-spin" />
 										<div>
 											<p className="text-sm text-muted-foreground">
@@ -151,7 +151,7 @@ export function LocationSelector() {
 			case "completed":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+						<div className="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border border-green-200">
 							<CheckCircle className="h-5 w-5 text-green-600" />
 							<div className="flex-1">
 								<span className="font-medium text-green-900">
@@ -175,7 +175,7 @@ export function LocationSelector() {
 								}}
 								className="text-xs"
 							>
-								<Edit className="w-3 h-3 mr-1" />
+								<Edit className="w-4 h-4 mr-2" />
 								Change
 							</Button>
 						</div>
@@ -184,7 +184,7 @@ export function LocationSelector() {
 							<Card>
 								<CardContent className="p-4">
 									<div className="flex items-center justify-between">
-										<div className="flex items-center space-x-3">
+										<div className="flex items-center space-x-4">
 											<Cloud className="w-8 h-8 text-primary" />
 											<div>
 												<p className="text-sm text-muted-foreground">
