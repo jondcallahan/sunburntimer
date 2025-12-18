@@ -61,11 +61,11 @@ export function LocationSelector() {
 			case "fetching_location":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
-							<Loader2 className="h-5 w-5 text-amber-600 animate-spin" />
+						<div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
 							<div className="flex-1">
-								<span className="font-medium text-amber-900">
-									Finding your location...
+								<span className="font-medium text-blue-900">
+									Getting your location...
 								</span>
 							</div>
 							<Button
@@ -83,7 +83,7 @@ export function LocationSelector() {
 							<CardContent className="p-4">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center space-x-4">
-										<Cloud className="w-8 h-8 text-stone-300" />
+										<Cloud className="w-8 h-8 text-gray-300" />
 										<div>
 											<p className="text-sm text-muted-foreground">
 												Current Weather
@@ -94,7 +94,7 @@ export function LocationSelector() {
 										</div>
 									</div>
 									<div className="text-right">
-										<p className="text-2xl font-bold text-stone-300">--°</p>
+										<p className="text-2xl font-bold text-gray-300">--°</p>
 										<p className="text-sm text-muted-foreground">Loading...</p>
 									</div>
 								</div>
@@ -106,11 +106,11 @@ export function LocationSelector() {
 			case "fetching_weather":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
-							<Loader2 className="h-5 w-5 text-amber-600 animate-spin" />
+						<div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
 							<div className="flex-1">
-								<span className="font-medium text-amber-900">
-									Checking the forecast...
+								<span className="font-medium text-blue-900">
+									Fetching weather data...
 								</span>
 							</div>
 							<Button
@@ -128,7 +128,7 @@ export function LocationSelector() {
 							<CardContent className="p-4">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center space-x-4">
-										<Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+										<Loader2 className="w-8 h-8 text-primary animate-spin" />
 										<div>
 											<p className="text-sm text-muted-foreground">
 												Current Weather
@@ -139,7 +139,7 @@ export function LocationSelector() {
 										</div>
 									</div>
 									<div className="text-right">
-										<p className="text-2xl font-bold text-stone-300">--°</p>
+										<p className="text-2xl font-bold text-gray-300">--°</p>
 										<p className="text-sm text-muted-foreground">Loading...</p>
 									</div>
 								</div>
@@ -151,14 +151,14 @@ export function LocationSelector() {
 			case "completed":
 				return (
 					<div className="space-y-4">
-						<div className="flex items-center space-x-4 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-							<CheckCircle className="h-5 w-5 text-emerald-600" />
+						<div className="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border border-green-200">
+							<CheckCircle className="h-5 w-5 text-green-600" />
 							<div className="flex-1">
-								<span className="font-medium text-emerald-900">
+								<span className="font-medium text-green-900">
 									{geolocation.placeName}
 								</span>
 								{geolocation.weather && (
-									<p className="text-sm text-emerald-700">
+									<p className="text-sm text-green-700">
 										{formatElevation(
 											geolocation.weather.elevation,
 											geolocation.countryCode || "US",
@@ -185,7 +185,7 @@ export function LocationSelector() {
 								<CardContent className="p-4">
 									<div className="flex items-center justify-between">
 										<div className="flex items-center space-x-4">
-											<Cloud className="w-8 h-8 text-amber-500" />
+											<Cloud className="w-8 h-8 text-primary" />
 											<div>
 												<p className="text-sm text-muted-foreground">
 													Current Weather
