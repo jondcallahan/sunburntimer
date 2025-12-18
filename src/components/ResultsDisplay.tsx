@@ -71,23 +71,23 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 					{/* Main Message */}
 					<div className="flex flex-col items-center gap-3">
 						{isHighRisk ? (
-							<Sun className="w-8 h-8 text-orange-500" />
+							<Sun className="w-8 h-8 text-amber-500" />
 						) : (
-							<CheckCircle className="w-8 h-8 text-green-600" />
+							<CheckCircle className="w-8 h-8 text-emerald-600" />
 						)}
 						<div className="text-center">
 							{burnTime && safeTime && safeTime !== "unlikely" ? (
 								<div>
-									<p className="text-2xl font-bold text-slate-800">
-										Safe for {safeTime}
+									<p className="text-2xl font-bold text-stone-800">
+										You've got {safeTime}
 									</p>
-									<p className="text-slate-600">
+									<p className="text-stone-600">
 										{isHighRisk
-											? `Use sunscreen by ${format(burnTime, "h:mm a")}, sun damage may occur after`
-											: `Until ${format(burnTime, "h:mm a")}`}
+											? `Heads up: apply sunscreen by ${format(burnTime, "h:mm a")}`
+											: `Enjoy the sun until ${format(burnTime, "h:mm a")}`}
 									</p>
 									{environmentalTimes && (
-										<p className="text-sm text-slate-500 mt-2">
+										<p className="text-sm text-stone-500 mt-2">
 											Full shade: {environmentalTimes.shade} • Beach:{" "}
 											{environmentalTimes.sand} • Snow:{" "}
 											{environmentalTimes.snow}
@@ -95,8 +95,8 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 									)}
 								</div>
 							) : (
-								<p className="text-2xl font-bold text-green-600">
-									Sunburn unlikely
+								<p className="text-2xl font-bold text-emerald-600">
+									You're good — sunburn unlikely today
 								</p>
 							)}
 						</div>

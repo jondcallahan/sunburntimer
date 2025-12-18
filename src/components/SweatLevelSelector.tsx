@@ -46,11 +46,11 @@ function SweatLevelOption({
 		// biome-ignore lint/a11y/useSemanticElements: Not going to overwrite the Card component to be a button so solve it with a11y attributes
 		<Card
 			className={`
-        cursor-pointer transition-all duration-200 hover:scale-105 border-2
+        cursor-pointer transition-all duration-150 border-2
         ${
 					selected
-						? "border-primary shadow-lg ring-2 ring-primary/20"
-						: "border-border hover:border-primary/50"
+						? "border-amber-500 bg-amber-50/50 shadow-md"
+						: "border-stone-200 hover:border-amber-300 hover:bg-amber-50/30"
 				}
       `}
 			onClick={() => onSelect(level)}
@@ -71,7 +71,7 @@ function SweatLevelOption({
 						<div
 							className={`
               flex items-center justify-center w-12 h-12 rounded-full
-              ${selected ? "bg-primary" : "bg-muted"}
+              ${selected ? "bg-amber-500" : "bg-stone-100"}
             `}
 						>
 							<div className="flex space-x-0.5">
@@ -82,11 +82,11 @@ function SweatLevelOption({
 										className={`w-3 h-3 ${
 											i < dropletCount
 												? selected
-													? "text-primary-foreground"
-													: "text-primary"
+													? "text-white"
+													: "text-amber-600"
 												: selected
-													? "text-primary-foreground/30"
-													: "text-muted-foreground/30"
+													? "text-white/30"
+													: "text-stone-300"
 										}`}
 									/>
 								))}
@@ -107,8 +107,8 @@ function SweatLevelOption({
 					</div>
 
 					{selected && (
-						<div className="flex items-center justify-center w-6 h-6 bg-primary rounded-full">
-							<Check className="w-4 h-4 text-primary-foreground" />
+						<div className="flex items-center justify-center w-6 h-6 bg-amber-500 rounded-full">
+							<Check className="w-4 h-4 text-white" />
 						</div>
 					)}
 				</div>

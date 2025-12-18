@@ -7,7 +7,8 @@
 			"Bash(rg:*)",
 			"WebFetch(domain:open-meteo.com)",
 			"Bash(bun run:*)",
-			"Bash(bun test:*)"
+			"Bash(bun test:*)",
+			"Bash(git checkout:*)"
 		],
 		"deny": []
 	}

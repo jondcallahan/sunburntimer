@@ -171,9 +171,9 @@ export function SkinTypeSelector() {
 					/>
 				))}
 			</div>
-			<div className="text-center text-sm text-gray-500 mt-2">
-				Swipe to browse skin types
-			</div>
+			<p className="text-center text-sm text-stone-400 mt-2">
+				← Scroll to see all types →
+			</p>
 		</div>
 	);
 }

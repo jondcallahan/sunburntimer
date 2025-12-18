@@ -98,18 +98,17 @@ function App() {
 			<div className="container mx-auto px-4 py-8 max-w-4xl">
 				{/* Header */}
 				<div className="mb-8">
-					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-3" />
-						<h1 className="text-3xl font-bold text-slate-800">
+					<div className="flex items-center mb-3">
+						<Sun className="w-8 h-8 text-amber-500 mr-3" />
+						<h1 className="text-3xl font-bold text-stone-800">
 							Sunburn Calculator
 						</h1>
 					</div>
-					<p className="text-slate-600 mb-1">
-						Estimate time to sunburn by UV index, skin type, and SPF using live
-						weather.
+					<p className="text-stone-600 mb-1">
+						Find out how long you can stay outside before the sun wins.
 					</p>
-					<p className="text-slate-500 text-sm">
-						by <span className="font-medium">SunburnTimer</span>
+					<p className="text-stone-400 text-sm">
+						by <span className="font-medium text-stone-500">SunburnTimer</span>
 					</p>
 				</div>
 
