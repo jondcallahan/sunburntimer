@@ -119,3 +119,50 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Sun presence - radial glow from top-right corner */
+.sun-glow {
+	background:
+		radial-gradient(
+			ellipse 80% 60% at 90% -10%,
+			rgba(251, 191, 36, 0.25) 0%,
+			rgba(251, 191, 36, 0.1) 30%,
+			rgba(255, 237, 213, 0.05) 60%,
+			transparent 80%
+		),
+		linear-gradient(to bottom, rgb(255, 247, 237) 0%, rgb(255, 251, 245) 100%);
+}
+
+/* Directional shadows - light source from top-right */
+.shadow-sun {
+	box-shadow:
+		-2px 3px 8px -2px rgba(0, 0, 0, 0.08),
+		-1px 2px 4px -1px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-sun-lg {
+	box-shadow:
+		-4px 6px 16px -4px rgba(0, 0, 0, 0.1),
+		-2px 3px 6px -2px rgba(0, 0, 0, 0.06);
+}
+
+/* Subtle light ray decoration */
+.sun-rays::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 300px;
+	height: 300px;
+	background: conic-gradient(
+		from 180deg at 100% 0%,
+		transparent 0deg,
+		rgba(251, 191, 36, 0.03) 15deg,
+		transparent 30deg,
+		rgba(251, 191, 36, 0.02) 45deg,
+		transparent 60deg,
+		rgba(251, 191, 36, 0.03) 75deg,
+		transparent 90deg
+	);
+	pointer-events: none;
+}
