@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { SunTimer } from "./components/SunTimer";
 import { RelativeTime } from "./components/RelativeTime";
 import { MathExplanation } from "./components/MathExplanation";
+import { SunPositionCard } from "./components/SunPositionCard";
 
 function App() {
 	const {
@@ -279,6 +280,7 @@ function App() {
 							<BurnChart result={calculation} />
 							<UVChart result={calculation} />
 						</div>
+						<SunPositionCard />
 						<SunTimer result={calculation} />
 					</div>
 				)}
