@@ -1,5 +1,4 @@
 import { useMemo, useState, useEffect, useId } from "react";
-import { motion } from "motion/react";
 import { Sunrise, Sunset, Play, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
@@ -290,31 +289,20 @@ export function SunPositionCard() {
 
 						{/* Sun indicator */}
 						{sunData.isDay && (
-							<motion.g
-								initial={{ opacity: 0, scale: 0 }}
-								animate={{ opacity: 1, scale: 1 }}
-								transition={{ delay: 1, duration: 0.5 }}
-							>
+							<g className="sun-entrance">
 								{/* Outer glow */}
 								<circle cx={sunX} cy={sunY} r="18" fill={`url(#${glowId})`} />
 								{/* Sun circle */}
-								<motion.circle
+								<circle
 									cx={sunX}
 									cy={sunY}
 									r="10"
 									fill="#fbbf24"
 									stroke="#f59e0b"
 									strokeWidth="2"
-									animate={{
-										r: [10, 11, 10],
-									}}
-									transition={{
-										duration: 2,
-										repeat: Number.POSITIVE_INFINITY,
-										ease: "easeInOut",
-									}}
+									className="sun-pulse"
 								/>
-							</motion.g>
+							</g>
 						)}
 					</svg>
 				</div>
