@@ -5,7 +5,7 @@ import { useAppStore } from "../store";
 import { format } from "date-fns";
 
 // Set to true to enable dev controls (play button to animate through day)
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 export function SunPositionCard() {
 	const { geolocation } = useAppStore();
