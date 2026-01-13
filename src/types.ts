@@ -170,6 +170,8 @@ export interface WeatherData {
 	hourly: HourlyWeather[];
 	elevation: number; // meters above sea level
 	aqi?: AQIData;
+	sunrise: string; // ISO8601 datetime
+	sunset: string; // ISO8601 datetime
 }
 
 // Geographic Position

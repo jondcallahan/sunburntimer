@@ -26,7 +26,6 @@ function SkinTypeCard({
 	const labelColor = "text-gray-500";
 
 	return (
-		// biome-ignore lint/a11y/useSemanticElements: Not going to overwrite the Card component to be a button so solve it with a11y attributes
 		<Card
 			ref={cardRef}
 			className={`

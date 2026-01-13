@@ -16,6 +16,10 @@ interface OpenMeteoResponse {
 		uv_index: number[];
 		weather_code: number[];
 	};
+	daily: {
+		sunrise: string[];
+		sunset: string[];
+	};
 }
 
 export async function fetchWeatherData(
@@ -30,6 +34,7 @@ export async function fetchWeatherData(
 		longitude: lon,
 		current: "temperature_2m,uv_index,weather_code",
 		hourly: "temperature_2m,uv_index,weather_code",
+		daily: "sunrise,sunset",
 		temperature_unit: "fahrenheit",
 		wind_speed_unit: "mph",
 		timezone: "auto",
@@ -111,5 +116,7 @@ export async function fetchWeatherData(
 		hourly,
 		elevation: data.elevation,
 		aqi,
-	} as WeatherData;
+		sunrise: data.daily.sunrise[0],
+		sunset: data.daily.sunset[0],
+	};
 }

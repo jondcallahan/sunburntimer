@@ -15,7 +15,6 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 	const config = SPF_CONFIG[level];
 
 	return (
-		// biome-ignore lint/a11y/useSemanticElements: Not going to overwrite the Card component to be a button so solve it with a11y attributes
 		<Card
 			className={`
         cursor-pointer transition-all duration-200 hover:scale-105 border-2

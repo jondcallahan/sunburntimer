@@ -10,6 +10,8 @@ import {
 	TimeScale,
 	Title,
 	Tooltip,
+	type TooltipItem,
+	type ScriptableContext,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { Line } from "react-chartjs-2";
@@ -75,7 +77,7 @@ export function UVChart({ result }: UVChartProps) {
 					label: "UV Index",
 					data: uvData,
 					borderColor: "#f59e0b", // amber-500
-					backgroundColor: (context: any) => {
+					backgroundColor: (context: ScriptableContext<"line">) => {
 						const ctx = context.chart.ctx;
 						const gradient = ctx.createLinearGradient(0, 0, 0, 400);
 
@@ -126,11 +128,11 @@ export function UVChart({ result }: UVChartProps) {
 					cornerRadius: 8,
 					padding: 12,
 					callbacks: {
-						title: (context: any) => {
+						title: (context: TooltipItem<"line">[]) => {
 							const date = new Date(context[0].parsed.x);
 							return format(date, "h:mm a");
 						},
-						label: (context: any) => {
+						label: (context: TooltipItem<"line">) => {
 							const uvIndex = context.parsed.y.toFixed(1);
 							const uvRisk = getUVRiskLevel(context.parsed.y);
 							return [`UV Index: ${uvIndex}`, `Risk Level: ${uvRisk}`];
@@ -205,7 +207,7 @@ export function UVChart({ result }: UVChartProps) {
 					},
 					ticks: {
 						color: "#64748b",
-						callback: (value: any) => value.toString(),
+						callback: (value: string | number) => value.toString(),
 					},
 				},
 			},

@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { SunTimer } from "./components/SunTimer";
 import { RelativeTime } from "./components/RelativeTime";
 import { MathExplanation } from "./components/MathExplanation";
+import { SunPositionCard } from "./components/SunPositionCard";
 
 function App() {
 	const {
@@ -52,14 +53,21 @@ function App() {
 
 	// Auto-calculate when all inputs are ready
 	useEffect(() => {
-		if (isReadyToCalculate && geolocation.weather && geolocation.placeName) {
+		if (
+			isReadyToCalculate &&
+			geolocation.weather &&
+			geolocation.placeName &&
+			skinType &&
+			spfLevel &&
+			sweatLevel
+		) {
 			const input = {
 				weather: geolocation.weather,
 				placeName: geolocation.placeName,
 				currentTime: new Date(),
-				skinType: skinType!,
-				spfLevel: spfLevel!,
-				sweatLevel: sweatLevel!,
+				skinType: skinType,
+				spfLevel: spfLevel,
+				sweatLevel: sweatLevel,
 			};
 
 			const result = findOptimalTimeSlicing(input);
@@ -279,6 +287,7 @@ function App() {
 							<BurnChart result={calculation} />
 							<UVChart result={calculation} />
 						</div>
+						<SunPositionCard />
 						<SunTimer result={calculation} />
 					</div>
 				)}
