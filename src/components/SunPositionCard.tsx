@@ -5,7 +5,7 @@ import { useAppStore } from "../store";
 import { format } from "date-fns";
 
 // Set to true to enable dev controls (play button to animate through day)
-const DEV_MODE = false;
+const DEV_MODE = true;
 
 export function SunPositionCard() {
 	const { geolocation } = useAppStore();
@@ -289,7 +289,10 @@ export function SunPositionCard() {
 
 						{/* Sun indicator */}
 						{sunData.isDay && (
-							<g className="sun-entrance">
+							<g
+								className="sun-entrance"
+								style={{ transformOrigin: `${sunX}px ${sunY}px` }}
+							>
 								{/* Outer glow */}
 								<circle cx={sunX} cy={sunY} r="18" fill={`url(#${glowId})`} />
 								{/* Sun circle */}
