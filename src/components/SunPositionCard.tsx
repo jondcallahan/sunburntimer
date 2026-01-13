@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useId } from "react";
 import { motion } from "motion/react";
 import { Sunrise, Sunset, Play, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -13,6 +13,8 @@ export function SunPositionCard() {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [demoProgress, setDemoProgress] = useState(0.5);
 	const [demoSeason, setDemoSeason] = useState<"current" | "summer" | "winter">("current");
+	const gradientId = useId();
+	const glowId = useId();
 
 	// Animation loop for dev mode - extends past 1.0 to show night
 	useEffect(() => {
@@ -216,7 +218,10 @@ export function SunPositionCard() {
 						height={height}
 						viewBox={`0 0 ${width} ${height}`}
 						className="overflow-visible"
+						role="img"
+						aria-labelledby={`${gradientId}-title`}
 					>
+						<title id={`${gradientId}-title`}>Sun position visualization showing daylight hours</title>
 						{/* Horizon line */}
 						<line
 							x1="10"
@@ -234,7 +239,7 @@ export function SunPositionCard() {
 						<polyline
 							points={daylightPath}
 							fill="none"
-							stroke="url(#sunGradient)"
+							stroke={`url(#${gradientId})`}
 							strokeWidth="4"
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -243,7 +248,7 @@ export function SunPositionCard() {
 						{/* Gradient definition */}
 						<defs>
 							<linearGradient
-								id="sunGradient"
+								id={gradientId}
 								x1="0%"
 								y1="0%"
 								x2="100%"
@@ -253,7 +258,7 @@ export function SunPositionCard() {
 								<stop offset="50%" stopColor="#f59e0b" />
 								<stop offset="100%" stopColor="#ea580c" />
 							</linearGradient>
-							<radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+							<radialGradient id={glowId} cx="50%" cy="50%" r="50%">
 								<stop offset="0%" stopColor="#fbbf24" stopOpacity="1" />
 								<stop offset="70%" stopColor="#f59e0b" stopOpacity="0.6" />
 								<stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
@@ -268,7 +273,7 @@ export function SunPositionCard() {
 								transition={{ delay: 1, duration: 0.5 }}
 							>
 								{/* Outer glow */}
-								<circle cx={sunX} cy={sunY} r="18" fill="url(#sunGlow)" />
+								<circle cx={sunX} cy={sunY} r="18" fill={`url(#${glowId})`} />
 								{/* Sun circle */}
 								<motion.circle
 									cx={sunX}
