@@ -53,14 +53,21 @@ function App() {
 
 	// Auto-calculate when all inputs are ready
 	useEffect(() => {
-		if (isReadyToCalculate && geolocation.weather && geolocation.placeName) {
+		if (
+			isReadyToCalculate &&
+			geolocation.weather &&
+			geolocation.placeName &&
+			skinType &&
+			spfLevel &&
+			sweatLevel
+		) {
 			const input = {
 				weather: geolocation.weather,
 				placeName: geolocation.placeName,
 				currentTime: new Date(),
-				skinType: skinType!,
-				spfLevel: spfLevel!,
-				sweatLevel: sweatLevel!,
+				skinType: skinType,
+				spfLevel: spfLevel,
+				sweatLevel: sweatLevel,
 			};
 
 			const result = findOptimalTimeSlicing(input);

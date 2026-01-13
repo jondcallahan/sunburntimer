@@ -10,6 +10,8 @@ import {
 	Legend,
 	Filler,
 	TimeScale,
+	type TooltipItem,
+	type ScriptableContext,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { format } from "date-fns";
@@ -62,7 +64,7 @@ export function BurnChart({ result }: BurnChartProps) {
 					label: "Cumulative Skin Damage (%)",
 					data: damageData,
 					borderColor: "#f97316", // Orange
-					backgroundColor: (context: any) => {
+					backgroundColor: (context: ScriptableContext<"line">) => {
 						const ctx = context.chart.ctx;
 						const gradient = ctx.createLinearGradient(0, 0, 0, 400);
 						gradient.addColorStop(0, "rgba(249, 115, 22, 0.3)");
@@ -101,11 +103,11 @@ export function BurnChart({ result }: BurnChartProps) {
 					cornerRadius: 8,
 					padding: 12,
 					callbacks: {
-						title: (context: any) => {
+						title: (context: TooltipItem<"line">[]) => {
 							const date = new Date(context[0].parsed.x);
 							return format(date, "h:mm a");
 						},
-						label: (context: any) => {
+						label: (context: TooltipItem<"line">) => {
 							const damage = context.parsed.y.toFixed(1);
 							const startDate = result.startTime
 								? new Date(result.startTime)
@@ -162,7 +164,7 @@ export function BurnChart({ result }: BurnChartProps) {
 						color: "rgba(0, 0, 0, 0.05)",
 					},
 					ticks: {
-						callback: (value: any) => `${value}%`,
+						callback: (value: string | number) => `${value}%`,
 					},
 				},
 			},
