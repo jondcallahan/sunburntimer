@@ -1,4 +1,4 @@
-import { Check, Loader2 } from "lucide-react";
+import { Check, LoaderIcon } from "lucide-react";
 
 interface StepHeaderProps {
 	stepNumber: number;
@@ -30,7 +30,7 @@ export function StepHeader({
 					}`}
 				>
 					{isLoading ? (
-						<Loader2 className="w-5 h-5 animate-spin" />
+						<LoaderIcon className="w-5 h-5 animate-spin" />
 					) : isCompleted ? (
 						<Check className="w-5 h-5" />
 					) : (

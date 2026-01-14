@@ -1,6 +1,6 @@
 import {
 	MapPin,
-	Loader2,
+	LoaderIcon,
 	AlertCircle,
 	CheckCircle,
 	Cloud,
@@ -62,7 +62,7 @@ export function LocationSelector() {
 				return (
 					<div className="space-y-4">
 						<div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+							<LoaderIcon className="h-5 w-5 text-blue-600 animate-spin" />
 							<div className="flex-1">
 								<span className="font-medium text-blue-900">
 									Getting your location...
@@ -107,7 +107,7 @@ export function LocationSelector() {
 				return (
 					<div className="space-y-4">
 						<div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-							<Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+							<LoaderIcon className="h-5 w-5 text-blue-600 animate-spin" />
 							<div className="flex-1">
 								<span className="font-medium text-blue-900">
 									Fetching weather data...
@@ -128,7 +128,7 @@ export function LocationSelector() {
 							<CardContent className="p-4">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center space-x-4">
-										<Loader2 className="w-8 h-8 text-primary animate-spin" />
+										<LoaderIcon className="w-8 h-8 text-primary animate-spin" />
 										<div>
 											<p className="text-sm text-muted-foreground">
 												Current Weather
