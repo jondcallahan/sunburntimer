@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { RefreshCw, Sun } from "lucide-react";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
-import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG, DEFAULT_SWEAT_LEVEL } from "./types";
+import {
+	SPF_CONFIG,
+	SPFLevel,
+	SWEAT_CONFIG,
+	DEFAULT_SWEAT_LEVEL,
+} from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";

@@ -7,7 +7,12 @@ import type {
 	Position,
 	WeatherData,
 } from "./types";
-import { type FitzpatrickType, SPFLevel, type SweatLevel, DEFAULT_SWEAT_LEVEL } from "./types";
+import {
+	type FitzpatrickType,
+	SPFLevel,
+	type SweatLevel,
+	DEFAULT_SWEAT_LEVEL,
+} from "./types";
 
 interface AppStore extends AppState {
 	// Actions
