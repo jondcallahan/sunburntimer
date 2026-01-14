@@ -139,6 +139,8 @@ export const SWEAT_CONFIG: Record<
 	},
 };
 
+export const DEFAULT_SWEAT_LEVEL = SweatLevel.LOW;
+
 // Weather Data
 export interface WeatherOverview {
 	id: number;
