@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { RefreshCw, Sun } from "lucide-react";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
-import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG, SweatLevel } from "./types";
+import { SPF_CONFIG, SPFLevel, SWEAT_CONFIG, DEFAULT_SWEAT_LEVEL } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
@@ -53,7 +53,13 @@ function App() {
 
 	// Auto-calculate when all inputs are ready
 	useEffect(() => {
-		if (!isReadyToCalculate || !geolocation.weather || !geolocation.placeName) {
+		if (
+			!isReadyToCalculate ||
+			!geolocation.weather ||
+			!geolocation.placeName ||
+			!skinType ||
+			!spfLevel
+		) {
 			return;
 		}
 
@@ -61,9 +67,9 @@ function App() {
 			weather: geolocation.weather,
 			placeName: geolocation.placeName,
 			currentTime: new Date(),
-			skinType: skinType!,
-			spfLevel: spfLevel!,
-			sweatLevel: sweatLevel ?? SweatLevel.LOW,
+			skinType,
+			spfLevel,
+			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
 		};
 
 		const result = findOptimalTimeSlicing(input);

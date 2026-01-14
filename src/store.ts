@@ -7,7 +7,7 @@ import type {
 	Position,
 	WeatherData,
 } from "./types";
-import { type FitzpatrickType, SPFLevel, SweatLevel } from "./types";
+import { type FitzpatrickType, SPFLevel, type SweatLevel, DEFAULT_SWEAT_LEVEL } from "./types";
 
 interface AppStore extends AppState {
 	// Actions
@@ -47,7 +47,7 @@ export const useAppStore = create<AppStore>()(
 					// Auto-set sweat level to LOW (no sweating) when SPF is selected and no sweat level is set
 					sweatLevel:
 						spfLevel !== SPFLevel.NONE && !state.sweatLevel
-							? SweatLevel.LOW
+							? DEFAULT_SWEAT_LEVEL
 							: state.sweatLevel,
 				})),
 
