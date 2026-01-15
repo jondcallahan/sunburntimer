@@ -3,12 +3,14 @@ import { Sunrise, Sunset, Play, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
 import { format } from "date-fns";
+import { useCurrentTime } from "../hooks/useCurrentTime";
 
 // Set to true to enable dev controls (play button to animate through day)
 const DEV_MODE = false;
 
 export function SunPositionCard() {
 	const { geolocation } = useAppStore();
+	const currentTime = useCurrentTime();
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [demoProgress, setDemoProgress] = useState(0.5);
 	const [demoSeason, setDemoSeason] = useState<"current" | "summer" | "winter">(
@@ -39,7 +41,7 @@ export function SunPositionCard() {
 		// In dev mode with animation, use demoProgress
 		const now = DEV_MODE
 			? sunriseTime.getTime() + totalDuration * demoProgress
-			: Date.now();
+			: currentTime.getTime();
 
 		// Calculate sun position (0 = sunrise, 1 = sunset)
 		const currentProgress = Math.max(
@@ -94,7 +96,13 @@ export function SunPositionCard() {
 			zenithScale: normalizedElevation,
 			maxElevation: Math.round(maxElevation),
 		};
-	}, [geolocation.weather, geolocation.position, demoProgress, demoSeason]);
+	}, [
+		geolocation.weather,
+		geolocation.position,
+		demoProgress,
+		demoSeason,
+		currentTime,
+	]);
 
 	if (!sunData) {
 		return null;
@@ -329,7 +337,7 @@ export function SunPositionCard() {
 						>
 							{sunData.isDay
 								? `${Math.round(sunData.currentProgress * 100)}% through the day`
-								: `Now ${format(new Date(), "h:mm a")} · Night`}
+								: `Now ${format(currentTime, "h:mm a")} · Night`}
 						</span>
 					</div>
 
