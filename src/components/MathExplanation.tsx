@@ -16,111 +16,110 @@ export function MathExplanation() {
 				<AccordionTrigger className="px-6 py-4 hover:no-underline">
 					<div className="flex items-center gap-2 text-slate-600 hover:text-amber-600 transition-colors">
 						<Calculator className="w-5 h-5" />
-						<span className="font-medium">How does this actually work?</span>
+						<span className="font-medium">How does this work?</span>
 					</div>
 				</AccordionTrigger>
 				<AccordionContent className="px-6 pb-6">
 					<div className="space-y-6 pt-2">
 						<p className="text-slate-600">
-							These numbers are estimates based on how dermatologists measure
-							sunburn risk. Not perfect, but the science is solid. Here's what's
-							happening under the hood:
+							These estimates are based on dermatological research on UV
+							exposure and erythema (skin reddening). Here's how it works:
 						</p>
 
-						{/* UV Index */}
+						{/* 1. UV Index */}
 						<div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
 							<h3 className="font-semibold text-amber-900 flex items-center gap-2 mb-2">
 								<Sun className="w-5 h-5" />
-								UV Index: the number that matters
+								1. UV energy input
 							</h3>
 							<p className="text-sm text-slate-700 mb-2">
-								The UV Index tells you how intense the sun's skin-damaging rays
-								are right now. Higher number = faster burn.
+								The UV Index measures the intensity of skin-damaging radiation.
+								Higher number means faster burn.
 							</p>
 							<div className="bg-white/60 p-3 rounded text-sm font-mono text-slate-600 border border-amber-100/50">
-								1 UV Index = 25 mW/m² of UV energy hitting you
+								1 UVI = 25 mW/m² (milliwatts per square meter)
 							</div>
 							<p className="text-xs text-slate-500 mt-2">
-								We apply a 0.8x adjustment because you're a person standing and
-								moving around, not a flat sensor pointing straight up at the
-								sky.
+								A 0.8× geometry factor is applied because you're a person
+								standing and moving, not a flat sensor pointing at the sky.
 							</p>
 						</div>
 
-						{/* Skin threshold */}
+						{/* 2. Skin threshold */}
 						<div className="bg-stone-50 p-4 rounded-lg border border-stone-100">
 							<h3 className="font-semibold text-stone-900 flex items-center gap-2 mb-2">
 								<User className="w-5 h-5" />
-								Your skin's burn threshold
+								2. Your skin's threshold (MED)
 							</h3>
 							<p className="text-sm text-slate-700 mb-2">
-								Your skin has a "budget" for UV exposure before it burns.
-								Dermatologists call this your MED (Minimal Erythemal Dose)—how
-								much UV energy it takes to turn you pink.
+								Each skin type has a Minimal Erythemal Dose (MED), the UV energy
+								needed to cause visible reddening. Measured in J/m² (joules per
+								square meter).
 							</p>
-							<p className="text-sm text-slate-600 mb-2">
-								This varies a lot by skin type:
-							</p>
-							<ul className="text-sm text-slate-600 space-y-1 ml-2">
-								<li>Type I (very fair): burns after ~200 J/m²</li>
-								<li>Type III (medium): burns after ~350 J/m²</li>
-								<li>Type VI (very dark): burns after ~1000 J/m²</li>
+							<ul className="list-disc list-inside text-sm text-slate-600 space-y-1 ml-2">
+								<li>
+									<span className="font-medium">Type I (very fair):</span> ~200
+									J/m²
+								</li>
+								<li>
+									<span className="font-medium">Type III (medium):</span> ~350
+									J/m²
+								</li>
+								<li>
+									<span className="font-medium">Type VI (very dark):</span>{" "}
+									~1000 J/m²
+								</li>
 							</ul>
 							<p className="text-xs text-slate-500 mt-2">
-								These are averages. Your actual threshold depends on genetics,
-								recent sun exposure, and other factors.
+								These are population averages. Your actual threshold varies with
+								genetics, recent exposure, and other factors.
 							</p>
 						</div>
 
-						{/* Sunscreen */}
+						{/* 3. Sunscreen */}
 						<div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
 							<h3 className="font-semibold text-blue-900 flex items-center gap-2 mb-2">
 								<Shield className="w-5 h-5" />
-								What sunscreen actually does
+								3. SPF as a divisor
 							</h3>
 							<p className="text-sm text-slate-700">
-								SPF is a divider. SPF 30 means only 1/30th of the UV gets
-								through to your skin. Pretty simple.
+								SPF divides the UV reaching your skin. <strong>SPF 30</strong>{" "}
+								means only <strong>1/30th</strong> of the UV energy gets
+								through.
 							</p>
 							<p className="text-xs text-blue-700 mt-2">
-								The catch: real-world sunscreen rarely performs at full
-								strength. You probably didn't apply enough, and it breaks down
-								as you sweat. We model that degradation over time.
+								Real-world sunscreen rarely performs at lab-rated SPF due to
+								application thickness and sweat. We model this degradation over
+								time.
 							</p>
 						</div>
 
-						{/* The math */}
+						{/* 4. The math */}
 						<div className="border-t pt-4">
 							<h3 className="font-semibold text-slate-800 mb-3">
-								Putting it together
+								4. The calculation
 							</h3>
 							<p className="text-sm text-slate-600 mb-3">
-								Think of it like filling a glass. Each minute in the sun adds a
-								little more UV damage, and when you hit 100%, you're burnt.
+								Think of it as filling a bucket. Each minute adds UV damage, and
+								at 100% you're burnt.
 							</p>
 							<div className="bg-slate-900 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-								<div className="mb-2 text-slate-400">
-									Every minute, we calculate:
-								</div>
-								<div>
-									Damage % = (UV energy received / your MED / SPF) × 100
-								</div>
+								<div className="mb-2 text-slate-400">Each minute:</div>
+								<div>Damage % = (UV_Energy_Per_Min / (MED × SPF)) × 100</div>
 							</div>
 							<p className="text-sm text-slate-600 mt-3">
-								We run this calculation minute-by-minute using the hourly UV
-								forecast, smoothing between hours for better accuracy.
+								This runs minute-by-minute using hourly UV forecasts,
+								interpolating between data points.
 							</p>
 							<p className="text-xs text-slate-500 mt-2">
-								At dawn and dusk (UV below 3), we apply extra smoothing since
-								the sun angle makes the standard formula less reliable.
+								For low UV (UVI &lt; 3), a smoothing curve accounts for reduced
+								effective exposure at dawn/dusk sun angles.
 							</p>
 						</div>
 
 						{/* References */}
 						<div className="border-t pt-4">
-							<h3 className="font-semibold text-slate-800 mb-3">
-								Where this comes from
-							</h3>
+							<h3 className="font-semibold text-slate-800 mb-3">References</h3>
 							<ul className="space-y-2 text-sm text-slate-600">
 								<li>
 									<a
@@ -129,7 +128,7 @@ export function MathExplanation() {
 										rel="noopener noreferrer"
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
-										WHO's UV Index definition
+										WHO: UV Index definition
 									</a>
 								</li>
 								<li>
@@ -139,14 +138,16 @@ export function MathExplanation() {
 										rel="noopener noreferrer"
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
-										EPA's sun safety guide
+										EPA: Sun safety guide
 									</a>
 								</li>
 								<li className="text-slate-500">
-									Fitzpatrick (1988) on skin type classification
+									Fitzpatrick, T.B. (1988). "The validity and practicality of
+									sun-reactive skin types I through VI."
 								</li>
 								<li className="text-slate-500">
-									McKinlay & Diffey (1987) on UV erythema response
+									McKinlay, A.F. & Diffey, B.L. (1987). "A reference action
+									spectrum for ultraviolet induced erythema in human skin."
 								</li>
 								<li>
 									<a
@@ -156,8 +157,8 @@ export function MathExplanation() {
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
 										Open-Meteo
-									</a>{" "}
-									for weather data
+									</a>
+									<span className="text-slate-400"> (weather data)</span>
 								</li>
 							</ul>
 						</div>
