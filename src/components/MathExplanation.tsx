@@ -102,7 +102,9 @@ export function MathExplanation() {
 								<div className="mb-2 text-slate-400">
 									Every minute, we calculate:
 								</div>
-								<div>Damage % = (UV energy received / your MED / SPF) × 100</div>
+								<div>
+									Damage % = (UV energy received / your MED / SPF) × 100
+								</div>
 							</div>
 							<p className="text-sm text-slate-600 mt-3">
 								We run this calculation minute-by-minute using the hourly UV
@@ -154,8 +156,8 @@ export function MathExplanation() {
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
 										Open-Meteo
-									</a>
-									{" "}for weather data
+									</a>{" "}
+									for weather data
 								</li>
 							</ul>
 						</div>
