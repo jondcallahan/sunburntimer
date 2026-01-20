@@ -190,14 +190,14 @@ export function LocationSelector() {
 												<p className="text-sm text-muted-foreground">
 													Current Weather
 												</p>
-												<p className="text-sm text-muted-foreground">
+												<p className="text-sm tabular-nums text-muted-foreground">
 													{Math.round(geolocation.weather.current.temp)}°F, UV
 													Index: {geolocation.weather.current.uvi}
 												</p>
 											</div>
 										</div>
 										<div className="text-right">
-											<p className="text-2xl font-bold">
+											<p className="text-2xl font-bold tabular-nums">
 												{Math.round(geolocation.weather.current.temp)}°
 											</p>
 											<p className="text-sm text-muted-foreground capitalize">
