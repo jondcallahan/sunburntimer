@@ -241,12 +241,9 @@ export function SunPositionCard() {
 						)}
 					</div>
 					<span
-						className={`text-sm font-normal transition-colors duration-1000 ${sunData.isDay ? "text-slate-600" : "text-slate-300"}`}
+						className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-600" : "text-slate-300"}`}
 					>
-						<span className="font-mono tabular-nums">
-							{sunData.daylightHours}
-						</span>{" "}
-						of daylight
+						{sunData.daylightHours} of daylight
 					</span>
 				</CardTitle>
 			</CardHeader>
@@ -328,7 +325,7 @@ export function SunPositionCard() {
 							className={`w-4 h-4 transition-colors duration-1000 ${sunData.isDay ? "text-amber-500" : "text-amber-400"}`}
 						/>
 						<span
-							className={`text-sm font-medium tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
+							className={`text-sm font-medium font-mono tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
 						>
 							{format(sunData.sunriseTime, "h:mm a")}
 						</span>
@@ -349,7 +346,7 @@ export function SunPositionCard() {
 							className={`w-4 h-4 transition-colors duration-1000 ${sunData.isDay ? "text-orange-500" : "text-orange-400"}`}
 						/>
 						<span
-							className={`text-sm font-medium tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
+							className={`text-sm font-medium font-mono tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
 						>
 							{format(sunData.sunsetTime, "h:mm a")}
 						</span>
