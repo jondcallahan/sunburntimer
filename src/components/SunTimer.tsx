@@ -206,9 +206,7 @@ export function SunTimer({ result }: SunTimerProps) {
 				<div className="space-y-2">
 					<div className="flex justify-between text-sm">
 						<span className="text-slate-600">Skin Damage</span>
-						<span
-							className={`font-medium font-mono tabular-nums ${riskStatus.textColor}`}
-						>
+						<span className={`font-medium font-mono ${riskStatus.textColor}`}>
 							{timer.accumulatedDamage.toFixed(1)}%
 						</span>
 					</div>
