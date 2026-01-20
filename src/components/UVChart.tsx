@@ -236,13 +236,13 @@ export function UVChart({ result }: UVChartProps) {
 					<div className="flex items-center space-x-4 text-sm">
 						<div className="text-center">
 							<p className="text-xs text-slate-600">Current</p>
-							<p className={`font-bold ${getUVRiskColor(currentUV)}`}>
+							<p className={`font-bold tabular-nums ${getUVRiskColor(currentUV)}`}>
 								{currentUV.toFixed(1)}
 							</p>
 						</div>
 						<div className="text-center">
 							<p className="text-xs text-slate-600">Peak</p>
-							<p className={`font-bold ${getUVRiskColor(maxUV)}`}>
+							<p className={`font-bold tabular-nums ${getUVRiskColor(maxUV)}`}>
 								{maxUV.toFixed(1)}
 							</p>
 						</div>

@@ -192,11 +192,11 @@ export function SunTimer({ result }: SunTimerProps) {
 			<CardContent className="space-y-4">
 				{/* Timer Display */}
 				<div className="text-center">
-					<div className="text-4xl font-mono font-bold text-slate-800 mb-2">
+					<div className="text-4xl font-mono font-bold tabular-nums text-slate-800 mb-2">
 						{formatElapsedTime(timer.elapsedMs)}
 					</div>
 					{timer.startTime && (
-						<p className="text-sm text-slate-600">
+						<p className="text-sm tabular-nums text-slate-600">
 							Started at {format(timer.startTime, "h:mm a")}
 						</p>
 					)}
@@ -206,7 +206,7 @@ export function SunTimer({ result }: SunTimerProps) {
 				<div className="space-y-2">
 					<div className="flex justify-between text-sm">
 						<span className="text-slate-600">Skin Damage</span>
-						<span className={`font-medium ${riskStatus.textColor}`}>
+						<span className={`font-medium tabular-nums ${riskStatus.textColor}`}>
 							{timer.accumulatedDamage.toFixed(1)}%
 						</span>
 					</div>
@@ -215,7 +215,7 @@ export function SunTimer({ result }: SunTimerProps) {
 						className="h-3"
 					/>
 					{burnTime && remainingTime !== null && (
-						<p className="text-xs text-slate-600 text-center">
+						<p className="text-xs tabular-nums text-slate-600 text-center">
 							{remainingTime > 0
 								? `${formatElapsedTime(remainingTime)} until burn threshold`
 								: "Burn threshold reached!"}

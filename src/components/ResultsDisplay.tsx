@@ -78,16 +78,16 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 						<div className="text-center">
 							{burnTime && safeTime && safeTime !== "unlikely" ? (
 								<div>
-									<p className="text-2xl font-bold text-slate-800">
+									<p className="text-2xl font-bold tabular-nums text-slate-800">
 										Safe for {safeTime}
 									</p>
-									<p className="text-slate-600">
+									<p className="text-slate-600 tabular-nums">
 										{isHighRisk
 											? `Use sunscreen by ${format(burnTime, "h:mm a")}, sun damage may occur after`
 											: `Until ${format(burnTime, "h:mm a")}`}
 									</p>
 									{environmentalTimes && (
-										<p className="text-sm text-slate-500 mt-2">
+										<p className="text-sm tabular-nums text-slate-500 mt-2">
 											Full shade: {environmentalTimes.shade} • Beach:{" "}
 											{environmentalTimes.sand} • Snow:{" "}
 											{environmentalTimes.snow}
