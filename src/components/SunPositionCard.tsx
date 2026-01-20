@@ -241,9 +241,12 @@ export function SunPositionCard() {
 						)}
 					</div>
 					<span
-						className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-600" : "text-slate-300"}`}
+						className={`text-sm font-normal transition-colors duration-1000 ${sunData.isDay ? "text-slate-600" : "text-slate-300"}`}
 					>
-						{sunData.daylightHours} of daylight
+						<span className="font-mono tabular-nums">
+							{sunData.daylightHours}
+						</span>{" "}
+						of daylight
 					</span>
 				</CardTitle>
 			</CardHeader>

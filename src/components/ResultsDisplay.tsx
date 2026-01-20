@@ -78,8 +78,9 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 						<div className="text-center">
 							{burnTime && safeTime && safeTime !== "unlikely" ? (
 								<div>
-									<p className="text-2xl font-bold tabular-nums text-slate-800">
-										Safe for {safeTime}
+									<p className="text-2xl font-bold text-slate-800">
+										Safe for{" "}
+										<span className="font-mono tabular-nums">{safeTime}</span>
 									</p>
 									<p className="text-slate-600 tabular-nums">
 										{isHighRisk
