@@ -31,21 +31,25 @@ function getMedInJm2(skinType: FitzpatrickType): number {
 }
 
 // **Effective SPF at time offset (hours since application)
-// Models sunscreen wearing off due to sweat: Starts full strength, then linearly drops to 1 (no protection) over time.**
+// Starts at real-world effective SPF (reduced from label due to typical under-application),
+// then linearly drops to 1 (no protection) over time based on sweat level.
+// Even LOW sweat has baseline degradation from skin oils, rubbing, and UV photodegradation.**
 function spfAtTime(
 	baseSpfValue: number,
 	sweatLevel: SweatLevel,
 	hoursFromStart: number,
 ): number {
-	if (sweatLevel === SweatLevel.LOW || baseSpfValue === 1.0)
-		return baseSpfValue;
+	if (baseSpfValue <= 1.0) return 1.0;
+	// Apply real-world effectiveness: people apply less than lab-tested thickness
+	const effectiveSpf =
+		baseSpfValue * CALCULATION_CONSTANTS.REAL_WORLD_SPF_FACTOR;
 	const sweatConfig = SWEAT_CONFIG[sweatLevel];
-	if (hoursFromStart <= sweatConfig.startHours) return baseSpfValue;
+	if (hoursFromStart <= sweatConfig.startHours) return effectiveSpf;
 	if (hoursFromStart >= sweatConfig.startHours + sweatConfig.durationHours)
 		return 1.0;
 	const decayProgress =
 		(hoursFromStart - sweatConfig.startHours) / sweatConfig.durationHours;
-	const remainingSpfValue = baseSpfValue * (1.0 - decayProgress);
+	const remainingSpfValue = effectiveSpf * (1.0 - decayProgress);
 	return Math.max(1.0, remainingSpfValue);
 }
 
@@ -166,6 +170,16 @@ function generateAdvice(
 	return advice;
 }
 
+// **Altitude UV correction: UV increases ~6-8% per 1000m elevation due to thinner atmosphere.**
+function altitudeUvMultiplier(elevationMeters: number): number {
+	if (elevationMeters <= 0) return 1.0;
+	return (
+		1.0 +
+		(elevationMeters / 1000) *
+			CALCULATION_CONSTANTS.ALTITUDE_UV_INCREASE_PER_1000M
+	);
+}
+
 // **Main calculation function
 // Loops through time slices, adds damage per slice, stops at burn threshold or evening.**
 function calculateBurnTimeWithSlices(
@@ -177,6 +191,7 @@ function calculateBurnTimeWithSlices(
 	const baseSpfValue =
 		SPF_CONFIG[input.spfLevel]?.coefficient ??
 		SPF_CONFIG[SPFLevel.NONE].coefficient;
+	const altMultiplier = altitudeUvMultiplier(input.weather.elevation ?? 0);
 	const startTimestampMs = input.currentTime.getTime();
 	const threshold = CALCULATION_CONSTANTS.DAMAGE_THRESHOLD;
 	const points: CalculationPoint[] = [];
@@ -194,7 +209,7 @@ function calculateBurnTimeWithSlices(
 		const effectiveEndMs = currentSlice.end.getTime();
 		const minutes = (effectiveEndMs - effectiveStartMs) / 60000;
 		if (minutes <= 0) continue;
-		// UV at effective start (if starting mid-slice)
+		// UV at effective start (if starting mid-slice), corrected for altitude
 		const sliceDurationMs =
 			currentSlice.end.getTime() - currentSlice.start.getTime();
 		const startFraction =
@@ -202,9 +217,10 @@ function calculateBurnTimeWithSlices(
 				? (effectiveStartMs - currentSlice.start.getTime()) / sliceDurationMs
 				: 0;
 		const uviAtEffectiveStart =
-			currentSlice.uviStart * (1 - startFraction) +
-			currentSlice.uviEnd * startFraction;
-		const uviAtEnd = currentSlice.uviEnd;
+			(currentSlice.uviStart * (1 - startFraction) +
+				currentSlice.uviEnd * startFraction) *
+			altMultiplier;
+		const uviAtEnd = currentSlice.uviEnd * altMultiplier;
 		// SPF at endpoints (hours since application)
 		const hoursFromStartAtEffective =
 			(effectiveStartMs - startTimestampMs) / 3600000;

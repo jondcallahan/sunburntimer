@@ -124,18 +124,18 @@ export const SWEAT_CONFIG: Record<
 > = {
 	[SweatLevel.LOW]: {
 		label: "None",
-		startHours: 0,
-		durationHours: 0,
+		startHours: 2.0, // Even without sweating, sunscreen degrades from skin oils, rubbing, UV photodegradation
+		durationHours: 16.0, // Slow baseline degradation per AAD/WHO reapplication guidance
 	},
 	[SweatLevel.MEDIUM]: {
 		label: "Some",
-		startHours: 2.0,
-		durationHours: 12.0,
+		startHours: 1.5,
+		durationHours: 8.0,
 	},
 	[SweatLevel.HIGH]: {
 		label: "Profuse",
-		startHours: 1.0,
-		durationHours: 6.0,
+		startHours: 0.5,
+		durationHours: 4.0,
 	},
 };
 
@@ -248,10 +248,16 @@ export const CALCULATION_CONSTANTS = {
 	MEANINGFUL_UV_THRESHOLD: 2.0,
 	HIGH_RISK_TIME_LIMIT_HOURS: 4,
 	EVENING_RISK_CUTOFF_HOUR: 18,
-	// Low UVI soft ramp (smoothstep) to reduce perceived over-estimation at UVI 1–2
+	// Low UVI soft ramp (smoothstep) to reduce perceived over-estimation at dawn/dusk
 	LOW_UV_SMOOTHSTEP_ENABLED: true,
-	LOW_UV_RAMP_LOW: 1.0,
-	LOW_UV_RAMP_HIGH: 3.0,
+	LOW_UV_RAMP_LOW: 0.5,
+	LOW_UV_RAMP_HIGH: 2.0,
+	// Real-world SPF effectiveness: people apply ~0.5-1.5 mg/cm² vs lab-tested 2 mg/cm².
+	// Effective SPF ≈ labeled^(applied/tested) ≈ labeled^0.5–0.75. Using 0.6 as a
+	// conservative real-world multiplier (e.g., SPF 30 behaves like ~SPF 18).
+	REAL_WORLD_SPF_FACTOR: 0.6,
+	// Altitude UV correction: UV increases ~6-8% per 1000m elevation
+	ALTITUDE_UV_INCREASE_PER_1000M: 0.07,
 };
 
 export const TIME_SLICE_OPTIONS = [30, 12, 6, 4];

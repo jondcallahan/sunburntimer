@@ -85,12 +85,13 @@ export function MathExplanation() {
 							<p className="text-sm text-slate-700">
 								SPF divides the UV reaching your skin. <strong>SPF 30</strong>{" "}
 								means only <strong>1/30th</strong> of the UV energy gets
-								through.
+								through in the lab.
 							</p>
 							<p className="text-xs text-blue-700 mt-2">
-								Real-world sunscreen rarely performs at lab-rated SPF due to
-								application thickness and sweat. We model this degradation over
-								time.
+								In practice, people apply less sunscreen than lab conditions
+								(~1 mg/cm² vs 2 mg/cm²), so we reduce effective SPF to ~60%
+								of the label. Sunscreen also degrades over time from sweat,
+								oils, and UV exposure — even without sweating.
 							</p>
 						</div>
 

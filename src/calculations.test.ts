@@ -249,9 +249,9 @@ describe("Sunburn Calculation Algorithm", () => {
 
 			if (noSPFTime !== Infinity && spfTime !== Infinity) {
 				const actualMultiplier = spfTime / noSPFTime;
-				// Should be roughly 15x protection (within reasonable tolerance)
-				expect(actualMultiplier).toBeGreaterThan(8);
-				expect(actualMultiplier).toBeLessThan(25);
+				// Real-world SPF 15 ≈ effective SPF 9 (60% of label), with degradation over time
+				expect(actualMultiplier).toBeGreaterThan(5);
+				expect(actualMultiplier).toBeLessThan(15);
 			} else {
 				// SPF should at least prevent burning when no SPF would cause burning
 				expectRelativeBurnTime(
