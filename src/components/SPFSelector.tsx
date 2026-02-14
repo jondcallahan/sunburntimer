@@ -1,4 +1,5 @@
 import { Check, Sun } from "lucide-react";
+import { haptic } from "ios-haptics";
 import { SPFLevel, SPF_CONFIG } from "../types";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "./ui/card";
@@ -24,7 +25,10 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 						: "border-border hover:border-primary/50"
 				}
       `}
-			onClick={() => onSelect(level)}
+			onClick={() => {
+				haptic();
+				onSelect(level);
+			}}
 			role="button"
 			tabIndex={0}
 			aria-pressed={selected}
@@ -32,6 +36,7 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
+					haptic();
 					onSelect(level);
 				}
 			}}
