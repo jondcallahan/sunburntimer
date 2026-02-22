@@ -22,6 +22,7 @@ interface OpenMeteoGeocodingResponse {
 
 export async function searchLocations(
 	query: string,
+	signal?: AbortSignal,
 ): Promise<GeocodingResult[]> {
 	if (query.length < 2) return [];
 
@@ -31,7 +32,7 @@ export async function searchLocations(
 	url.searchParams.set("language", "en");
 	url.searchParams.set("format", "json");
 
-	const response = await fetch(url);
+	const response = await fetch(url, { signal });
 	if (!response.ok) {
 		throw new Error("Geocoding API error");
 	}

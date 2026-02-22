@@ -15,6 +15,14 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+	const abortRef = useRef<AbortController | null>(null);
+
+	useEffect(() => {
+		return () => {
+			clearTimeout(timerRef.current);
+			abortRef.current?.abort();
+		};
+	}, []);
 
 	const doSearch = useCallback(async (q: string) => {
 		if (q.length < 2) {
@@ -22,16 +30,24 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 			setIsOpen(false);
 			return;
 		}
+
+		abortRef.current?.abort();
+		const controller = new AbortController();
+		abortRef.current = controller;
+
 		setIsSearching(true);
 		try {
-			const res = await searchLocations(q);
+			const res = await searchLocations(q, controller.signal);
 			setResults(res);
 			setIsOpen(res.length > 0);
 			setActiveIndex(-1);
-		} catch {
+		} catch (e) {
+			if (e instanceof Error && e.name === "AbortError") return;
 			setResults([]);
 		} finally {
-			setIsSearching(false);
+			if (!controller.signal.aborted) {
+				setIsSearching(false);
+			}
 		}
 	}, []);
 
@@ -76,10 +92,6 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 		};
 		document.addEventListener("mousedown", handler);
 		return () => document.removeEventListener("mousedown", handler);
-	}, []);
-
-	useEffect(() => {
-		return () => clearTimeout(timerRef.current);
 	}, []);
 
 	const formatResult = (r: GeocodingResult) => {
