@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import type { Position, WeatherData, AQIData } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
@@ -21,6 +22,17 @@ interface OpenMeteoResponse {
 		sunrise: string[];
 		sunset: string[];
 	};
+}
+
+/**
+ * Parse a naive datetime string from Open-Meteo (e.g. "2026-02-22T14:00")
+ * as local time in the given IANA timezone, returning a UTC timestamp (ms).
+ */
+function parseLocationTime(timeStr: string, timezone: string): number {
+	const [datePart, timePart] = timeStr.split("T");
+	const [y, m, d] = datePart.split("-").map(Number);
+	const [h, min] = (timePart ?? "00:00").split(":").map(Number);
+	return new TZDate(y, m - 1, d, h, min, 0, timezone).getTime();
 }
 
 export async function fetchWeatherData(
@@ -62,50 +74,10 @@ export async function fetchWeatherData(
 		throw new Error("Invalid weather data received from API");
 	}
 
-	// Convert Open-Meteo format to our internal format
 	const locationTimezone = data.timezone;
 
-	// Parse a naive datetime string (from Open-Meteo, in location's timezone) to a UTC timestamp.
-	// Open-Meteo returns times like "2026-02-22T14:00" in the location's local time.
-	// We need to interpret these in the location's timezone, not the browser's.
-	const formatter = new Intl.DateTimeFormat("en-US", {
-		timeZone: locationTimezone,
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		second: "2-digit",
-		hour12: false,
-	});
-
-	function parseLocationTime(timeStr: string): number {
-		// Parse as UTC first to get the date/time components
-		const asUtc = new Date(`${timeStr}Z`);
-		// What time would it be in the target timezone if it were this UTC time?
-		// We need the reverse: given local time, find UTC.
-		// Use iterative approach: assume offset, check, adjust.
-		// Simple method: get offset at a rough estimate, then refine once.
-		const roughUtc = asUtc.getTime(); // treat the local time as UTC
-		const testDate = new Date(roughUtc);
-		const parts = formatter.formatToParts(testDate);
-		const get = (type: string) =>
-			Number.parseInt(parts.find((p) => p.type === type)?.value || "0", 10);
-		const localAtRoughUtc = Date.UTC(
-			get("year"),
-			get("month") - 1,
-			get("day"),
-			get("hour"),
-			get("minute"),
-			get("second"),
-		);
-		const offset = localAtRoughUtc - roughUtc;
-		// The actual UTC time = local time - offset
-		return roughUtc - offset;
-	}
-
 	const current = {
-		dt: Math.floor(parseLocationTime(data.current.time) / 1000),
+		dt: Math.floor(parseLocationTime(data.current.time, locationTimezone) / 1000),
 		temp: data.current.temperature_2m,
 		uvi: data.current.uv_index,
 		weather: [
@@ -126,7 +98,7 @@ export async function fetchWeatherData(
 	const maxHours = hourlyData.time.length;
 
 	const hourly = Array.from({ length: maxHours }, (_, i) => ({
-		dt: Math.floor(parseLocationTime(hourlyData.time[i]) / 1000),
+		dt: Math.floor(parseLocationTime(hourlyData.time[i], locationTimezone) / 1000),
 		temp: hourlyData.temperature_2m[i],
 		uvi: hourlyData.uv_index[i],
 		weather: [
@@ -158,8 +130,8 @@ export async function fetchWeatherData(
 		hourly,
 		elevation: data.elevation,
 		aqi,
-		sunrise: new Date(parseLocationTime(data.daily.sunrise[0])).toISOString(),
-		sunset: new Date(parseLocationTime(data.daily.sunset[0])).toISOString(),
+		sunrise: new Date(parseLocationTime(data.daily.sunrise[0], locationTimezone)).toISOString(),
+		sunset: new Date(parseLocationTime(data.daily.sunset[0], locationTimezone)).toISOString(),
 		timezone: locationTimezone,
 	};
 }
