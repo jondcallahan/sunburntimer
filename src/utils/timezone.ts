@@ -1,4 +1,5 @@
 import { TZDate } from "@date-fns/tz";
+import { format } from "date-fns";
 
 /**
  * Convert a Date to a TZDate in the given timezone.
@@ -11,26 +12,14 @@ export function toTZDate(date: Date, timezone?: string): Date {
 }
 
 /**
- * Format a Date object in a specific IANA timezone using Intl.DateTimeFormat.
- * Supports format tokens: "h:mm a" (e.g. "2:30 PM")
+ * Format a Date in a specific IANA timezone using any date-fns format string.
  */
 export function formatInTimeZone(
 	date: Date,
 	timezone: string,
-	_formatStr: string,
+	formatStr: string,
 ): string {
-	const parts = new Intl.DateTimeFormat("en-US", {
-		timeZone: timezone,
-		hour: "numeric",
-		minute: "2-digit",
-		hour12: true,
-	}).formatToParts(date);
-
-	const hour12 = parts.find((p) => p.type === "hour")?.value || "12";
-	const minute = parts.find((p) => p.type === "minute")?.value || "00";
-	const dayPeriod = parts.find((p) => p.type === "dayPeriod")?.value || "AM";
-
-	return `${hour12}:${minute} ${dayPeriod}`;
+	return format(toTZDate(date, timezone), formatStr);
 }
 
 /**
