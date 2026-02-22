@@ -127,29 +127,26 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 			</div>
 
 			{isOpen && (
-				<ul
+				<div
 					role="listbox"
 					className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-md shadow-md overflow-hidden"
 				>
 					{results.map((r, i) => (
-						<li
+						<div
 							key={r.id}
 							role="option"
 							id={`result-${r.id}`}
 							aria-selected={i === activeIndex}
+							tabIndex={-1}
+							className={`w-full text-left px-3 py-2 text-sm hover:bg-accent cursor-pointer ${
+								i === activeIndex ? "bg-accent" : ""
+							}`}
+							onMouseDown={() => handleSelect(r)}
 						>
-							<button
-								type="button"
-								className={`w-full text-left px-3 py-2 text-sm hover:bg-accent cursor-pointer ${
-									i === activeIndex ? "bg-accent" : ""
-								}`}
-								onMouseDown={() => handleSelect(r)}
-							>
-								{formatResult(r)}
-							</button>
-						</li>
+							{formatResult(r)}
+						</div>
 					))}
-				</ul>
+				</div>
 			)}
 		</div>
 	);
