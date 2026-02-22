@@ -113,6 +113,13 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 					disabled={disabled}
 					placeholder="Search for a city..."
 					className="w-full pl-9 pr-8 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+					role="combobox"
+					aria-expanded={isOpen}
+					aria-haspopup="listbox"
+					aria-activedescendant={
+						activeIndex >= 0 ? `result-${results[activeIndex]?.id}` : undefined
+					}
+					aria-label="Search for a city"
 				/>
 				{isSearching && (
 					<LoaderIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
@@ -120,9 +127,17 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 			</div>
 
 			{isOpen && (
-				<ul className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-md shadow-md overflow-hidden">
+				<ul
+					role="listbox"
+					className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-md shadow-md overflow-hidden"
+				>
 					{results.map((r, i) => (
-						<li key={r.id}>
+						<li
+							key={r.id}
+							role="option"
+							id={`result-${r.id}`}
+							aria-selected={i === activeIndex}
+						>
 							<button
 								type="button"
 								className={`w-full text-left px-3 py-2 text-sm hover:bg-accent cursor-pointer ${
