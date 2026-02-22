@@ -112,7 +112,7 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 					onKeyDown={handleKeyDown}
 					disabled={disabled}
 					placeholder="Search for a city..."
-					className="w-full pl-9 pr-8 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+					className="w-full pl-9 pr-8 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 text-base"
 					role="combobox"
 					aria-expanded={isOpen}
 					aria-haspopup="listbox"
