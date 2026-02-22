@@ -43,20 +43,6 @@ export function SunPositionCard() {
 		const sunsetTime = new Date(sunset);
 		const totalDuration = sunsetTime.getTime() - sunriseTime.getTime();
 
-		// In dev mode with animation, use demoProgress
-		const now = DEV_MODE
-			? sunriseTime.getTime() + totalDuration * demoProgress
-			: currentTime.getTime();
-
-		// Calculate sun position (0 = sunrise, 1 = sunset)
-		const currentProgress = Math.max(
-			0,
-			Math.min(1, (now - sunriseTime.getTime()) / totalDuration),
-		);
-
-		// Determine if it's day or night
-		const isDay = now >= sunriseTime.getTime() && now <= sunsetTime.getTime();
-
 		// Calculate daylight hours
 		const daylightHours = totalDuration / (1000 * 60 * 60);
 		const hours = Math.floor(daylightHours);
@@ -95,22 +81,46 @@ export function SunPositionCard() {
 		return {
 			sunriseTime,
 			sunsetTime,
-			currentProgress,
-			isDay,
+			totalDuration,
 			daylightHours: `${hours}h ${minutes}m`,
 			zenithScale: normalizedElevation,
 			maxElevation: Math.round(maxElevation),
 			timezone: tz,
+			sunriseHour: getFractionalHoursInTimezone(sunriseTime, tz),
+			sunsetHour: getFractionalHoursInTimezone(sunsetTime, tz),
 		};
-	}, [
-		geolocation.weather,
-		geolocation.position,
-		demoProgress,
-		demoSeason,
-		currentTime,
-	]);
+	}, [geolocation.weather, geolocation.position, demoSeason]);
 
-	if (!sunData) {
+	const currentSunData = useMemo(() => {
+		if (!sunData) return null;
+
+		// In dev mode with animation, use demoProgress
+		const now = DEV_MODE
+			? sunData.sunriseTime.getTime() + sunData.totalDuration * demoProgress
+			: currentTime.getTime();
+
+		// Calculate sun position (0 = sunrise, 1 = sunset)
+		const currentProgress = Math.max(
+			0,
+			Math.min(
+				1,
+				(now - sunData.sunriseTime.getTime()) / sunData.totalDuration,
+			),
+		);
+
+		// Determine if it's day or night
+		const isDay =
+			now >= sunData.sunriseTime.getTime() &&
+			now <= sunData.sunsetTime.getTime();
+
+		return {
+			...sunData,
+			currentProgress,
+			isDay,
+		};
+	}, [sunData, currentTime, demoProgress]);
+
+	if (!currentSunData) {
 		return null;
 	}
 
@@ -121,30 +131,23 @@ export function SunPositionCard() {
 	const centerY = height - 10; // horizon line near bottom
 	const startX = 25; // sunrise position
 	const endX = width - 25; // sunset position
-	const peakHeight = Math.round(30 + 45 * sunData.zenithScale); // arc peak scales with zenith
+	const peakHeight = Math.round(30 + 45 * currentSunData.zenithScale); // arc peak scales with zenith
 
-	const sunriseHour = getFractionalHoursInTimezone(
-		sunData.sunriseTime,
-		sunData.timezone,
-	);
-	const sunsetHour = getFractionalHoursInTimezone(
-		sunData.sunsetTime,
-		sunData.timezone,
-	);
+	const { sunriseHour, sunsetHour } = currentSunData;
 
 	// Current hour for sun position
 	let currentHour: number;
-	if (sunData.isDay) {
+	if (currentSunData.isDay) {
 		currentHour =
-			sunriseHour + sunData.currentProgress * (sunsetHour - sunriseHour);
+			sunriseHour + currentSunData.currentProgress * (sunsetHour - sunriseHour);
 	} else {
 		// At night, extrapolate based on progress
-		if (sunData.currentProgress < 0) {
-			currentHour = sunriseHour + sunData.currentProgress * sunriseHour;
+		if (currentSunData.currentProgress < 0) {
+			currentHour = sunriseHour + currentSunData.currentProgress * sunriseHour;
 		} else {
 			currentHour =
 				sunsetHour +
-				(sunData.currentProgress - 1) * (24 - sunsetHour + sunriseHour);
+				(currentSunData.currentProgress - 1) * (24 - sunsetHour + sunriseHour);
 		}
 	}
 
@@ -180,11 +183,11 @@ export function SunPositionCard() {
 
 	// Dynamic background gradient based on time of day
 	const getBackgroundClass = () => {
-		if (!sunData.isDay) {
+		if (!currentSunData.isDay) {
 			// Night - dark blue/purple
 			return "bg-gradient-to-br from-slate-800 to-indigo-900";
 		}
-		const progress = sunData.currentProgress;
+		const progress = currentSunData.currentProgress;
 		if (progress < 0.15) {
 			// Dawn - pink/orange
 			return "bg-gradient-to-br from-rose-100 to-orange-100";
@@ -211,7 +214,7 @@ export function SunPositionCard() {
 		>
 			<CardHeader className="pb-2">
 				<CardTitle
-					className={`flex items-center justify-between transition-colors duration-1000 ${sunData.isDay ? "text-slate-800" : "text-slate-100"}`}
+					className={`flex items-center justify-between transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-800" : "text-slate-100"}`}
 				>
 					<div className="flex items-center gap-2">
 						<span className="text-base font-semibold">Sun Position</span>
@@ -220,7 +223,7 @@ export function SunPositionCard() {
 								<button
 									type="button"
 									onClick={() => setIsPlaying(!isPlaying)}
-									className={`p-1 rounded-full transition-colors ${sunData.isDay ? "hover:bg-black/10" : "hover:bg-white/20"}`}
+									className={`p-1 rounded-full transition-colors ${currentSunData.isDay ? "hover:bg-black/10" : "hover:bg-white/20"}`}
 									title={isPlaying ? "Pause animation" : "Play day cycle"}
 								>
 									{isPlaying ? (
@@ -237,7 +240,7 @@ export function SunPositionCard() {
 										)
 									}
 									className={`text-xs px-1.5 py-0.5 rounded border transition-colors ${
-										sunData.isDay
+										currentSunData.isDay
 											? "bg-white/50 border-slate-300 text-slate-700"
 											: "bg-white/10 border-slate-500 text-slate-200"
 									}`}
@@ -251,9 +254,9 @@ export function SunPositionCard() {
 						)}
 					</div>
 					<span
-						className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-600" : "text-slate-300"}`}
+						className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
 					>
-						{sunData.daylightHours} of daylight
+						{currentSunData.daylightHours} of daylight
 					</span>
 				</CardTitle>
 			</CardHeader>
@@ -276,7 +279,7 @@ export function SunPositionCard() {
 							y1={centerY}
 							x2={width - 10}
 							y2={centerY}
-							stroke={sunData.isDay ? "#d1d5db" : "#475569"}
+							stroke={currentSunData.isDay ? "#d1d5db" : "#475569"}
 							strokeWidth="1"
 							strokeDasharray="4 2"
 						/>
@@ -306,7 +309,7 @@ export function SunPositionCard() {
 						</defs>
 
 						{/* Sun indicator */}
-						{sunData.isDay && (
+						{currentSunData.isDay && (
 							<g
 								className="sun-entrance"
 								style={{ transformOrigin: `${sunX}px ${sunY}px` }}
@@ -332,14 +335,14 @@ export function SunPositionCard() {
 				<div className="flex justify-between items-center mt-2 px-2">
 					<div className="flex items-center gap-1.5">
 						<Sunrise
-							className={`w-4 h-4 transition-colors duration-1000 ${sunData.isDay ? "text-amber-500" : "text-amber-400"}`}
+							className={`w-4 h-4 transition-colors duration-1000 ${currentSunData.isDay ? "text-amber-500" : "text-amber-400"}`}
 						/>
 						<span
-							className={`text-sm font-medium font-mono transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
+							className={`text-sm font-medium font-mono transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-700" : "text-slate-200"}`}
 						>
 							{formatInTimeZone(
-								sunData.sunriseTime,
-								sunData.timezone,
+								currentSunData.sunriseTime,
+								currentSunData.timezone,
 								"h:mm a",
 							)}
 						</span>
@@ -347,22 +350,26 @@ export function SunPositionCard() {
 
 					<div className="text-center">
 						<span
-							className={`text-xs tabular-nums transition-colors duration-1000 ${sunData.isDay ? "text-slate-500" : "text-slate-300"}`}
+							className={`text-xs tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-300"}`}
 						>
-							{sunData.isDay
-								? `${Math.round(sunData.currentProgress * 100)}% through the day`
-								: `Now ${formatInTimeZone(currentTime, sunData.timezone, "h:mm a")} · Night`}
+							{currentSunData.isDay
+								? `${Math.round(currentSunData.currentProgress * 100)}% through the day`
+								: `Now ${formatInTimeZone(currentTime, currentSunData.timezone, "h:mm a")} · Night`}
 						</span>
 					</div>
 
 					<div className="flex items-center gap-1.5">
 						<Sunset
-							className={`w-4 h-4 transition-colors duration-1000 ${sunData.isDay ? "text-orange-500" : "text-orange-400"}`}
+							className={`w-4 h-4 transition-colors duration-1000 ${currentSunData.isDay ? "text-orange-500" : "text-orange-400"}`}
 						/>
 						<span
-							className={`text-sm font-medium font-mono transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
+							className={`text-sm font-medium font-mono transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-700" : "text-slate-200"}`}
 						>
-							{formatInTimeZone(sunData.sunsetTime, sunData.timezone, "h:mm a")}
+							{formatInTimeZone(
+								currentSunData.sunsetTime,
+								currentSunData.timezone,
+								"h:mm a",
+							)}
 						</span>
 					</div>
 				</div>
