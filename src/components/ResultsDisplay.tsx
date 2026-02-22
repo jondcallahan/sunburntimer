@@ -4,13 +4,15 @@ import { format } from "date-fns";
 import { Card, CardContent } from "./ui/card";
 import type { CalculationResult } from "../types";
 import { CALCULATION_CONSTANTS } from "../types";
+import { getHoursInTimezone } from "../utils/timezone";
 import { formatDuration, calculateEnvironmentalTimes } from "../lib/utils";
 
 interface ResultsDisplayProps {
 	result: CalculationResult;
+	timezone?: string;
 }
 
-export function ResultsDisplay({ result }: ResultsDisplayProps) {
+export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 	const { burnTime, startTime, points, advice } = result;
 
 	const finalDamage = useMemo(() => {
@@ -56,13 +58,18 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 				: false;
 
 		// Check if burn occurs during high UV hours (before 6 PM)
+		const burnHour = burnTime
+			? timezone
+				? getHoursInTimezone(burnTime, timezone)
+				: burnTime.getHours()
+			: 0;
 		const isHighUVPeriod = burnTime
-			? burnTime.getHours() < CALCULATION_CONSTANTS.EVENING_RISK_CUTOFF_HOUR
+			? burnHour < CALCULATION_CONSTANTS.EVENING_RISK_CUTOFF_HOUR
 			: true;
 
 		// High risk only if all conditions are met
 		return isDamageHigh && isQuickBurn && isHighUVPeriod;
-	}, [finalDamage, safeTime, burnTime, startTime]);
+	}, [finalDamage, safeTime, burnTime, startTime, timezone]);
 
 	return (
 		<Card>

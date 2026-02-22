@@ -291,7 +291,10 @@ function App() {
 							</div>
 						</div>
 
-						<ResultsDisplay result={calculation} />
+						<ResultsDisplay
+							result={calculation}
+							timezone={geolocation.weather?.timezone}
+						/>
 						<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 							<BurnChart result={calculation} />
 							<UVChart result={calculation} />

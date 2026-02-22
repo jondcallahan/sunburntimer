@@ -174,6 +174,7 @@ export interface WeatherData {
 	aqi?: AQIData;
 	sunrise: string; // ISO8601 datetime
 	sunset: string; // ISO8601 datetime
+	timezone: string; // IANA timezone string (e.g. "America/Denver")
 }
 
 // Geographic Position

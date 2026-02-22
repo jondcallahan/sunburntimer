@@ -14,6 +14,8 @@ import {
 	formatElevation,
 } from "../services/geolocation";
 import { fetchWeatherData } from "../services/weather";
+import { LocationSearch } from "./LocationSearch";
+import type { GeocodingResult } from "../services/geocoding";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "./ui/alert";
@@ -26,6 +28,29 @@ export function LocationSelector() {
 		setWeather,
 		setGeolocationError,
 	} = useAppStore();
+
+	const handleSearchSelect = async (result: GeocodingResult) => {
+		try {
+			haptic();
+			const position = {
+				latitude: result.latitude,
+				longitude: result.longitude,
+			};
+			const placeName = result.admin1
+				? `${result.name}, ${result.admin1}`
+				: result.name;
+			setPosition(position, placeName, result.countryCode);
+
+			setGeolocationStatus("fetching_weather");
+			const weather = await fetchWeatherData(position);
+			setWeather(weather);
+			haptic.confirm();
+		} catch (error) {
+			setGeolocationError(
+				error instanceof Error ? error.message : "Failed to fetch weather",
+			);
+		}
+	};
 
 	const handleCurrentLocation = async () => {
 		try {
@@ -249,6 +274,14 @@ export function LocationSelector() {
 					<MapPin className="w-5 h-5 mr-2" />
 					Use Current Location
 				</Button>
+
+				<div className="flex items-center gap-3">
+					<div className="flex-1 border-t border-border" />
+					<span className="text-xs text-muted-foreground">or</span>
+					<div className="flex-1 border-t border-border" />
+				</div>
+
+				<LocationSearch onSelect={handleSearchSelect} disabled={isLoading} />
 			</div>
 
 			{renderStatus()}

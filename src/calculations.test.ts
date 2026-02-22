@@ -39,6 +39,9 @@ function createMockWeatherData(
 			pop: 0,
 		})),
 		elevation: 0,
+		sunrise: new Date(timestamp * 1000).toISOString(),
+		sunset: new Date((timestamp + 12 * 3600) * 1000).toISOString(),
+		timezone: "America/Denver",
 	};
 }
 

@@ -2,7 +2,10 @@ import { useMemo, useState, useEffect, useId } from "react";
 import { Sunrise, Sunset, Play, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
-import { format } from "date-fns";
+import {
+	formatInTimeZone,
+	getFractionalHoursInTimezone,
+} from "../utils/timezone";
 import { useCurrentTime } from "../hooks/useCurrentTime";
 
 // Set to true to enable dev controls (play button to animate through day)
@@ -32,6 +35,8 @@ export function SunPositionCard() {
 		if (!geolocation.weather || !geolocation.position) {
 			return null;
 		}
+
+		const tz = geolocation.weather.timezone;
 
 		const { sunrise, sunset } = geolocation.weather;
 		const sunriseTime = new Date(sunrise);
@@ -95,6 +100,7 @@ export function SunPositionCard() {
 			daylightHours: `${hours}h ${minutes}m`,
 			zenithScale: normalizedElevation,
 			maxElevation: Math.round(maxElevation),
+			timezone: tz,
 		};
 	}, [
 		geolocation.weather,
@@ -117,10 +123,14 @@ export function SunPositionCard() {
 	const endX = width - 25; // sunset position
 	const peakHeight = Math.round(30 + 45 * sunData.zenithScale); // arc peak scales with zenith
 
-	const sunriseHour =
-		sunData.sunriseTime.getHours() + sunData.sunriseTime.getMinutes() / 60;
-	const sunsetHour =
-		sunData.sunsetTime.getHours() + sunData.sunsetTime.getMinutes() / 60;
+	const sunriseHour = getFractionalHoursInTimezone(
+		sunData.sunriseTime,
+		sunData.timezone,
+	);
+	const sunsetHour = getFractionalHoursInTimezone(
+		sunData.sunsetTime,
+		sunData.timezone,
+	);
 
 	// Current hour for sun position
 	let currentHour: number;
@@ -327,7 +337,11 @@ export function SunPositionCard() {
 						<span
 							className={`text-sm font-medium font-mono transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
 						>
-							{format(sunData.sunriseTime, "h:mm a")}
+							{formatInTimeZone(
+								sunData.sunriseTime,
+								sunData.timezone,
+								"h:mm a",
+							)}
 						</span>
 					</div>
 
@@ -337,7 +351,7 @@ export function SunPositionCard() {
 						>
 							{sunData.isDay
 								? `${Math.round(sunData.currentProgress * 100)}% through the day`
-								: `Now ${format(currentTime, "h:mm a")} · Night`}
+								: `Now ${formatInTimeZone(currentTime, sunData.timezone, "h:mm a")} · Night`}
 						</span>
 					</div>
 
@@ -348,7 +362,7 @@ export function SunPositionCard() {
 						<span
 							className={`text-sm font-medium font-mono transition-colors duration-1000 ${sunData.isDay ? "text-slate-700" : "text-slate-200"}`}
 						>
-							{format(sunData.sunsetTime, "h:mm a")}
+							{formatInTimeZone(sunData.sunsetTime, sunData.timezone, "h:mm a")}
 						</span>
 					</div>
 				</div>

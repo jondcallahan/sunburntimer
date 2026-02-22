@@ -14,6 +14,7 @@ import {
 	SPF_CONFIG,
 	SWEAT_CONFIG,
 } from "./types";
+import { getHoursInTimezone } from "./utils/timezone";
 
 // **** Physics-grounded damage model ****
 // UVI = 40 * E_ery(W/m²) -> dose per minute = 1.5 * UVI (J/m²)
@@ -113,11 +114,12 @@ function shouldStopCalculation(
 	totalDamage: number,
 	currentTime: Date,
 	pointCount: number,
+	timezone: string,
 ): boolean {
 	if (totalDamage >= CALCULATION_CONSTANTS.DAMAGE_THRESHOLD) {
 		return true;
 	}
-	const hour = currentTime.getHours();
+	const hour = getHoursInTimezone(currentTime, timezone);
 	if (
 		pointCount > CALCULATION_CONSTANTS.MIN_POINTS_FOR_EVENING_STOP &&
 		hour >= CALCULATION_CONSTANTS.EVENING_CUTOFF_HOUR
@@ -256,7 +258,12 @@ function calculateBurnTimeWithSlices(
 		pointCount++;
 		if (
 			burnTime ||
-			shouldStopCalculation(totalDamage, displayTimeSlice.datetime, pointCount)
+			shouldStopCalculation(
+				totalDamage,
+				displayTimeSlice.datetime,
+				pointCount,
+				input.weather.timezone,
+			)
 		) {
 			break;
 		}
