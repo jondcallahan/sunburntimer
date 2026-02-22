@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import "chartjs-adapter-date-fns";
 import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { shiftToLocalTimezone } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -33,21 +34,33 @@ ChartJS.register(
 
 interface BurnChartProps {
 	result: CalculationResult;
+	timezone?: string;
 }
 
-export function BurnChart({ result }: BurnChartProps) {
-	const chartData = useMemo(() => {
-		// Filter points to stop at midnight (next day)
-		const startDate = result.startTime
-			? new Date(result.startTime)
-			: new Date();
-		const cutoffTime = new Date(startDate);
-		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
+export function BurnChart({ result, timezone }: BurnChartProps) {
+	const filteredPoints = useMemo(() => {
+		const shiftedPoints = result.points.map((p) => ({
+			...p,
+			slice: {
+				...p.slice,
+				datetime: shiftToLocalTimezone(p.slice.datetime, timezone),
+			},
+		}));
 
-		const filteredPoints = result.points.filter(
-			(point) => point.slice.datetime <= cutoffTime,
+		const shiftedStartTime = shiftToLocalTimezone(
+			result.startTime ? new Date(result.startTime) : new Date(),
+			timezone
 		);
 
+		const cutoffTime = new Date(shiftedStartTime);
+		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day logically in target timezone
+
+		return shiftedPoints.filter(
+			(point) => point.slice.datetime <= cutoffTime,
+		);
+	}, [result.points, result.startTime, timezone]);
+
+	const chartData = useMemo(() => {
 		const times = filteredPoints.map((point) => point.slice.datetime);
 		const damageData = filteredPoints.map((_, i) => {
 			// Calculate cumulative damage up to this point
@@ -82,7 +95,7 @@ export function BurnChart({ result }: BurnChartProps) {
 				},
 			],
 		};
-	}, [result.points, result.startTime]);
+	}, [filteredPoints]);
 
 	const options = useMemo(
 		() => ({
@@ -109,15 +122,6 @@ export function BurnChart({ result }: BurnChartProps) {
 						},
 						label: (context: TooltipItem<"line">) => {
 							const damage = context.parsed.y.toFixed(1);
-							const startDate = result.startTime
-								? new Date(result.startTime)
-								: new Date();
-							const cutoffTime = new Date(startDate);
-							cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
-
-							const filteredPoints = result.points.filter(
-								(point) => point.slice.datetime <= cutoffTime,
-							);
 							const point = filteredPoints[context.dataIndex];
 							return [
 								`Damage: ${damage}%`,
@@ -174,27 +178,17 @@ export function BurnChart({ result }: BurnChartProps) {
 				},
 			},
 		}),
-		[result.points, result.startTime],
+		[filteredPoints],
 	);
 
 	const burnTimeReached = useMemo(() => {
-		const startDate = result.startTime
-			? new Date(result.startTime)
-			: new Date();
-		const cutoffTime = new Date(startDate);
-		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
-
-		const filteredPoints = result.points.filter(
-			(point) => point.slice.datetime <= cutoffTime,
-		);
-
 		return filteredPoints.some((_, i) => {
 			const cumulativeDamage = filteredPoints
 				.slice(0, i + 1)
 				.reduce((sum, point) => sum + point.burnCost, 0);
 			return cumulativeDamage >= 100;
 		});
-	}, [result.points, result.startTime]);
+	}, [filteredPoints]);
 
 	return (
 		<Card>

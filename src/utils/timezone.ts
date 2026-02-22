@@ -58,3 +58,14 @@ export function getFractionalHoursInTimezone(
 	);
 	return hour + minute / 60;
 }
+
+/**
+ * Shift a Date object so that its local time representation matches
+ * the target timezone's wall-clock time. Useful for charting libraries
+ * that only understand local time.
+ */
+export function shiftToLocalTimezone(date: Date, timezone?: string): Date {
+	if (!timezone) return date;
+	const tzString = date.toLocaleString("en-US", { timeZone: timezone });
+	return new Date(tzString);
+}

@@ -21,6 +21,7 @@ import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
 import { getUVIndexColor } from "../lib/utils";
+import { shiftToLocalTimezone } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -37,9 +38,10 @@ ChartJS.register(
 
 interface UVChartProps {
 	result: CalculationResult;
+	timezone?: string;
 }
 
-export function UVChart({ result }: UVChartProps) {
+export function UVChart({ result, timezone }: UVChartProps) {
 	const { geolocation } = useAppStore();
 
 	// Calculate UV statistics from weather data or fallback to calculation points
@@ -62,11 +64,11 @@ export function UVChart({ result }: UVChartProps) {
 
 		if (!weatherData) {
 			// Fallback to calculation points if no weather data
-			times = result.points.map((point) => point.slice.datetime);
+			times = result.points.map((point) => shiftToLocalTimezone(point.slice.datetime, timezone));
 			uvData = result.points.map((point) => point.slice.uvIndex);
 		} else {
 			// Show UV data for the next 3 days (up to 72 hours)
-			times = weatherData.hourly.map((hour) => new Date(hour.dt * 1000));
+			times = weatherData.hourly.map((hour) => shiftToLocalTimezone(new Date(hour.dt * 1000), timezone));
 			uvData = weatherData.hourly.map((hour) => hour.uvi);
 		}
 
@@ -99,7 +101,7 @@ export function UVChart({ result }: UVChartProps) {
 				},
 			],
 		};
-	}, [result.points, weatherData?.hourly.map, weatherData]);
+	}, [result.points, weatherData?.hourly.map, weatherData, timezone]);
 
 	const getUVRiskLevel = useCallback((uvIndex: number): string => {
 		if (uvIndex < 3) return "Low";
@@ -143,8 +145,8 @@ export function UVChart({ result }: UVChartProps) {
 					annotations: {
 						currentTime: {
 							type: "line" as const,
-							xMin: Date.now(),
-							xMax: Date.now(),
+							xMin: shiftToLocalTimezone(new Date(), timezone).getTime(),
+							xMax: shiftToLocalTimezone(new Date(), timezone).getTime(),
 							borderColor: "#dc2626", // red-600
 							borderWidth: 2,
 							borderDash: [3, 3],
@@ -217,7 +219,7 @@ export function UVChart({ result }: UVChartProps) {
 				},
 			},
 		}),
-		[maxUV, getUVRiskLevel],
+		[maxUV, getUVRiskLevel, timezone],
 	);
 
 	const getUVRiskColor = (uvIndex: number): string => {
