@@ -1,9 +1,11 @@
+import { TZDate } from "@date-fns/tz";
 import type { Position, WeatherData, AQIData } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
 
 interface OpenMeteoResponse {
 	elevation: number;
+	timezone: string;
 	current: {
 		time: string;
 		temperature_2m: number;
@@ -20,6 +22,17 @@ interface OpenMeteoResponse {
 		sunrise: string[];
 		sunset: string[];
 	};
+}
+
+/**
+ * Parse a naive datetime string from Open-Meteo (e.g. "2026-02-22T14:00")
+ * as local time in the given IANA timezone, returning a UTC timestamp (ms).
+ */
+function parseLocationTime(timeStr: string, timezone: string): number {
+	const [datePart, timePart] = timeStr.split("T");
+	const [y, m, d] = datePart.split("-").map(Number);
+	const [h, min] = (timePart ?? "00:00").split(":").map(Number);
+	return new TZDate(y, m - 1, d, h, min, 0, timezone).getTime();
 }
 
 export async function fetchWeatherData(
@@ -61,9 +74,12 @@ export async function fetchWeatherData(
 		throw new Error("Invalid weather data received from API");
 	}
 
-	// Convert Open-Meteo format to our internal format
+	const locationTimezone = data.timezone;
+
 	const current = {
-		dt: Math.floor(new Date(data.current.time).getTime() / 1000),
+		dt: Math.floor(
+			parseLocationTime(data.current.time, locationTimezone) / 1000,
+		),
 		temp: data.current.temperature_2m,
 		uvi: data.current.uv_index,
 		weather: [
@@ -84,7 +100,9 @@ export async function fetchWeatherData(
 	const maxHours = hourlyData.time.length;
 
 	const hourly = Array.from({ length: maxHours }, (_, i) => ({
-		dt: Math.floor(new Date(hourlyData.time[i]).getTime() / 1000),
+		dt: Math.floor(
+			parseLocationTime(hourlyData.time[i], locationTimezone) / 1000,
+		),
 		temp: hourlyData.temperature_2m[i],
 		uvi: hourlyData.uv_index[i],
 		weather: [
@@ -116,7 +134,12 @@ export async function fetchWeatherData(
 		hourly,
 		elevation: data.elevation,
 		aqi,
-		sunrise: data.daily.sunrise[0],
-		sunset: data.daily.sunset[0],
+		sunrise: new Date(
+			parseLocationTime(data.daily.sunrise[0], locationTimezone),
+		).toISOString(),
+		sunset: new Date(
+			parseLocationTime(data.daily.sunset[0], locationTimezone),
+		).toISOString(),
+		timezone: locationTimezone,
 	};
 }

@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import "chartjs-adapter-date-fns";
 import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { toTZDate, formatInTimeZone } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -33,21 +34,32 @@ ChartJS.register(
 
 interface BurnChartProps {
 	result: CalculationResult;
+	timezone?: string;
 }
 
-export function BurnChart({ result }: BurnChartProps) {
-	const chartData = useMemo(() => {
-		// Filter points to stop at midnight (next day)
-		const startDate = result.startTime
-			? new Date(result.startTime)
-			: new Date();
-		const cutoffTime = new Date(startDate);
-		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
+export function BurnChart({ result, timezone }: BurnChartProps) {
+	const filteredPoints = useMemo(() => {
+		const tzPoints = result.points.map((p) => ({
+			...p,
+			slice: {
+				...p.slice,
+				datetime: toTZDate(p.slice.datetime, timezone),
+			},
+		}));
 
-		const filteredPoints = result.points.filter(
-			(point) => point.slice.datetime <= cutoffTime,
+		const tzStartTime = toTZDate(
+			result.startTime ? new Date(result.startTime) : new Date(),
+			timezone,
 		);
 
+		// setHours(24) on a TZDate correctly means "midnight in the target tz"
+		const cutoffTime = new Date(tzStartTime);
+		cutoffTime.setHours(24, 0, 0, 0);
+
+		return tzPoints.filter((point) => point.slice.datetime <= cutoffTime);
+	}, [result.points, result.startTime, timezone]);
+
+	const chartData = useMemo(() => {
 		const times = filteredPoints.map((point) => point.slice.datetime);
 		const damageData = filteredPoints.map((_, i) => {
 			// Calculate cumulative damage up to this point
@@ -82,7 +94,7 @@ export function BurnChart({ result }: BurnChartProps) {
 				},
 			],
 		};
-	}, [result.points, result.startTime]);
+	}, [filteredPoints]);
 
 	const options = useMemo(
 		() => ({
@@ -105,19 +117,12 @@ export function BurnChart({ result }: BurnChartProps) {
 					callbacks: {
 						title: (context: TooltipItem<"line">[]) => {
 							const date = new Date(context[0].parsed.x);
-							return format(date, "h:mm a");
+							return timezone
+								? formatInTimeZone(date, timezone, "h:mm a")
+								: format(date, "h:mm a");
 						},
 						label: (context: TooltipItem<"line">) => {
 							const damage = context.parsed.y.toFixed(1);
-							const startDate = result.startTime
-								? new Date(result.startTime)
-								: new Date();
-							const cutoffTime = new Date(startDate);
-							cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
-
-							const filteredPoints = result.points.filter(
-								(point) => point.slice.datetime <= cutoffTime,
-							);
 							const point = filteredPoints[context.dataIndex];
 							return [
 								`Damage: ${damage}%`,
@@ -148,6 +153,14 @@ export function BurnChart({ result }: BurnChartProps) {
 					grid: {
 						color: "rgba(0, 0, 0, 0.05)",
 					},
+					ticks: {
+						callback: (value: string | number) => {
+							const date = new Date(value as number);
+							return timezone
+								? formatInTimeZone(date, timezone, "h a")
+								: format(date, "h a");
+						},
+					},
 				},
 				y: {
 					min: 0,
@@ -174,27 +187,17 @@ export function BurnChart({ result }: BurnChartProps) {
 				},
 			},
 		}),
-		[result.points, result.startTime],
+		[filteredPoints, timezone],
 	);
 
 	const burnTimeReached = useMemo(() => {
-		const startDate = result.startTime
-			? new Date(result.startTime)
-			: new Date();
-		const cutoffTime = new Date(startDate);
-		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day
-
-		const filteredPoints = result.points.filter(
-			(point) => point.slice.datetime <= cutoffTime,
-		);
-
 		return filteredPoints.some((_, i) => {
 			const cumulativeDamage = filteredPoints
 				.slice(0, i + 1)
 				.reduce((sum, point) => sum + point.burnCost, 0);
 			return cumulativeDamage >= 100;
 		});
-	}, [result.points, result.startTime]);
+	}, [filteredPoints]);
 
 	return (
 		<Card>
