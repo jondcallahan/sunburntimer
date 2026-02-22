@@ -77,7 +77,9 @@ export async function fetchWeatherData(
 	const locationTimezone = data.timezone;
 
 	const current = {
-		dt: Math.floor(parseLocationTime(data.current.time, locationTimezone) / 1000),
+		dt: Math.floor(
+			parseLocationTime(data.current.time, locationTimezone) / 1000,
+		),
 		temp: data.current.temperature_2m,
 		uvi: data.current.uv_index,
 		weather: [
@@ -98,7 +100,9 @@ export async function fetchWeatherData(
 	const maxHours = hourlyData.time.length;
 
 	const hourly = Array.from({ length: maxHours }, (_, i) => ({
-		dt: Math.floor(parseLocationTime(hourlyData.time[i], locationTimezone) / 1000),
+		dt: Math.floor(
+			parseLocationTime(hourlyData.time[i], locationTimezone) / 1000,
+		),
 		temp: hourlyData.temperature_2m[i],
 		uvi: hourlyData.uv_index[i],
 		weather: [
@@ -130,8 +134,12 @@ export async function fetchWeatherData(
 		hourly,
 		elevation: data.elevation,
 		aqi,
-		sunrise: new Date(parseLocationTime(data.daily.sunrise[0], locationTimezone)).toISOString(),
-		sunset: new Date(parseLocationTime(data.daily.sunset[0], locationTimezone)).toISOString(),
+		sunrise: new Date(
+			parseLocationTime(data.daily.sunrise[0], locationTimezone),
+		).toISOString(),
+		sunset: new Date(
+			parseLocationTime(data.daily.sunset[0], locationTimezone),
+		).toISOString(),
 		timezone: locationTimezone,
 	};
 }
