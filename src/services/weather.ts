@@ -68,20 +68,20 @@ export async function fetchWeatherData(
 	// Parse a naive datetime string (from Open-Meteo, in location's timezone) to a UTC timestamp.
 	// Open-Meteo returns times like "2026-02-22T14:00" in the location's local time.
 	// We need to interpret these in the location's timezone, not the browser's.
+	const formatter = new Intl.DateTimeFormat("en-US", {
+		timeZone: locationTimezone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hour12: false,
+	});
+
 	function parseLocationTime(timeStr: string): number {
 		// Parse as UTC first to get the date/time components
 		const asUtc = new Date(`${timeStr}Z`);
-		// Format that same instant in the location timezone to find the offset
-		const formatter = new Intl.DateTimeFormat("en-US", {
-			timeZone: locationTimezone,
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-			hour12: false,
-		});
 		// What time would it be in the target timezone if it were this UTC time?
 		// We need the reverse: given local time, find UTC.
 		// Use iterative approach: assume offset, check, adjust.
