@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import "chartjs-adapter-date-fns";
 import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { shiftToLocalTimezone } from "../utils/timezone";
+import { toTZDate } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -39,23 +39,24 @@ interface BurnChartProps {
 
 export function BurnChart({ result, timezone }: BurnChartProps) {
 	const filteredPoints = useMemo(() => {
-		const shiftedPoints = result.points.map((p) => ({
+		const tzPoints = result.points.map((p) => ({
 			...p,
 			slice: {
 				...p.slice,
-				datetime: shiftToLocalTimezone(p.slice.datetime, timezone),
+				datetime: toTZDate(p.slice.datetime, timezone),
 			},
 		}));
 
-		const shiftedStartTime = shiftToLocalTimezone(
+		const tzStartTime = toTZDate(
 			result.startTime ? new Date(result.startTime) : new Date(),
 			timezone
 		);
 
-		const cutoffTime = new Date(shiftedStartTime);
-		cutoffTime.setHours(24, 0, 0, 0); // Midnight next day logically in target timezone
+		// setHours(24) on a TZDate correctly means "midnight in the target tz"
+		const cutoffTime = new Date(tzStartTime);
+		cutoffTime.setHours(24, 0, 0, 0);
 
-		return shiftedPoints.filter(
+		return tzPoints.filter(
 			(point) => point.slice.datetime <= cutoffTime,
 		);
 	}, [result.points, result.startTime, timezone]);

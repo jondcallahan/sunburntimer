@@ -21,7 +21,7 @@ import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
 import { getUVIndexColor } from "../lib/utils";
-import { shiftToLocalTimezone } from "../utils/timezone";
+import { toTZDate } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -64,11 +64,11 @@ export function UVChart({ result, timezone }: UVChartProps) {
 
 		if (!weatherData) {
 			// Fallback to calculation points if no weather data
-			times = result.points.map((point) => shiftToLocalTimezone(point.slice.datetime, timezone));
+			times = result.points.map((point) => toTZDate(point.slice.datetime, timezone));
 			uvData = result.points.map((point) => point.slice.uvIndex);
 		} else {
 			// Show UV data for the next 3 days (up to 72 hours)
-			times = weatherData.hourly.map((hour) => shiftToLocalTimezone(new Date(hour.dt * 1000), timezone));
+			times = weatherData.hourly.map((hour) => toTZDate(new Date(hour.dt * 1000), timezone));
 			uvData = weatherData.hourly.map((hour) => hour.uvi);
 		}
 
@@ -145,8 +145,8 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					annotations: {
 						currentTime: {
 							type: "line" as const,
-							xMin: shiftToLocalTimezone(new Date(), timezone).getTime(),
-							xMax: shiftToLocalTimezone(new Date(), timezone).getTime(),
+							xMin: toTZDate(new Date(), timezone).getTime(),
+							xMax: toTZDate(new Date(), timezone).getTime(),
 							borderColor: "#dc2626", // red-600
 							borderWidth: 2,
 							borderDash: [3, 3],
