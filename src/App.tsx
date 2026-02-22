@@ -94,6 +94,7 @@ function App() {
 		if (!geolocation.position) return;
 
 		try {
+			haptic();
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(geolocation.position);
 			setWeather(weather);
