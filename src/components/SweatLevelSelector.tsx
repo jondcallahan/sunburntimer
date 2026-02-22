@@ -1,4 +1,5 @@
 import { Check, Droplets, AlertTriangle } from "lucide-react";
+import { haptic } from "ios-haptics";
 import { SweatLevel, SWEAT_CONFIG } from "../types";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "./ui/card";
@@ -52,7 +53,10 @@ function SweatLevelOption({
 						: "border-border hover:border-primary/50"
 				}
       `}
-			onClick={() => onSelect(level)}
+			onClick={() => {
+				haptic();
+				onSelect(level);
+			}}
 			role="button"
 			tabIndex={0}
 			aria-pressed={selected}
@@ -60,6 +64,7 @@ function SweatLevelOption({
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
+					haptic();
 					onSelect(level);
 				}
 			}}

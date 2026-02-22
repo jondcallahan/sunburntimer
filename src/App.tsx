@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { RefreshCw, Sun } from "lucide-react";
+import { haptic } from "ios-haptics";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
 import {
@@ -93,9 +94,11 @@ function App() {
 		if (!geolocation.position) return;
 
 		try {
+			haptic();
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(geolocation.position);
 			setWeather(weather);
+			haptic.confirm();
 		} catch (error) {
 			setGeolocationError(
 				error instanceof Error
