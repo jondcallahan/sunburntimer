@@ -296,8 +296,14 @@ function App() {
 							timezone={geolocation.weather?.timezone}
 						/>
 						<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-							<BurnChart result={calculation} timezone={geolocation.weather?.timezone} />
-							<UVChart result={calculation} timezone={geolocation.weather?.timezone} />
+							<BurnChart
+								result={calculation}
+								timezone={geolocation.weather?.timezone}
+							/>
+							<UVChart
+								result={calculation}
+								timezone={geolocation.weather?.timezone}
+							/>
 						</div>
 						<SunPositionCard />
 						<SunTimer result={calculation} />

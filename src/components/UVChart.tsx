@@ -64,11 +64,15 @@ export function UVChart({ result, timezone }: UVChartProps) {
 
 		if (!weatherData) {
 			// Fallback to calculation points if no weather data
-			times = result.points.map((point) => toTZDate(point.slice.datetime, timezone));
+			times = result.points.map((point) =>
+				toTZDate(point.slice.datetime, timezone),
+			);
 			uvData = result.points.map((point) => point.slice.uvIndex);
 		} else {
 			// Show UV data for the next 3 days (up to 72 hours)
-			times = weatherData.hourly.map((hour) => toTZDate(new Date(hour.dt * 1000), timezone));
+			times = weatherData.hourly.map((hour) =>
+				toTZDate(new Date(hour.dt * 1000), timezone),
+			);
 			uvData = weatherData.hourly.map((hour) => hour.uvi);
 		}
 

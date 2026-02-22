@@ -49,16 +49,14 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 
 		const tzStartTime = toTZDate(
 			result.startTime ? new Date(result.startTime) : new Date(),
-			timezone
+			timezone,
 		);
 
 		// setHours(24) on a TZDate correctly means "midnight in the target tz"
 		const cutoffTime = new Date(tzStartTime);
 		cutoffTime.setHours(24, 0, 0, 0);
 
-		return tzPoints.filter(
-			(point) => point.slice.datetime <= cutoffTime,
-		);
+		return tzPoints.filter((point) => point.slice.datetime <= cutoffTime);
 	}, [result.points, result.startTime, timezone]);
 
 	const chartData = useMemo(() => {
