@@ -21,7 +21,7 @@ import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
 import { getUVIndexColor } from "../lib/utils";
-import { toTZDate } from "../utils/timezone";
+import { toTZDate, formatInTimeZone } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -136,7 +136,9 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					callbacks: {
 						title: (context: TooltipItem<"line">[]) => {
 							const date = new Date(context[0].parsed.x);
-							return format(date, "h:mm a");
+							return timezone
+								? formatInTimeZone(date, timezone, "h:mm a")
+								: format(date, "h:mm a");
 						},
 						label: (context: TooltipItem<"line">) => {
 							const uvIndex = context.parsed.y.toFixed(1);
@@ -149,8 +151,8 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					annotations: {
 						currentTime: {
 							type: "line" as const,
-							xMin: toTZDate(new Date(), timezone).getTime(),
-							xMax: toTZDate(new Date(), timezone).getTime(),
+							xMin: Date.now(),
+							xMax: Date.now(),
 							borderColor: "#dc2626", // red-600
 							borderWidth: 2,
 							borderDash: [3, 3],
@@ -194,6 +196,12 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					},
 					ticks: {
 						color: "#64748b",
+						callback: (value: string | number) => {
+							const date = new Date(value as number);
+							return timezone
+								? formatInTimeZone(date, timezone, "h a")
+								: format(date, "h a");
+						},
 					},
 				},
 				y: {

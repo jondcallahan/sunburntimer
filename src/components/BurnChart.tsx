@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import "chartjs-adapter-date-fns";
 import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { toTZDate } from "../utils/timezone";
+import { toTZDate, formatInTimeZone } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -117,7 +117,9 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 					callbacks: {
 						title: (context: TooltipItem<"line">[]) => {
 							const date = new Date(context[0].parsed.x);
-							return format(date, "h:mm a");
+							return timezone
+								? formatInTimeZone(date, timezone, "h:mm a")
+								: format(date, "h:mm a");
 						},
 						label: (context: TooltipItem<"line">) => {
 							const damage = context.parsed.y.toFixed(1);
@@ -151,6 +153,14 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 					grid: {
 						color: "rgba(0, 0, 0, 0.05)",
 					},
+					ticks: {
+						callback: (value: string | number) => {
+							const date = new Date(value as number);
+							return timezone
+								? formatInTimeZone(date, timezone, "h a")
+								: format(date, "h a");
+						},
+					},
 				},
 				y: {
 					min: 0,
@@ -177,7 +187,7 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 				},
 			},
 		}),
-		[filteredPoints],
+		[filteredPoints, timezone],
 	);
 
 	const burnTimeReached = useMemo(() => {
