@@ -46,6 +46,7 @@ export function LocationSelector() {
 			setWeather(weather);
 			haptic.confirm();
 		} catch (error) {
+			haptic.error();
 			setGeolocationError(
 				error instanceof Error ? error.message : "Failed to fetch weather",
 			);
@@ -66,6 +67,7 @@ export function LocationSelector() {
 			setWeather(weather);
 			haptic.confirm();
 		} catch (error) {
+			haptic.error();
 			setGeolocationError(
 				error instanceof Error ? error.message : "Failed to get location",
 			);

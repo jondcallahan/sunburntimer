@@ -100,10 +100,9 @@ function App() {
 			setWeather(weather);
 			haptic.confirm();
 		} catch (error) {
+			haptic.error();
 			setGeolocationError(
-				error instanceof Error
-					? error.message
-					: "Failed to refresh weather data",
+				error instanceof Error ? error.message : "Failed to fetch weather",
 			);
 		}
 	};
