@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Badge } from "./ui/badge";
+import { haptic } from "ios-haptics";
 import type { CalculationResult } from "../types";
 
 interface SunTimerProps {
@@ -94,6 +95,7 @@ export function SunTimer({ result }: SunTimerProps) {
 	}, [timer.isRunning, timer.startTime, calculateRealTimeDamage]);
 
 	const handleStart = () => {
+		haptic();
 		const now = new Date();
 		setTimer({
 			isRunning: true,
@@ -104,14 +106,17 @@ export function SunTimer({ result }: SunTimerProps) {
 	};
 
 	const handlePause = () => {
+		haptic();
 		setTimer((prev) => ({ ...prev, isRunning: false }));
 	};
 
 	const handleResume = () => {
+		haptic();
 		setTimer((prev) => ({ ...prev, isRunning: true }));
 	};
 
 	const handleStop = () => {
+		haptic();
 		setTimer({
 			isRunning: false,
 			startTime: null,

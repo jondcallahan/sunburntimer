@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, LoaderIcon } from "lucide-react";
+import { haptic } from "ios-haptics";
 import { searchLocations, type GeocodingResult } from "../services/geocoding";
 
 interface LocationSearchProps {
@@ -43,6 +44,7 @@ export function LocationSearch({ onSelect, disabled }: LocationSearchProps) {
 			setActiveIndex(-1);
 		} catch (e) {
 			if (e instanceof Error && e.name === "AbortError") return;
+			haptic.error();
 			setResults([]);
 		} finally {
 			if (!controller.signal.aborted) {

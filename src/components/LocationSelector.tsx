@@ -201,6 +201,7 @@ export function LocationSelector() {
 								variant="outline"
 								size="sm"
 								onClick={() => {
+									haptic();
 									setGeolocationStatus("blank");
 								}}
 								className="text-xs"
