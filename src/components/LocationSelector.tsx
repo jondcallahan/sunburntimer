@@ -43,8 +43,8 @@ export function LocationSelector() {
 
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(position);
+			haptic.confirm();
 			setWeather(weather);
-			requestAnimationFrame(() => haptic.confirm());
 		} catch (error) {
 			haptic.error();
 			setGeolocationError(
@@ -64,8 +64,8 @@ export function LocationSelector() {
 
 			setGeolocationStatus("fetching_weather");
 			const weather = await fetchWeatherData(position);
+			haptic.confirm();
 			setWeather(weather);
-			requestAnimationFrame(() => haptic.confirm());
 		} catch (error) {
 			haptic.error();
 			setGeolocationError(
