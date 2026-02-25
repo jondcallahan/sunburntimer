@@ -1,6 +1,7 @@
 import type * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDownIcon } from "lucide-react";
+import { haptic } from "ios-haptics";
 
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ function AccordionItem({
 function AccordionTrigger({
 	className,
 	children,
+	onClick,
 	...props
 }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
 	return (
@@ -37,6 +39,10 @@ function AccordionTrigger({
 					className,
 				)}
 				{...props}
+				onClick={(e) => {
+					haptic();
+					onClick?.(e);
+				}}
 			>
 				{children}
 				<ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
