@@ -140,6 +140,9 @@ export async function fetchWeatherData(
 		sunset: new Date(
 			parseLocationTime(data.daily.sunset[0], locationTimezone),
 		).toISOString(),
+		nextSunrise: new Date(
+			parseLocationTime(data.daily.sunrise[1], locationTimezone),
+		).toISOString(),
 		timezone: locationTimezone,
 	};
 }

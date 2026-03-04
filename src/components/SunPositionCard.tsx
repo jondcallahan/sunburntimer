@@ -38,9 +38,10 @@ export function SunPositionCard() {
 
 		const tz = geolocation.weather.timezone;
 
-		const { sunrise, sunset } = geolocation.weather;
+		const { sunrise, sunset, nextSunrise } = geolocation.weather;
 		const sunriseTime = new Date(sunrise);
 		const sunsetTime = new Date(sunset);
+		const nextSunriseTime = nextSunrise ? new Date(nextSunrise) : null;
 		const totalDuration = sunsetTime.getTime() - sunriseTime.getTime();
 
 		// Calculate daylight hours
@@ -81,6 +82,7 @@ export function SunPositionCard() {
 		return {
 			sunriseTime,
 			sunsetTime,
+			nextSunriseTime,
 			totalDuration,
 			daylightHours: `${hours}h ${minutes}m`,
 			zenithScale: normalizedElevation,
@@ -113,10 +115,32 @@ export function SunPositionCard() {
 			now >= sunData.sunriseTime.getTime() &&
 			now <= sunData.sunsetTime.getTime();
 
+		let timeRemainingStr = "";
+		if (isDay) {
+			const msLeft = sunData.sunsetTime.getTime() - now;
+			const hoursLeft = Math.floor(msLeft / (1000 * 60 * 60));
+			const minsLeft = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+			timeRemainingStr = `${hoursLeft}h ${minsLeft}m left to sunset`;
+		} else {
+			// Nighttime: either before today's sunrise, or after today's sunset
+			if (now < sunData.sunriseTime.getTime()) {
+				const msLeft = sunData.sunriseTime.getTime() - now;
+				const hoursLeft = Math.floor(msLeft / (1000 * 60 * 60));
+				const minsLeft = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+				timeRemainingStr = `${hoursLeft}h ${minsLeft}m left to sunrise`;
+			} else if (sunData.nextSunriseTime) {
+				const msLeft = sunData.nextSunriseTime.getTime() - now;
+				const hoursLeft = Math.floor(msLeft / (1000 * 60 * 60));
+				const minsLeft = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+				timeRemainingStr = `${hoursLeft}h ${minsLeft}m left to sunrise`;
+			}
+		}
+
 		return {
 			...sunData,
 			currentProgress,
 			isDay,
+			timeRemainingStr,
 		};
 	}, [sunData, currentTime, demoProgress]);
 
@@ -352,9 +376,10 @@ export function SunPositionCard() {
 						<span
 							className={`text-xs tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-300"}`}
 						>
-							{currentSunData.isDay
-								? `${Math.round(currentSunData.currentProgress * 100)}% through the day`
-								: `Now ${formatInTimeZone(currentTime, currentSunData.timezone, "h:mm a")} · Night`}
+							{currentSunData.timeRemainingStr ||
+								(!currentSunData.isDay
+									? `Now ${formatInTimeZone(currentTime, currentSunData.timezone, "h:mm a")} · Night`
+									: "")}
 						</span>
 					</div>
 
