@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { Analytics } from "@vercel/analytics/react";
+import { Agentation } from "agentation";
 
 const root = document.getElementById("root");
 
@@ -14,5 +15,6 @@ createRoot(root).render(
 	<StrictMode>
 		<App />
 		<Analytics />
+		{import.meta.env.DEV && <Agentation />}
 	</StrictMode>,
 );
