@@ -8,6 +8,16 @@ import {
 } from "../utils/timezone";
 import { useCurrentTime } from "../hooks/useCurrentTime";
 
+function formatDuration(ms: number): string {
+	const totalMins = Math.round(ms / (1000 * 60));
+	const hours = Math.floor(totalMins / 60);
+	const mins = totalMins % 60;
+	if (hours === 0) {
+		return `${mins}m`;
+	}
+	return `${hours}h ${mins}m`;
+}
+
 // Set to true to enable dev controls (play button to animate through day)
 const DEV_MODE = false;
 
@@ -38,15 +48,14 @@ export function SunPositionCard() {
 
 		const tz = geolocation.weather.timezone;
 
-		const { sunrise, sunset } = geolocation.weather;
+		const { sunrise, sunset, nextSunrise } = geolocation.weather;
 		const sunriseTime = new Date(sunrise);
 		const sunsetTime = new Date(sunset);
+		const nextSunriseTime = nextSunrise ? new Date(nextSunrise) : null;
 		const totalDuration = sunsetTime.getTime() - sunriseTime.getTime();
 
 		// Calculate daylight hours
-		const daylightHours = totalDuration / (1000 * 60 * 60);
-		const hours = Math.floor(daylightHours);
-		const minutes = Math.round((daylightHours - hours) * 60);
+		const daylightHoursStr = formatDuration(totalDuration);
 
 		// Calculate solar zenith (max elevation) based on latitude and day of year
 		// This determines how "tall" the arc should be
@@ -81,8 +90,9 @@ export function SunPositionCard() {
 		return {
 			sunriseTime,
 			sunsetTime,
+			nextSunriseTime,
 			totalDuration,
-			daylightHours: `${hours}h ${minutes}m`,
+			daylightHours: daylightHoursStr,
 			zenithScale: normalizedElevation,
 			maxElevation: Math.round(maxElevation),
 			timezone: tz,
@@ -113,10 +123,23 @@ export function SunPositionCard() {
 			now >= sunData.sunriseTime.getTime() &&
 			now <= sunData.sunsetTime.getTime();
 
+		let timeRemainingStr = "";
+		if (isDay) {
+			timeRemainingStr = `Sunset in ${formatDuration(sunData.sunsetTime.getTime() - now)}`;
+		} else {
+			// Nighttime: either before today's sunrise, or after today's sunset
+			if (now < sunData.sunriseTime.getTime()) {
+				timeRemainingStr = `Sunrise in ${formatDuration(sunData.sunriseTime.getTime() - now)}`;
+			} else if (sunData.nextSunriseTime) {
+				timeRemainingStr = `Sunrise in ${formatDuration(sunData.nextSunriseTime.getTime() - now)}`;
+			}
+		}
+
 		return {
 			...sunData,
 			currentProgress,
 			isDay,
+			timeRemainingStr,
 		};
 	}, [sunData, currentTime, demoProgress]);
 
@@ -253,11 +276,20 @@ export function SunPositionCard() {
 							</>
 						)}
 					</div>
-					<span
-						className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
-					>
-						{currentSunData.daylightHours} of daylight
-					</span>
+					<div className="flex flex-col items-end gap-0.5">
+						<span
+							className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
+						>
+							{currentSunData.daylightHours} of daylight
+						</span>
+						{currentSunData.timeRemainingStr && (
+							<span
+								className={`text-xs tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-400"}`}
+							>
+								{currentSunData.timeRemainingStr}
+							</span>
+						)}
+					</div>
 				</CardTitle>
 			</CardHeader>
 			<CardContent className="pt-0">
