@@ -10,12 +10,15 @@ interface SelectableCardProps extends React.ComponentProps<"div"> {
 }
 
 const SelectableCard = React.forwardRef<HTMLDivElement, SelectableCardProps>(
-	({ className, selected = false, onClick, disabled, ...props }, ref) => {
+	(
+		{ className, selected = false, onClick, onKeyDown, disabled, ...props },
+		ref,
+	) => {
 		return (
 			<Card asChild>
 				{/* biome-ignore lint/a11y/useSemanticElements: selectable cards need block card content, so this wrapper manages button semantics explicitly */}
 				<div
-					ref={ref as React.Ref<HTMLDivElement>}
+					ref={ref}
 					data-slot="selectable-card"
 					data-selected={selected ? "true" : "false"}
 					role="button"
@@ -38,7 +41,7 @@ const SelectableCard = React.forwardRef<HTMLDivElement, SelectableCardProps>(
 						onClick?.(event);
 					}}
 					onKeyDown={(event) => {
-						props.onKeyDown?.(event);
+						onKeyDown?.(event);
 						if (disabled) {
 							return;
 						}
