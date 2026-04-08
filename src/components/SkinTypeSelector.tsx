@@ -1,10 +1,10 @@
 import { Check } from "lucide-react";
 import { useLayoutEffect, useRef, useMemo } from "react";
-import { haptic } from "ios-haptics";
 import { FitzpatrickType, SKIN_TYPE_CONFIG } from "../types";
 import { useAppStore } from "../store";
-import { Card, CardContent } from "./ui/card";
+import { CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { SelectableCard } from "./ui/selectable-card";
 
 interface SkinTypeCardProps {
 	type: FitzpatrickType;
@@ -27,31 +27,12 @@ function SkinTypeCard({
 	const labelColor = "text-gray-500";
 
 	return (
-		<Card
+		<SelectableCard
 			ref={cardRef}
-			className={`
-			cursor-pointer transition-all duration-200 border relative overflow-hidden w-72 h-80 flex-shrink-0 snap-center bg-white scroll-m-12
-			${
-				selected
-					? "shadow-inner"
-					: "border-stone-200 hover:border-slate-400 hover:shadow-md"
-			}
-      `}
-			onClick={() => {
-				haptic();
-				onSelect(type);
-			}}
-			role="button"
-			tabIndex={0}
-			aria-pressed={selected}
+			selected={selected}
+			className="relative h-80 w-72 flex-shrink-0 snap-center overflow-hidden bg-white scroll-m-12"
+			onClick={() => onSelect(type)}
 			aria-label={`Select skin type ${type}: ${config.subtitle}`}
-			onKeyDown={(e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					haptic();
-					onSelect(type);
-				}
-			}}
 		>
 			{/* Skin tone stripe */}
 			<div
@@ -118,7 +99,7 @@ function SkinTypeCard({
 					</div>
 				</div>
 			</CardContent>
-		</Card>
+		</SelectableCard>
 	);
 }
 

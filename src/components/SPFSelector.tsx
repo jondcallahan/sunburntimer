@@ -1,10 +1,10 @@
 import { Check, Sun } from "lucide-react";
-import { haptic } from "ios-haptics";
 import { SPFLevel, SPF_CONFIG } from "../types";
 import { useAppStore } from "../store";
-import { Card, CardContent } from "./ui/card";
+import { CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Alert, AlertDescription } from "./ui/alert";
+import { SelectableCard } from "./ui/selectable-card";
 
 interface SPFOptionProps {
 	level: SPFLevel;
@@ -16,30 +16,10 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 	const config = SPF_CONFIG[level];
 
 	return (
-		<Card
-			className={`
-        cursor-pointer transition-all duration-200 hover:scale-105 border-2
-        ${
-					selected
-						? "border-primary shadow-lg ring-2 ring-primary/20"
-						: "border-border hover:border-primary/50"
-				}
-      `}
-			onClick={() => {
-				haptic();
-				onSelect(level);
-			}}
-			role="button"
-			tabIndex={0}
-			aria-pressed={selected}
+		<SelectableCard
+			selected={selected}
+			onClick={() => onSelect(level)}
 			aria-label={`Select ${config.label} sunscreen protection`}
-			onKeyDown={(e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					haptic();
-					onSelect(level);
-				}
-			}}
 		>
 			<CardContent className="p-4">
 				<div className="flex items-center justify-between">
@@ -63,7 +43,7 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 					)}
 				</div>
 			</CardContent>
-		</Card>
+		</SelectableCard>
 	);
 }
 
