@@ -26,7 +26,7 @@ const SelectableCard = React.forwardRef<HTMLDivElement, SelectableCardProps>(
 					aria-pressed={props["aria-pressed"] ?? selected}
 					aria-disabled={disabled || undefined}
 					className={cn(
-						"w-full cursor-pointer text-left transition-all duration-200 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50",
+						"w-full cursor-pointer text-left transition-all duration-200 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
 						selected
 							? "border-primary shadow-md"
 							: "border-stone-200 hover:border-slate-400 hover:shadow-md",
