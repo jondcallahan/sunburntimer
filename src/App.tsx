@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { RefreshCw, Sun } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { haptic } from "ios-haptics";
 import { useAppStore, useIsReadyToCalculate } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
@@ -115,7 +115,12 @@ function App() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-4" />
+						<img
+							src="/favicon.svg"
+							alt=""
+							aria-hidden="true"
+							className="w-12 h-12 mr-3"
+						/>
 						<h1 className="text-3xl font-bold text-slate-800">
 							Sunburn Calculator
 						</h1>
