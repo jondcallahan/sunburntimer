@@ -228,6 +228,14 @@ export interface CalculationResult {
 	advice: string[];
 }
 
+export type ActivityStart =
+	| { mode: "now" }
+	| {
+			mode: "forecastOffset";
+			baseTimeMs: number;
+			offsetMinutes: number;
+	  };
+
 // App State
 export interface AppState {
 	skinType?: FitzpatrickType;
@@ -235,6 +243,7 @@ export interface AppState {
 	sweatLevel?: SweatLevel;
 	geolocation: GeolocationState;
 	calculation?: CalculationResult;
+	activityStart: ActivityStart;
 }
 
 // Constants

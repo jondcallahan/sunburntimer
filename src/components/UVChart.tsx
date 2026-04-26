@@ -39,9 +39,16 @@ ChartJS.register(
 interface UVChartProps {
 	result: CalculationResult;
 	timezone?: string;
+	startMarkerTime?: Date;
+	startMarkerLabel?: string;
 }
 
-export function UVChart({ result, timezone }: UVChartProps) {
+export function UVChart({
+	result,
+	timezone,
+	startMarkerTime,
+	startMarkerLabel = "Now",
+}: UVChartProps) {
 	const { geolocation } = useAppStore();
 
 	// Calculate UV statistics from weather data or fallback to calculation points
@@ -115,8 +122,10 @@ export function UVChart({ result, timezone }: UVChartProps) {
 		return "Extreme";
 	}, []);
 
-	const options = useMemo(
-		() => ({
+	const options = useMemo(() => {
+		const markerTime = startMarkerTime ?? new Date();
+
+		return {
 			responsive: true,
 			maintainAspectRatio: false,
 			interaction: {
@@ -151,13 +160,13 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					annotations: {
 						currentTime: {
 							type: "line" as const,
-							xMin: Date.now(),
-							xMax: Date.now(),
+							xMin: markerTime.getTime(),
+							xMax: markerTime.getTime(),
 							borderColor: "#dc2626", // red-600
 							borderWidth: 2,
 							borderDash: [3, 3],
 							label: {
-								content: "Now",
+								content: startMarkerLabel,
 								enabled: true,
 								position: "start" as const,
 								backgroundColor: "#dc2626",
@@ -230,9 +239,8 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					hoverRadius: 6,
 				},
 			},
-		}),
-		[maxUV, getUVRiskLevel, timezone],
-	);
+		};
+	}, [maxUV, getUVRiskLevel, timezone, startMarkerTime, startMarkerLabel]);
 
 	const getUVRiskColor = (uvIndex: number): string => {
 		if (uvIndex < 3) return "text-green-600";
