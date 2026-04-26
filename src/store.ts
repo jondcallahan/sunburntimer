@@ -29,6 +29,7 @@ interface AppStore extends AppState {
 	setGeolocationError: (error: string) => void;
 	setCalculation: (calculation: CalculationResult) => void;
 	clearCalculation: () => void;
+	setActivityStart: (activityStart: AppState["activityStart"]) => void;
 	reset: () => void;
 }
 
@@ -36,6 +37,7 @@ const initialState: AppState = {
 	geolocation: {
 		status: "blank",
 	},
+	activityStart: { mode: "now" },
 };
 
 export const useAppStore = create<AppStore>()(
@@ -102,6 +104,9 @@ export const useAppStore = create<AppStore>()(
 
 			clearCalculation: () =>
 				set((state) => ({ ...state, calculation: undefined })),
+
+			setActivityStart: (activityStart) =>
+				set((state) => ({ ...state, activityStart })),
 
 			reset: () => set(initialState),
 		}),
