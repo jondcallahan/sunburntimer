@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 type SliderProps = Omit<
 	React.InputHTMLAttributes<HTMLInputElement>,
-	"value" | "defaultValue" | "min" | "max" | "step" | "onChange"
+	"value" | "defaultValue" | "min" | "max" | "step" | "onInput" | "onChange"
 > & {
 	value?: number[];
 	defaultValue?: number[];
@@ -39,7 +39,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
 				max={max}
 				step={step}
 				value={currentValue}
-				onInput={(event) => {
+				onChange={(event) => {
 					onValueChange?.([Number(event.currentTarget.value)]);
 				}}
 				className={cn(

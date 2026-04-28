@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { CalendarClock, Clock, SunMedium } from "lucide-react";
 import { haptic } from "ios-haptics";
 import { useAppStore } from "../store";
@@ -14,6 +14,8 @@ import {
 } from "../utils/activity-start";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+
+const HAPTIC_STEP_INTERVAL_MS = 35;
 
 const PRESETS = [
 	{ key: "laterToday", label: "Later today" },
@@ -45,6 +47,12 @@ export function ActivityStartSelector() {
 		(selectedOffset - (forecastWindow?.minOffsetMinutes ?? 0)) /
 			ACTIVITY_START_STEP_MINUTES,
 	);
+	const lastHapticStepRef = useRef<number | undefined>(undefined);
+	const lastHapticMsRef = useRef(0);
+
+	useEffect(() => {
+		lastHapticStepRef.current = selectedStepIndex;
+	}, [selectedStepIndex]);
 
 	useEffect(() => {
 		if (
@@ -117,7 +125,16 @@ export function ActivityStartSelector() {
 			return;
 		}
 
-		haptic();
+		if (lastHapticStepRef.current !== stepIndex) {
+			const now = performance.now();
+			if (now - lastHapticMsRef.current >= HAPTIC_STEP_INTERVAL_MS) {
+				haptic();
+				lastHapticMsRef.current = now;
+			}
+
+			lastHapticStepRef.current = stepIndex;
+		}
+
 		setActivityStart(createForecastOffsetStart(offsetMinutes, weather, base));
 	};
 
