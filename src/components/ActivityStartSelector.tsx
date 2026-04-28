@@ -13,6 +13,7 @@ import {
 	snapOffsetMinutes,
 } from "../utils/activity-start";
 import { Button } from "./ui/button";
+import { Slider } from "./ui/slider";
 
 const PRESETS = [
 	{ key: "laterToday", label: "Later today" },
@@ -102,13 +103,21 @@ export function ActivityStartSelector() {
 	};
 
 	const updateStepIndex = (stepIndex: number) => {
-		haptic();
 		const base =
 			activityStart.mode === "forecastOffset"
 				? activityStart.baseTimeMs
 				: renderTimeMs;
 		const offsetMinutes =
 			forecastWindow.minOffsetMinutes + stepIndex * ACTIVITY_START_STEP_MINUTES;
+
+		if (
+			activityStart.mode === "forecastOffset" &&
+			activityStart.offsetMinutes === offsetMinutes
+		) {
+			return;
+		}
+
+		haptic();
 		setActivityStart(createForecastOffsetStart(offsetMinutes, weather, base));
 	};
 
@@ -171,19 +180,15 @@ export function ActivityStartSelector() {
 					</p>
 				</div>
 
-				<input
-					type="range"
+				<Slider
 					min={0}
 					max={sliderStepCount}
 					step={1}
-					value={selectedStepIndex}
-					onChange={(event) =>
-						updateStepIndex(Number(event.currentTarget.value))
-					}
+					value={[selectedStepIndex]}
+					onValueChange={(value) => updateStepIndex(value[0] ?? 0)}
 					aria-label="Start exposure time"
 					aria-valuetext={selectedLabel}
 					title=""
-					className="h-2 w-full cursor-pointer appearance-none rounded-full bg-stone-200 accent-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 				/>
 
 				<div className="mt-3 grid grid-cols-3 text-xs text-slate-500">
