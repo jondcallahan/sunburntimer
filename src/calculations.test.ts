@@ -1,5 +1,9 @@
 import { describe, it, expect } from "bun:test";
-import { findOptimalTimeSlicing } from "./calculations";
+import {
+	findOptimalTimeSlicing,
+	recoverSkinDamagePercent,
+	UVB_SKIN_RECOVERY,
+} from "./calculations";
 import type { CalculationInput, WeatherData, CalculationResult } from "./types";
 import { FitzpatrickType, SPFLevel, SweatLevel } from "./types";
 
@@ -80,6 +84,11 @@ function getBurnTimeHours(
 	input: CalculationInput,
 ): number {
 	return getBurnTimeMinutes(result, input) / 60;
+}
+
+function getPointEndDamage(result: CalculationResult, index: number): number {
+	const point = result.points[index];
+	return point ? point.totalDamageAtStart + point.burnCost : 0;
 }
 
 function expectRelativeBurnTime(
@@ -359,6 +368,52 @@ describe("Sunburn Calculation Algorithm", () => {
 				typeVI.input,
 				"Type I should burn much faster than Type VI",
 			);
+		});
+	});
+
+	describe("Leaky Bucket Recovery", () => {
+		it("should recover accumulated UVB damage over the published recovery window", () => {
+			const startingDamage = 80;
+			const recoveredDamage = recoverSkinDamagePercent(
+				startingDamage,
+				UVB_SKIN_RECOVERY.recoveryPeriodHours * 60,
+			);
+
+			expect(recoveredDamage).toBeCloseTo(
+				startingDamage * UVB_SKIN_RECOVERY.remainingFractionAfterRecoveryPeriod,
+				6,
+			);
+		});
+
+		it("should leak accumulated damage during a no-UV break before later exposure", () => {
+			const fixedTime = new Date("2025-09-06T08:00:00-06:00");
+			const input = createTestScenario(
+				FitzpatrickType.VI,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				[6, 6, 0, 0, 0, 0, 6, 6],
+				fixedTime,
+			);
+
+			const result = findOptimalTimeSlicing(input);
+			const morningCutoffMs = fixedTime.getTime() + 2.5 * 60 * 60 * 1000;
+			const afternoonRestartMs = fixedTime.getTime() + 5.5 * 60 * 60 * 1000;
+			const morningPeakDamage = Math.max(
+				...result.points
+					.map((point, index) => ({
+						time: point.slice.datetime.getTime(),
+						damage: getPointEndDamage(result, index),
+					}))
+					.filter((point) => point.time <= morningCutoffMs)
+					.map((point) => point.damage),
+			);
+			const damageBeforeAfternoon = result.points.find(
+				(point) => point.slice.datetime.getTime() >= afternoonRestartMs,
+			)?.totalDamageAtStart;
+
+			expect(morningPeakDamage).toBeGreaterThan(30);
+			expect(damageBeforeAfternoon).toBeDefined();
+			expect(damageBeforeAfternoon ?? 0).toBeLessThan(morningPeakDamage * 0.8);
 		});
 	});
 
