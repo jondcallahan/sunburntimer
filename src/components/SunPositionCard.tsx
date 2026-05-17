@@ -237,7 +237,7 @@ export function SunPositionCard() {
 		>
 			<CardHeader className="pb-2">
 				<CardTitle
-					className={`flex items-center justify-between transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-800" : "text-slate-100"}`}
+					className={`flex items-start justify-between transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-800" : "text-slate-100"}`}
 				>
 					<div className="flex items-center gap-2">
 						<span className="text-base font-semibold">Sun Position</span>
