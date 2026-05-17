@@ -237,7 +237,7 @@ export function SunPositionCard() {
 		>
 			<CardHeader className="pb-2">
 				<CardTitle
-					className={`flex items-center justify-between transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-800" : "text-slate-100"}`}
+					className={`flex items-start justify-between transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-800" : "text-slate-100"}`}
 				>
 					<div className="flex items-center gap-2">
 						<span className="text-base font-semibold">Sun Position</span>
@@ -277,18 +277,18 @@ export function SunPositionCard() {
 						)}
 					</div>
 					<div className="flex flex-col items-end gap-0.5">
-						<span
-							className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
-						>
-							{currentSunData.daylightHours} of daylight
-						</span>
 						{currentSunData.timeRemainingStr && (
 							<span
-								className={`text-xs tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-400"}`}
+								className={`text-sm font-semibold tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
 							>
 								{currentSunData.timeRemainingStr}
 							</span>
 						)}
+						<span
+							className={`text-xs font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-400"}`}
+						>
+							{currentSunData.daylightHours} of daylight
+						</span>
 					</div>
 				</CardTitle>
 			</CardHeader>
