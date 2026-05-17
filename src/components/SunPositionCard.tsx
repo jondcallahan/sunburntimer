@@ -279,13 +279,13 @@ export function SunPositionCard() {
 					<div className="flex flex-col items-end gap-0.5">
 						{currentSunData.timeRemainingStr && (
 							<span
-								className={`text-sm font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
+								className={`text-sm font-semibold tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-600" : "text-slate-300"}`}
 							>
 								{currentSunData.timeRemainingStr}
 							</span>
 						)}
 						<span
-							className={`text-xs tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-400"}`}
+							className={`text-xs font-normal tabular-nums transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-500" : "text-slate-400"}`}
 						>
 							{currentSunData.daylightHours} of daylight
 						</span>
