@@ -10,7 +10,7 @@ import {
 	DEFAULT_SWEAT_LEVEL,
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
-import { fetchWeatherData } from "./services/weather";
+import { fetchWeatherData, getActiveWeatherProvider } from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
@@ -50,6 +50,7 @@ function App() {
 	} = useAppStore();
 
 	const isReadyToCalculate = useIsReadyToCalculate();
+	const isGoogleWeatherMode = getActiveWeatherProvider() === "google";
 
 	// Check if user has pre-loaded preferences (returning user)
 	const hasPreloadedPrefs = !!(skinType && spfLevel);
@@ -126,6 +127,11 @@ function App() {
 					</p>
 					<p className="text-slate-500 text-sm">
 						by <span className="font-medium">SunburnTimer</span>
+						{isGoogleWeatherMode && (
+							<Badge variant="secondary" className="ml-2 align-middle">
+								Google Weather test
+							</Badge>
+						)}
 					</p>
 				</div>
 

@@ -5,8 +5,11 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Calculator, Sun, Shield, User } from "lucide-react";
+import { getActiveWeatherProvider } from "@/services/weather";
 
 export function MathExplanation() {
+	const weatherProvider = getActiveWeatherProvider();
+
 	return (
 		<Accordion type="single" collapsible className="w-full">
 			<AccordionItem
@@ -151,15 +154,41 @@ export function MathExplanation() {
 								</li>
 								<li>
 									<a
-										href="https://open-meteo.com/"
+										href={
+											weatherProvider === "google"
+												? "https://developers.google.com/maps/documentation/weather"
+												: "https://open-meteo.com/"
+										}
 										target="_blank"
 										rel="noopener noreferrer"
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
-										Open-Meteo
+										{weatherProvider === "google"
+											? "Google Weather API"
+											: "Open-Meteo"}
 									</a>
-									<span className="text-slate-400"> (weather data)</span>
+									<span className="text-slate-400">
+										{weatherProvider === "google"
+											? " (UV forecast test data)"
+											: " (weather data)"}
+									</span>
 								</li>
+								{weatherProvider === "google" && (
+									<li>
+										<a
+											href="https://open-meteo.com/"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
+										>
+											Open-Meteo
+										</a>
+										<span className="text-slate-400">
+											{" "}
+											(elevation, sun timing, and AQI metadata)
+										</span>
+									</li>
+								)}
 							</ul>
 						</div>
 					</div>

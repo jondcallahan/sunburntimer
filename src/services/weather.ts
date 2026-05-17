@@ -3,6 +3,8 @@ import type { Position, WeatherData, AQIData } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
 
+export type WeatherProvider = "open-meteo" | "google";
+
 interface OpenMeteoResponse {
 	elevation: number;
 	timezone: string;
@@ -35,7 +37,71 @@ function parseLocationTime(timeStr: string, timezone: string): number {
 	return new TZDate(y, m - 1, d, h, min, 0, timezone).getTime();
 }
 
+export function getActiveWeatherProvider(): WeatherProvider {
+	if (typeof window === "undefined") {
+		return "open-meteo";
+	}
+
+	return window.location.pathname.replace(/\/+$/, "") === "/google"
+		? "google"
+		: "open-meteo";
+}
+
 export async function fetchWeatherData(
+	position: Position,
+): Promise<WeatherData> {
+	if (getActiveWeatherProvider() === "google") {
+		return fetchGoogleWeatherData(position);
+	}
+
+	return fetchOpenMeteoWeatherData(position);
+}
+
+async function fetchGoogleWeatherData(
+	position: Position,
+): Promise<WeatherData> {
+	const params = new URLSearchParams({
+		latitude: position.latitude.toFixed(4),
+		longitude: position.longitude.toFixed(4),
+	});
+
+	const response = await fetch(`/api/google-weather?${params.toString()}`, {
+		headers: {
+			Accept: "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		const message = await readErrorMessage(response);
+		throw new Error(message || `Google Weather API error: ${response.status}`);
+	}
+
+	const contentType = response.headers.get("content-type");
+	if (!contentType?.includes("application/json")) {
+		throw new Error(
+			"Google weather endpoint did not return JSON. Use a Vercel preview deployment or run the app with Vercel dev.",
+		);
+	}
+
+	return response.json();
+}
+
+async function readErrorMessage(
+	response: Response,
+): Promise<string | undefined> {
+	const contentType = response.headers.get("content-type");
+
+	if (contentType?.includes("application/json")) {
+		const body = (await response.json().catch(() => undefined)) as
+			| { error?: string }
+			| undefined;
+		return body?.error;
+	}
+
+	return response.text().catch(() => undefined);
+}
+
+export async function fetchOpenMeteoWeatherData(
 	position: Position,
 ): Promise<WeatherData> {
 	const lat = position.latitude.toFixed(4);
