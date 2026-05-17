@@ -86,7 +86,7 @@ const OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
 const OPEN_METEO_AQI_URL =
 	"https://air-quality-api.open-meteo.com/v1/air-quality";
 const FORECAST_HOURS = 72;
-const CACHE_TTL_MS = 30 * 60 * 1000;
+const CACHE_TTL_MS = 5 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 30;
 
@@ -448,8 +448,7 @@ function weatherResponse(
 	cacheStatus: "HIT" | "MISS",
 ): Response {
 	return jsonResponse(body, 200, {
-		"Cache-Control":
-			"public, max-age=0, s-maxage=1800, stale-while-revalidate=1800",
+		"Cache-Control": "no-store",
 		"X-Weather-Provider": "google",
 		"X-Cache-Status": cacheStatus,
 	});
