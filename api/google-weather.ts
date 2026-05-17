@@ -85,7 +85,8 @@ const GOOGLE_WEATHER_BASE_URL =
 const OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
 const OPEN_METEO_AQI_URL =
 	"https://air-quality-api.open-meteo.com/v1/air-quality";
-const FORECAST_HOURS = 72;
+const FORECAST_DAYS = 3;
+const MAX_GOOGLE_FORECAST_HOURS = 72;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 30;
@@ -272,10 +273,10 @@ async function fetchGoogleHourlyWeather(
 		timeZone ??= page.timeZone;
 		forecastHours.push(...(page.forecastHours ?? []));
 		nextPageToken = page.nextPageToken;
-	} while (nextPageToken && forecastHours.length < FORECAST_HOURS);
+	} while (nextPageToken && forecastHours.length < MAX_GOOGLE_FORECAST_HOURS);
 
 	return {
-		forecastHours: forecastHours.slice(0, FORECAST_HOURS),
+		forecastHours: forecastHours.slice(0, MAX_GOOGLE_FORECAST_HOURS),
 		timeZone,
 	};
 }
@@ -292,7 +293,7 @@ async function fetchGoogleHourlyWeatherPage(
 		"location.latitude": latitude.toString(),
 		"location.longitude": longitude.toString(),
 		unitsSystem: "IMPERIAL",
-		hours: FORECAST_HOURS.toString(),
+		hours: MAX_GOOGLE_FORECAST_HOURS.toString(),
 		pageSize: "24",
 		languageCode: "en",
 	});
@@ -322,7 +323,7 @@ async function fetchOpenMeteoMetadata(
 		latitude: latitude.toString(),
 		longitude: longitude.toString(),
 		daily: "sunrise,sunset",
-		forecast_days: "2",
+		forecast_days: FORECAST_DAYS.toString(),
 		timezone: "auto",
 	}).toString();
 
@@ -361,6 +362,11 @@ function normalizeWeatherData(
 	metadata: OpenMeteoMetadataResponse,
 	aqi: OpenMeteoAqiResponse | undefined,
 ): WeatherData {
+	const timezone = googleWeather.timeZone?.id || metadata.timezone;
+	if (!timezone) {
+		throw new Error("Missing weather timezone");
+	}
+
 	const hourly = (googleWeather.forecastHours ?? []).flatMap((hour) => {
 		const startTime = hour.interval?.startTime;
 		const temperature = hour.temperature?.degrees;
@@ -383,15 +389,11 @@ function normalizeWeatherData(
 			},
 		];
 	});
+	const filteredHourly = filterToForecastDays(hourly, timezone);
 
-	const current = hourly[0];
+	const current = filteredHourly[0];
 	if (!current) {
 		throw new Error("Invalid Google weather data received");
-	}
-
-	const timezone = googleWeather.timeZone?.id || metadata.timezone;
-	if (!timezone) {
-		throw new Error("Missing weather timezone");
 	}
 
 	const sunrise = metadata.daily?.sunrise?.[0];
@@ -403,7 +405,7 @@ function normalizeWeatherData(
 
 	return {
 		current,
-		hourly,
+		hourly: filteredHourly,
 		elevation: metadata.elevation ?? 0,
 		aqi:
 			typeof aqi?.current?.us_aqi === "number"
@@ -416,6 +418,52 @@ function normalizeWeatherData(
 		).toISOString(),
 		timezone,
 	};
+}
+
+function filterToForecastDays(
+	hourly: WeatherData["hourly"],
+	timezone: string,
+): WeatherData["hourly"] {
+	const firstHour = hourly[0];
+	if (!firstHour) {
+		return [];
+	}
+
+	const startDay = getDateKeyInTimezone(firstHour.dt, timezone);
+	const includedDays = new Set<string>();
+	let lastIncludedDay = startDay;
+
+	for (const hour of hourly) {
+		const day = getDateKeyInTimezone(hour.dt, timezone);
+		if (!includedDays.has(day)) {
+			if (includedDays.size >= FORECAST_DAYS) {
+				break;
+			}
+			includedDays.add(day);
+			lastIncludedDay = day;
+		}
+	}
+
+	return hourly.filter((hour) => {
+		const day = getDateKeyInTimezone(hour.dt, timezone);
+		return day >= startDay && day <= lastIncludedDay;
+	});
+}
+
+function getDateKeyInTimezone(
+	timestampSeconds: number,
+	timezone: string,
+): string {
+	const parts = new Intl.DateTimeFormat("en-US", {
+		timeZone: timezone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).formatToParts(new Date(timestampSeconds * 1000));
+	const part = (type: string) =>
+		parts.find((datePart) => datePart.type === type)?.value;
+
+	return `${part("year")}-${part("month")}-${part("day")}`;
 }
 
 function parseLocationTime(timeStr: string, timezone: string): number {
