@@ -52,6 +52,7 @@ type GoogleHourlyResponse = {
 	timeZone?: {
 		id?: string;
 	};
+	nextPageToken?: string;
 };
 
 type OpenMeteoMetadataResponse = {
@@ -84,6 +85,7 @@ const GOOGLE_WEATHER_BASE_URL =
 const OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
 const OPEN_METEO_AQI_URL =
 	"https://air-quality-api.open-meteo.com/v1/air-quality";
+const FORECAST_HOURS = 72;
 const CACHE_TTL_MS = 30 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 30;
@@ -256,16 +258,50 @@ async function fetchGoogleHourlyWeather(
 	latitude: number,
 	longitude: number,
 ): Promise<GoogleHourlyResponse> {
+	let nextPageToken: string | undefined;
+	let timeZone: GoogleHourlyResponse["timeZone"];
+	const forecastHours: GoogleForecastHour[] = [];
+
+	do {
+		const page = await fetchGoogleHourlyWeatherPage(
+			apiKey,
+			latitude,
+			longitude,
+			nextPageToken,
+		);
+		timeZone ??= page.timeZone;
+		forecastHours.push(...(page.forecastHours ?? []));
+		nextPageToken = page.nextPageToken;
+	} while (nextPageToken && forecastHours.length < FORECAST_HOURS);
+
+	return {
+		forecastHours: forecastHours.slice(0, FORECAST_HOURS),
+		timeZone,
+	};
+}
+
+async function fetchGoogleHourlyWeatherPage(
+	apiKey: string,
+	latitude: number,
+	longitude: number,
+	pageToken?: string,
+): Promise<GoogleHourlyResponse> {
 	const url = new URL(GOOGLE_WEATHER_BASE_URL);
-	url.search = new URLSearchParams({
+	const params = new URLSearchParams({
 		key: apiKey,
 		"location.latitude": latitude.toString(),
 		"location.longitude": longitude.toString(),
 		unitsSystem: "IMPERIAL",
-		hours: "24",
+		hours: FORECAST_HOURS.toString(),
 		pageSize: "24",
 		languageCode: "en",
-	}).toString();
+	});
+
+	if (pageToken) {
+		params.set("pageToken", pageToken);
+	}
+
+	url.search = params.toString();
 
 	const response = await fetch(url);
 	if (!response.ok) {
