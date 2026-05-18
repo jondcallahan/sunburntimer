@@ -8,6 +8,7 @@ type WeatherOverview = {
 };
 
 type WeatherData = {
+	provider: "google";
 	current: {
 		dt: number;
 		temp: number;
@@ -70,11 +71,6 @@ type OpenMeteoAqiResponse = {
 	};
 };
 
-type CacheEntry = {
-	expiresAt: number;
-	body: WeatherData;
-};
-
 type RateLimitEntry = {
 	windowStart: number;
 	count: number;
@@ -87,22 +83,17 @@ const OPEN_METEO_AQI_URL =
 	"https://air-quality-api.open-meteo.com/v1/air-quality";
 const FORECAST_DAYS = 3;
 const MAX_GOOGLE_FORECAST_HOURS = 72;
-const CACHE_TTL_MS = 5 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 30;
 
 const globalRuntime = globalThis as typeof globalThis & {
-	__sunburnGoogleWeatherCache?: Map<string, CacheEntry>;
 	__sunburnGoogleWeatherRateLimit?: Map<string, RateLimitEntry>;
 };
 
-const weatherCache =
-	globalRuntime.__sunburnGoogleWeatherCache ?? new Map<string, CacheEntry>();
 const rateLimit =
 	globalRuntime.__sunburnGoogleWeatherRateLimit ??
 	new Map<string, RateLimitEntry>();
 
-globalRuntime.__sunburnGoogleWeatherCache = weatherCache;
 globalRuntime.__sunburnGoogleWeatherRateLimit = rateLimit;
 
 export default {
@@ -140,34 +131,15 @@ export default {
 			);
 		}
 
-		const roundedLatitude = roundCoordinate(latitude);
-		const roundedLongitude = roundCoordinate(longitude);
-		const cacheKey = [
-			"google-weather-v1",
-			roundedLatitude,
-			roundedLongitude,
-			new Date().toISOString().slice(0, 13),
-		].join(":");
-
-		const cached = weatherCache.get(cacheKey);
-		if (cached && cached.expiresAt > Date.now()) {
-			return weatherResponse(cached.body, "HIT");
-		}
-
 		try {
 			const [googleWeather, metadata, aqi] = await Promise.all([
-				fetchGoogleHourlyWeather(apiKey, roundedLatitude, roundedLongitude),
-				fetchOpenMeteoMetadata(roundedLatitude, roundedLongitude),
-				fetchOpenMeteoAqi(roundedLatitude, roundedLongitude),
+				fetchGoogleHourlyWeather(apiKey, latitude, longitude),
+				fetchOpenMeteoMetadata(latitude, longitude),
+				fetchOpenMeteoAqi(latitude, longitude),
 			]);
 			const weather = normalizeWeatherData(googleWeather, metadata, aqi);
 
-			weatherCache.set(cacheKey, {
-				expiresAt: Date.now() + CACHE_TTL_MS,
-				body: weather,
-			});
-
-			return weatherResponse(weather, "MISS");
+			return weatherResponse(weather);
 		} catch (error) {
 			return jsonResponse(
 				{
@@ -248,10 +220,6 @@ function parseCoordinate(
 	}
 
 	return coordinate;
-}
-
-function roundCoordinate(coordinate: number): number {
-	return Number(coordinate.toFixed(3));
 }
 
 async function fetchGoogleHourlyWeather(
@@ -404,6 +372,7 @@ function normalizeWeatherData(
 	}
 
 	return {
+		provider: "google",
 		current,
 		hourly: filteredHourly,
 		elevation: metadata.elevation ?? 0,
@@ -491,14 +460,10 @@ function toTitleCase(value: string): string {
 	return value.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function weatherResponse(
-	body: WeatherData,
-	cacheStatus: "HIT" | "MISS",
-): Response {
+function weatherResponse(body: WeatherData): Response {
 	return jsonResponse(body, 200, {
 		"Cache-Control": "no-store",
 		"X-Weather-Provider": "google",
-		"X-Cache-Status": cacheStatus,
 	});
 }
 

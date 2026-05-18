@@ -168,6 +168,7 @@ export interface AQIData {
 }
 
 export interface WeatherData {
+	provider: WeatherProvider;
 	current: CurrentWeather;
 	hourly: HourlyWeather[];
 	elevation: number; // meters above sea level

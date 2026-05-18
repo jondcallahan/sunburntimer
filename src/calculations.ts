@@ -50,9 +50,9 @@ function spfAtTime(
 	return Math.max(1.0, remainingSpfValue);
 }
 
-// **Low-UV ramp: smoothstep between configured [low, high]
-// At very low UV (e.g., <1), damage is negligible. This smoothly ramps up the weighting from 0 to full effect,
-// avoiding overestimation in dawn/dusk or cloudy conditions. Smoothstep is a curved transition for natural feel.**
+// Open-Meteo can report measurable UV around dawn/dusk that made estimates feel
+// too conservative. Google UV is already condition-adjusted enough for this pass,
+// so Google weather bypasses this weighting.
 function lowUvWeight(uvi: number): number {
 	const { LOW_UV_SMOOTHSTEP_ENABLED, LOW_UV_RAMP_LOW, LOW_UV_RAMP_HIGH } =
 		CALCULATION_CONSTANTS;
@@ -64,7 +64,7 @@ function lowUvWeight(uvi: number): number {
 		0,
 		Math.min(1, (uvi - lowThreshold) / (highThreshold - lowThreshold)),
 	);
-	return normalizedUvi * normalizedUvi * (3 - 2 * normalizedUvi); // smoothstep formula: cubic curve for smooth start/end.
+	return normalizedUvi * normalizedUvi * (3 - 2 * normalizedUvi);
 }
 
 type SliceWindow = {
@@ -181,6 +181,7 @@ function calculateBurnTimeWithSlices(
 		SPF_CONFIG[SPFLevel.NONE].coefficient;
 	const startTimestampMs = input.currentTime.getTime();
 	const threshold = CALCULATION_CONSTANTS.DAMAGE_THRESHOLD;
+	const shouldApplyLowUvWeight = input.weather.provider !== "google";
 	const points: CalculationPoint[] = [];
 	let totalDamage = 0;
 	let pointCount = 0;
@@ -222,12 +223,16 @@ function calculateBurnTimeWithSlices(
 			hoursFromStartAtEnd,
 		);
 		// Trapezoid on effective irradiance (UVI/SPF)
-		// **Effective irradiance: UV strength divided by SPF, weighted for low UV. Average start/end for smooth integration.**
+		// **Effective irradiance: UV strength divided by SPF. Average start/end for smooth integration.**
+		const lowUvWeightAtStart = shouldApplyLowUvWeight
+			? lowUvWeight(uviAtEffectiveStart)
+			: 1;
+		const lowUvWeightAtEnd = shouldApplyLowUvWeight ? lowUvWeight(uviAtEnd) : 1;
 		const effectiveIrradianceStart =
 			(uviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) *
-			lowUvWeight(uviAtEffectiveStart);
+			lowUvWeightAtStart;
 		const effectiveIrradianceEnd =
-			(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
+			(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeightAtEnd;
 		const averageEffectiveIrradiance =
 			0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
 		// Damage% added in this (possibly partial) window

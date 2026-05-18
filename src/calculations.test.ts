@@ -11,6 +11,7 @@ function createMockWeatherData(
 	const timestamp = baseTime || Math.floor(Date.now() / 1000);
 
 	return {
+		provider: "open-meteo",
 		current: {
 			dt: timestamp,
 			temp: 75,

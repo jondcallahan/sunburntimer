@@ -62,8 +62,8 @@ async function fetchGoogleWeatherData(
 	position: Position,
 ): Promise<WeatherData> {
 	const params = new URLSearchParams({
-		latitude: position.latitude.toFixed(4),
-		longitude: position.longitude.toFixed(4),
+		latitude: position.latitude.toString(),
+		longitude: position.longitude.toString(),
 	});
 
 	const response = await fetch(`/api/google-weather?${params.toString()}`, {
@@ -197,6 +197,7 @@ export async function fetchOpenMeteoWeatherData(
 	}
 
 	return {
+		provider: "open-meteo",
 		current,
 		hourly,
 		elevation: data.elevation,
