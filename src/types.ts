@@ -178,6 +178,8 @@ export interface WeatherData {
 	timezone: string; // IANA timezone string (e.g. "America/Denver")
 }
 
+export type WeatherProvider = "open-meteo" | "google";
+
 // Geographic Position
 export interface Position {
 	latitude: number;
@@ -233,6 +235,7 @@ export interface AppState {
 	skinType?: FitzpatrickType;
 	spfLevel?: SPFLevel;
 	sweatLevel?: SweatLevel;
+	weatherProvider?: WeatherProvider;
 	geolocation: GeolocationState;
 	calculation?: CalculationResult;
 }

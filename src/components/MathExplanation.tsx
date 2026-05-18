@@ -5,10 +5,20 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Calculator, Sun, Shield, User } from "lucide-react";
-import { getActiveWeatherProvider } from "@/services/weather";
+import { useAppStore } from "@/store";
+import {
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "@/services/weather";
 
 export function MathExplanation() {
-	const weatherProvider = getActiveWeatherProvider();
+	const weatherProviderPreference = useAppStore(
+		(state) => state.weatherProvider,
+	);
+	const weatherProvider =
+		isGoogleWeatherTestRoute() && weatherProviderPreference
+			? weatherProviderPreference
+			: getActiveWeatherProvider();
 
 	return (
 		<Accordion type="single" collapsible className="w-full">

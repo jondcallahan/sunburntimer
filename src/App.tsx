@@ -10,7 +10,11 @@ import {
 	DEFAULT_SWEAT_LEVEL,
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
-import { fetchWeatherData, getActiveWeatherProvider } from "./services/weather";
+import {
+	fetchWeatherData,
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
@@ -41,6 +45,7 @@ function App() {
 		skinType,
 		spfLevel,
 		sweatLevel,
+		weatherProvider,
 		geolocation,
 		calculation,
 		setCalculation,
@@ -50,7 +55,11 @@ function App() {
 	} = useAppStore();
 
 	const isReadyToCalculate = useIsReadyToCalculate();
-	const isGoogleWeatherMode = getActiveWeatherProvider() === "google";
+	const activeWeatherProvider =
+		isGoogleWeatherTestRoute() && weatherProvider
+			? weatherProvider
+			: getActiveWeatherProvider();
+	const isGoogleWeatherMode = activeWeatherProvider === "google";
 
 	// Check if user has pre-loaded preferences (returning user)
 	const hasPreloadedPrefs = !!(skinType && spfLevel);
@@ -97,7 +106,10 @@ function App() {
 		try {
 			haptic();
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(geolocation.position);
+			const weather = await fetchWeatherData(
+				geolocation.position,
+				activeWeatherProvider,
+			);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {

@@ -1,9 +1,7 @@
 import { TZDate } from "@date-fns/tz";
-import type { Position, WeatherData, AQIData } from "../types";
+import type { Position, WeatherData, AQIData, WeatherProvider } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
-
-export type WeatherProvider = "open-meteo" | "google";
 
 interface OpenMeteoResponse {
 	elevation: number;
@@ -38,19 +36,22 @@ function parseLocationTime(timeStr: string, timezone: string): number {
 }
 
 export function getActiveWeatherProvider(): WeatherProvider {
+	return isGoogleWeatherTestRoute() ? "google" : "open-meteo";
+}
+
+export function isGoogleWeatherTestRoute(): boolean {
 	if (typeof window === "undefined") {
-		return "open-meteo";
+		return false;
 	}
 
-	return window.location.pathname.replace(/\/+$/, "") === "/google"
-		? "google"
-		: "open-meteo";
+	return window.location.pathname.replace(/\/+$/, "") === "/google";
 }
 
 export async function fetchWeatherData(
 	position: Position,
+	provider: WeatherProvider = getActiveWeatherProvider(),
 ): Promise<WeatherData> {
-	if (getActiveWeatherProvider() === "google") {
+	if (provider === "google") {
 		return fetchGoogleWeatherData(position);
 	}
 

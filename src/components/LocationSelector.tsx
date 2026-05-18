@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
 	MapPin,
 	LoaderIcon,
@@ -13,21 +14,48 @@ import {
 	reverseGeocode,
 	formatElevation,
 } from "../services/geolocation";
-import { fetchWeatherData } from "../services/weather";
+import {
+	fetchWeatherData,
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "../services/weather";
 import { LocationSearch } from "./LocationSearch";
 import type { GeocodingResult } from "../services/geocoding";
+import type { WeatherProvider } from "../types";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "./ui/alert";
+import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 export function LocationSelector() {
+	const openMeteoProviderId = useId();
+	const googleProviderId = useId();
 	const {
 		geolocation,
+		weatherProvider,
 		setGeolocationStatus,
 		setPosition,
 		setWeather,
 		setGeolocationError,
+		setWeatherProvider,
 	} = useAppStore();
+	const canChooseWeatherProvider = isGoogleWeatherTestRoute();
+	const activeWeatherProvider =
+		canChooseWeatherProvider && weatherProvider
+			? weatherProvider
+			: getActiveWeatherProvider();
+
+	const refreshWeatherForProvider = async (
+		provider: WeatherProvider,
+		position = geolocation.position,
+	) => {
+		if (!position) return;
+
+		setGeolocationStatus("fetching_weather");
+		const weather = await fetchWeatherData(position, provider);
+		setWeather(weather);
+	};
 
 	const handleSearchSelect = async (result: GeocodingResult) => {
 		try {
@@ -42,7 +70,7 @@ export function LocationSelector() {
 			setPosition(position, placeName, result.countryCode);
 
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(position);
+			const weather = await fetchWeatherData(position, activeWeatherProvider);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -63,13 +91,27 @@ export function LocationSelector() {
 			setPosition(position, placeName, countryCode);
 
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(position);
+			const weather = await fetchWeatherData(position, activeWeatherProvider);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
 			haptic.error();
 			setGeolocationError(
 				error instanceof Error ? error.message : "Failed to get location",
+			);
+		}
+	};
+
+	const handleWeatherProviderChange = async (provider: WeatherProvider) => {
+		try {
+			haptic();
+			setWeatherProvider(provider);
+			await refreshWeatherForProvider(provider);
+			haptic.confirm();
+		} catch (error) {
+			haptic.error();
+			setGeolocationError(
+				error instanceof Error ? error.message : "Failed to fetch weather",
 			);
 		}
 	};
@@ -267,6 +309,37 @@ export function LocationSelector() {
 
 	return (
 		<div className="space-y-6">
+			{canChooseWeatherProvider && (
+				<div className="space-y-3">
+					<Label className="text-sm font-medium text-slate-700">
+						Weather provider
+					</Label>
+					<RadioGroup
+						value={activeWeatherProvider}
+						onValueChange={(value) =>
+							handleWeatherProviderChange(value as WeatherProvider)
+						}
+						disabled={isLoading}
+						className="grid grid-cols-2 gap-2"
+					>
+						<Label
+							htmlFor={openMeteoProviderId}
+							className="flex cursor-pointer items-center gap-3 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-slate-700 transition-colors has-[[data-state=checked]]:border-amber-500 has-[[data-state=checked]]:bg-amber-50 has-[[data-state=checked]]:text-amber-950"
+						>
+							<RadioGroupItem id={openMeteoProviderId} value="open-meteo" />
+							Open-Meteo
+						</Label>
+						<Label
+							htmlFor={googleProviderId}
+							className="flex cursor-pointer items-center gap-3 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-slate-700 transition-colors has-[[data-state=checked]]:border-amber-500 has-[[data-state=checked]]:bg-amber-50 has-[[data-state=checked]]:text-amber-950"
+						>
+							<RadioGroupItem id={googleProviderId} value="google" />
+							Google
+						</Label>
+					</RadioGroup>
+				</div>
+			)}
+
 			<div className="grid grid-cols-1 gap-4">
 				<Button
 					variant="outline"

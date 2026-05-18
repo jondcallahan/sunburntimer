@@ -6,6 +6,7 @@ import type {
 	GeolocationState,
 	Position,
 	WeatherData,
+	WeatherProvider,
 } from "./types";
 import {
 	type FitzpatrickType,
@@ -19,6 +20,7 @@ interface AppStore extends AppState {
 	setSkinType: (skinType: FitzpatrickType) => void;
 	setSPFLevel: (spfLevel: SPFLevel) => void;
 	setSweatLevel: (sweatLevel: SweatLevel) => void;
+	setWeatherProvider: (weatherProvider: WeatherProvider) => void;
 	setGeolocationStatus: (status: GeolocationState["status"]) => void;
 	setPosition: (
 		position: Position,
@@ -57,6 +59,19 @@ export const useAppStore = create<AppStore>()(
 				})),
 
 			setSweatLevel: (sweatLevel) => set((state) => ({ ...state, sweatLevel })),
+
+			setWeatherProvider: (weatherProvider) =>
+				set((state) => ({
+					...state,
+					weatherProvider,
+					calculation: undefined,
+					geolocation: {
+						...state.geolocation,
+						weather: undefined,
+						lastFetched: undefined,
+						error: undefined,
+					},
+				})),
 
 			setGeolocationStatus: (status) =>
 				set((state) => ({
@@ -111,6 +126,7 @@ export const useAppStore = create<AppStore>()(
 				skinType: state.skinType,
 				spfLevel: state.spfLevel,
 				sweatLevel: state.sweatLevel,
+				weatherProvider: state.weatherProvider,
 				geolocation:
 					state.geolocation.status === "completed" && state.geolocation.position
 						? {
