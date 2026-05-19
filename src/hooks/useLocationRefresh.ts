@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAppStore } from "../store";
 import {
+	fetchEnsembleWeatherData,
 	fetchWeatherData,
 	getActiveWeatherProvider,
 	isGoogleWeatherTestRoute,
@@ -12,6 +13,7 @@ export function useLocationRefresh() {
 		weatherProvider,
 		setGeolocationStatus,
 		setWeather,
+		setEnsembleWeather,
 		setGeolocationError,
 	} = useAppStore();
 	const activeWeatherProvider =
@@ -30,6 +32,15 @@ export function useLocationRefresh() {
 			const refreshWeather = async () => {
 				try {
 					setGeolocationStatus("fetching_weather");
+					if (activeWeatherProvider === "ensemble") {
+						const weather = await fetchEnsembleWeatherData(
+							position,
+							geolocation.placeName,
+							geolocation.countryCode,
+						);
+						setEnsembleWeather(weather);
+						return;
+					}
 					const weather = await fetchWeatherData(
 						position,
 						activeWeatherProvider,
@@ -49,10 +60,13 @@ export function useLocationRefresh() {
 	}, [
 		geolocation.status,
 		geolocation.position,
+		geolocation.placeName,
+		geolocation.countryCode,
 		geolocation.weather,
 		activeWeatherProvider,
 		setGeolocationStatus,
 		setWeather,
+		setEnsembleWeather,
 		setGeolocationError,
 	]);
 }

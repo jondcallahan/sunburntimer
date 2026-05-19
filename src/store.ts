@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type {
 	AppState,
 	CalculationResult,
+	EnsembleCalculationResult,
 	GeolocationState,
 	Position,
 	WeatherData,
@@ -28,8 +29,10 @@ interface AppStore extends AppState {
 		countryCode?: string,
 	) => void;
 	setWeather: (weather: WeatherData) => void;
+	setEnsembleWeather: (weather: WeatherData[]) => void;
 	setGeolocationError: (error: string) => void;
 	setCalculation: (calculation: CalculationResult) => void;
+	setEnsembleCalculation: (calculation: EnsembleCalculationResult) => void;
 	clearCalculation: () => void;
 	reset: () => void;
 }
@@ -65,9 +68,11 @@ export const useAppStore = create<AppStore>()(
 					...state,
 					weatherProvider,
 					calculation: undefined,
+					ensembleCalculation: undefined,
 					geolocation: {
 						...state.geolocation,
 						weather: undefined,
+						ensembleWeather: undefined,
 						lastFetched: undefined,
 						error: undefined,
 					},
@@ -97,6 +102,19 @@ export const useAppStore = create<AppStore>()(
 					geolocation: {
 						...state.geolocation,
 						weather,
+						ensembleWeather: undefined,
+						lastFetched: Date.now(),
+						status: "completed",
+					},
+				})),
+
+			setEnsembleWeather: (weather) =>
+				set((state) => ({
+					...state,
+					geolocation: {
+						...state.geolocation,
+						weather: weather[0],
+						ensembleWeather: weather,
 						lastFetched: Date.now(),
 						status: "completed",
 					},
@@ -113,10 +131,25 @@ export const useAppStore = create<AppStore>()(
 				})),
 
 			setCalculation: (calculation) =>
-				set((state) => ({ ...state, calculation })),
+				set((state) => ({
+					...state,
+					calculation,
+					ensembleCalculation: undefined,
+				})),
+
+			setEnsembleCalculation: (ensembleCalculation) =>
+				set((state) => ({
+					...state,
+					calculation: undefined,
+					ensembleCalculation,
+				})),
 
 			clearCalculation: () =>
-				set((state) => ({ ...state, calculation: undefined })),
+				set((state) => ({
+					...state,
+					calculation: undefined,
+					ensembleCalculation: undefined,
+				})),
 
 			reset: () => set(initialState),
 		}),

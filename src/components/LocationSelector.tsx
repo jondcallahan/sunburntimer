@@ -15,6 +15,7 @@ import {
 	formatElevation,
 } from "../services/geolocation";
 import {
+	fetchEnsembleWeatherData,
 	fetchWeatherData,
 	getActiveWeatherProvider,
 	isGoogleWeatherTestRoute,
@@ -31,12 +32,14 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 export function LocationSelector() {
 	const openMeteoProviderId = useId();
 	const googleProviderId = useId();
+	const ensembleProviderId = useId();
 	const {
 		geolocation,
 		weatherProvider,
 		setGeolocationStatus,
 		setPosition,
 		setWeather,
+		setEnsembleWeather,
 		setGeolocationError,
 		setWeatherProvider,
 	} = useAppStore();
@@ -53,6 +56,15 @@ export function LocationSelector() {
 		if (!position) return;
 
 		setGeolocationStatus("fetching_weather");
+		if (provider === "ensemble") {
+			const weather = await fetchEnsembleWeatherData(
+				position,
+				geolocation.placeName,
+				geolocation.countryCode,
+			);
+			setEnsembleWeather(weather);
+			return;
+		}
 		const weather = await fetchWeatherData(position, provider);
 		setWeather(weather);
 	};
@@ -70,6 +82,16 @@ export function LocationSelector() {
 			setPosition(position, placeName, result.countryCode);
 
 			setGeolocationStatus("fetching_weather");
+			if (activeWeatherProvider === "ensemble") {
+				const weather = await fetchEnsembleWeatherData(
+					position,
+					placeName,
+					result.countryCode,
+				);
+				haptic.confirm();
+				setEnsembleWeather(weather);
+				return;
+			}
 			const weather = await fetchWeatherData(position, activeWeatherProvider);
 			haptic.confirm();
 			setWeather(weather);
@@ -91,6 +113,16 @@ export function LocationSelector() {
 			setPosition(position, placeName, countryCode);
 
 			setGeolocationStatus("fetching_weather");
+			if (activeWeatherProvider === "ensemble") {
+				const weather = await fetchEnsembleWeatherData(
+					position,
+					placeName,
+					countryCode,
+				);
+				haptic.confirm();
+				setEnsembleWeather(weather);
+				return;
+			}
 			const weather = await fetchWeatherData(position, activeWeatherProvider);
 			haptic.confirm();
 			setWeather(weather);
@@ -320,7 +352,7 @@ export function LocationSelector() {
 							handleWeatherProviderChange(value as WeatherProvider)
 						}
 						disabled={isLoading}
-						className="grid grid-cols-2 gap-2"
+						className="grid grid-cols-3 gap-2"
 					>
 						<Label
 							htmlFor={openMeteoProviderId}
@@ -335,6 +367,13 @@ export function LocationSelector() {
 						>
 							<RadioGroupItem id={googleProviderId} value="google" />
 							Google
+						</Label>
+						<Label
+							htmlFor={ensembleProviderId}
+							className="flex cursor-pointer items-center gap-3 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-slate-700 transition-colors has-[[data-state=checked]]:border-amber-500 has-[[data-state=checked]]:bg-amber-50 has-[[data-state=checked]]:text-amber-950"
+						>
+							<RadioGroupItem id={ensembleProviderId} value="ensemble" />
+							Range
 						</Label>
 					</RadioGroup>
 				</div>

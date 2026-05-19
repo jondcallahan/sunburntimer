@@ -165,22 +165,24 @@ export function MathExplanation() {
 								<li>
 									<a
 										href={
-											weatherProvider === "google"
-												? "https://developers.google.com/maps/documentation/weather"
-												: "https://open-meteo.com/"
+											weatherProvider === "open-meteo"
+												? "https://open-meteo.com/"
+												: "https://developers.google.com/maps/documentation/weather"
 										}
 										target="_blank"
 										rel="noopener noreferrer"
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
-										{weatherProvider === "google"
-											? "Google Weather API"
-											: "Open-Meteo"}
+										{weatherProvider === "open-meteo"
+											? "Open-Meteo"
+											: "Google Weather API"}
 									</a>
 									<span className="text-slate-400">
-										{weatherProvider === "google"
-											? " (UV forecast test data)"
-											: " (weather data)"}
+										{weatherProvider === "ensemble"
+											? " (provider range test data)"
+											: weatherProvider === "google"
+												? " (UV forecast test data)"
+												: " (weather data)"}
 									</span>
 								</li>
 								{weatherProvider === "google" && (
@@ -196,6 +198,22 @@ export function MathExplanation() {
 										<span className="text-slate-400">
 											{" "}
 											(elevation, sun timing, and AQI metadata)
+										</span>
+									</li>
+								)}
+								{weatherProvider === "ensemble" && (
+									<li>
+										<a
+											href="https://www.epa.gov/enviro/web-services"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
+										>
+											EPA UV Index
+										</a>
+										<span className="text-slate-400">
+											{" "}
+											(US hourly UV forecast when available)
 										</span>
 									</li>
 								)}
