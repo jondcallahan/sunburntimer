@@ -1,10 +1,25 @@
 import { useEffect } from "react";
 import { useAppStore } from "../store";
-import { fetchWeatherData } from "../services/weather";
+import {
+	fetchEnsembleWeatherData,
+	fetchWeatherData,
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "../services/weather";
 
 export function useLocationRefresh() {
-	const { geolocation, setGeolocationStatus, setWeather, setGeolocationError } =
-		useAppStore();
+	const {
+		geolocation,
+		weatherProvider,
+		setGeolocationStatus,
+		setWeather,
+		setEnsembleWeather,
+		setGeolocationError,
+	} = useAppStore();
+	const activeWeatherProvider =
+		isGoogleWeatherTestRoute() && weatherProvider
+			? weatherProvider
+			: getActiveWeatherProvider();
 
 	useEffect(() => {
 		// If we have a saved location but no weather data, refresh the weather
@@ -17,7 +32,19 @@ export function useLocationRefresh() {
 			const refreshWeather = async () => {
 				try {
 					setGeolocationStatus("fetching_weather");
-					const weather = await fetchWeatherData(position);
+					if (activeWeatherProvider === "ensemble") {
+						const weather = await fetchEnsembleWeatherData(
+							position,
+							geolocation.placeName,
+							geolocation.countryCode,
+						);
+						setEnsembleWeather(weather);
+						return;
+					}
+					const weather = await fetchWeatherData(
+						position,
+						activeWeatherProvider,
+					);
 					setWeather(weather);
 				} catch (error) {
 					setGeolocationError(
@@ -33,9 +60,13 @@ export function useLocationRefresh() {
 	}, [
 		geolocation.status,
 		geolocation.position,
+		geolocation.placeName,
+		geolocation.countryCode,
 		geolocation.weather,
+		activeWeatherProvider,
 		setGeolocationStatus,
 		setWeather,
+		setEnsembleWeather,
 		setGeolocationError,
 	]);
 }

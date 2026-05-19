@@ -10,7 +10,12 @@ import {
 	DEFAULT_SWEAT_LEVEL,
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
-import { fetchWeatherData } from "./services/weather";
+import {
+	fetchWeatherData,
+	fetchEnsembleWeatherData,
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
@@ -18,6 +23,7 @@ import { SPFSelector } from "./components/SPFSelector";
 import { SweatLevelSelector } from "./components/SweatLevelSelector";
 import { LocationSelector } from "./components/LocationSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
+import { EnsembleResultsDisplay } from "./components/EnsembleResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
 import {
@@ -41,15 +47,27 @@ function App() {
 		skinType,
 		spfLevel,
 		sweatLevel,
+		weatherProvider,
 		geolocation,
 		calculation,
+		ensembleCalculation,
 		setCalculation,
+		setEnsembleCalculation,
 		setGeolocationStatus,
 		setWeather,
+		setEnsembleWeather,
 		setGeolocationError,
 	} = useAppStore();
 
 	const isReadyToCalculate = useIsReadyToCalculate();
+	const activeWeatherProvider =
+		isGoogleWeatherTestRoute() && weatherProvider
+			? weatherProvider
+			: getActiveWeatherProvider();
+	const isGoogleWeatherMode = activeWeatherProvider === "google";
+	const isEnsembleMode = activeWeatherProvider === "ensemble";
+	const displayedCalculation =
+		calculation ?? ensembleCalculation?.recommended.result;
 
 	// Check if user has pre-loaded preferences (returning user)
 	const hasPreloadedPrefs = !!(skinType && spfLevel);
@@ -61,7 +79,7 @@ function App() {
 	useEffect(() => {
 		if (
 			!isReadyToCalculate ||
-			!geolocation.weather ||
+			(!geolocation.weather && !geolocation.ensembleWeather) ||
 			!geolocation.placeName ||
 			!skinType ||
 			!spfLevel
@@ -69,25 +87,54 @@ function App() {
 			return;
 		}
 
-		const input = {
-			weather: geolocation.weather,
+		const currentTime = new Date();
+		const commonInput = {
 			placeName: geolocation.placeName,
-			currentTime: new Date(),
+			currentTime,
 			skinType,
 			spfLevel,
 			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
 		};
 
-		const result = findOptimalTimeSlicing(input);
-		setCalculation(result);
+		if (activeWeatherProvider === "ensemble" && geolocation.ensembleWeather) {
+			const providers = geolocation.ensembleWeather.map((weather) => ({
+				provider: weather.provider,
+				result: findOptimalTimeSlicing({
+					...commonInput,
+					weather,
+				}),
+			}));
+			const ranked = [...providers].sort((a, b) => {
+				if (!a.result.burnTime && !b.result.burnTime) return 0;
+				if (!a.result.burnTime) return 1;
+				if (!b.result.burnTime) return -1;
+				return a.result.burnTime.getTime() - b.result.burnTime.getTime();
+			});
+			const recommended = ranked[0];
+			if (!recommended) return;
+			setEnsembleCalculation({
+				providers: ranked,
+				recommended,
+				optimistic: ranked[ranked.length - 1],
+			});
+		} else if (geolocation.weather) {
+			const result = findOptimalTimeSlicing({
+				...commonInput,
+				weather: geolocation.weather,
+			});
+			setCalculation(result);
+		}
 	}, [
 		isReadyToCalculate,
+		activeWeatherProvider,
 		skinType,
 		spfLevel,
 		sweatLevel,
 		geolocation.weather,
+		geolocation.ensembleWeather,
 		geolocation.placeName,
 		setCalculation,
+		setEnsembleCalculation,
 	]);
 
 	const handleRefresh = async () => {
@@ -96,7 +143,21 @@ function App() {
 		try {
 			haptic();
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(geolocation.position);
+			if (activeWeatherProvider === "ensemble") {
+				const weather = await fetchEnsembleWeatherData(
+					geolocation.position,
+					geolocation.placeName,
+					geolocation.countryCode,
+				);
+				setEnsembleWeather(weather);
+				haptic.confirm();
+				return;
+			}
+
+			const weather = await fetchWeatherData(
+				geolocation.position,
+				activeWeatherProvider,
+			);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -126,6 +187,11 @@ function App() {
 					</p>
 					<p className="text-slate-500 text-sm">
 						by <span className="font-medium">SunburnTimer</span>
+						{(isGoogleWeatherMode || isEnsembleMode) && (
+							<Badge variant="secondary" className="ml-2 align-middle">
+								{isEnsembleMode ? "Provider range test" : "Google Weather test"}
+							</Badge>
+						)}
 					</p>
 				</div>
 
@@ -265,7 +331,7 @@ function App() {
 				</Accordion>
 
 				{/* Results */}
-				{calculation && (
+				{displayedCalculation && (
 					<div className="mt-8 space-y-6">
 						<div className="flex items-center justify-between">
 							<h2 className="text-2xl font-bold text-slate-800">
@@ -290,22 +356,28 @@ function App() {
 							</div>
 						</div>
 
-						<ResultsDisplay
-							result={calculation}
-							timezone={geolocation.weather?.timezone}
-						/>
+						{ensembleCalculation ? (
+							<EnsembleResultsDisplay ensemble={ensembleCalculation} />
+						) : (
+							calculation && (
+								<ResultsDisplay
+									result={calculation}
+									timezone={geolocation.weather?.timezone}
+								/>
+							)
+						)}
 						<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 							<BurnChart
-								result={calculation}
+								result={displayedCalculation}
 								timezone={geolocation.weather?.timezone}
 							/>
 							<UVChart
-								result={calculation}
+								result={displayedCalculation}
 								timezone={geolocation.weather?.timezone}
 							/>
 						</div>
 						<SunPositionCard />
-						<SunTimer result={calculation} />
+						<SunTimer result={displayedCalculation} />
 					</div>
 				)}
 

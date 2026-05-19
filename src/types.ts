@@ -168,6 +168,7 @@ export interface AQIData {
 }
 
 export interface WeatherData {
+	provider: ActualWeatherProvider;
 	current: CurrentWeather;
 	hourly: HourlyWeather[];
 	elevation: number; // meters above sea level
@@ -177,6 +178,9 @@ export interface WeatherData {
 	nextSunrise: string; // ISO8601 datetime
 	timezone: string; // IANA timezone string (e.g. "America/Denver")
 }
+
+export type ActualWeatherProvider = "open-meteo" | "google" | "epa";
+export type WeatherProvider = ActualWeatherProvider | "ensemble";
 
 // Geographic Position
 export interface Position {
@@ -195,6 +199,7 @@ export interface GeolocationState {
 	placeName?: string;
 	countryCode?: string;
 	weather?: WeatherData;
+	ensembleWeather?: WeatherData[];
 	lastFetched?: number; // timestamp when weather was last fetched
 	error?: string;
 }
@@ -228,13 +233,26 @@ export interface CalculationResult {
 	advice: string[];
 }
 
+export interface ProviderCalculationResult {
+	provider: ActualWeatherProvider;
+	result: CalculationResult;
+}
+
+export interface EnsembleCalculationResult {
+	providers: ProviderCalculationResult[];
+	recommended: ProviderCalculationResult;
+	optimistic?: ProviderCalculationResult;
+}
+
 // App State
 export interface AppState {
 	skinType?: FitzpatrickType;
 	spfLevel?: SPFLevel;
 	sweatLevel?: SweatLevel;
+	weatherProvider?: WeatherProvider;
 	geolocation: GeolocationState;
 	calculation?: CalculationResult;
+	ensembleCalculation?: EnsembleCalculationResult;
 }
 
 // Constants

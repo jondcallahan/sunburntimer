@@ -5,8 +5,21 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Calculator, Sun, Shield, User } from "lucide-react";
+import { useAppStore } from "@/store";
+import {
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "@/services/weather";
 
 export function MathExplanation() {
+	const weatherProviderPreference = useAppStore(
+		(state) => state.weatherProvider,
+	);
+	const weatherProvider =
+		isGoogleWeatherTestRoute() && weatherProviderPreference
+			? weatherProviderPreference
+			: getActiveWeatherProvider();
+
 	return (
 		<Accordion type="single" collapsible className="w-full">
 			<AccordionItem
@@ -151,15 +164,59 @@ export function MathExplanation() {
 								</li>
 								<li>
 									<a
-										href="https://open-meteo.com/"
+										href={
+											weatherProvider === "open-meteo"
+												? "https://open-meteo.com/"
+												: "https://developers.google.com/maps/documentation/weather"
+										}
 										target="_blank"
 										rel="noopener noreferrer"
 										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
 									>
-										Open-Meteo
+										{weatherProvider === "open-meteo"
+											? "Open-Meteo"
+											: "Google Weather API"}
 									</a>
-									<span className="text-slate-400"> (weather data)</span>
+									<span className="text-slate-400">
+										{weatherProvider === "ensemble"
+											? " (provider range test data)"
+											: weatherProvider === "google"
+												? " (UV forecast test data)"
+												: " (weather data)"}
+									</span>
 								</li>
+								{weatherProvider === "google" && (
+									<li>
+										<a
+											href="https://open-meteo.com/"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
+										>
+											Open-Meteo
+										</a>
+										<span className="text-slate-400">
+											{" "}
+											(elevation, sun timing, and AQI metadata)
+										</span>
+									</li>
+								)}
+								{weatherProvider === "ensemble" && (
+									<li>
+										<a
+											href="https://www.epa.gov/enviro/web-services"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
+										>
+											EPA UV Index
+										</a>
+										<span className="text-slate-400">
+											{" "}
+											(US hourly UV forecast when available)
+										</span>
+									</li>
+								)}
 							</ul>
 						</div>
 					</div>
