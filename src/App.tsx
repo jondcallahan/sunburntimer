@@ -27,7 +27,6 @@ import {
 	AccordionTrigger,
 } from "./components/ui/accordion";
 import { StepHeader } from "./components/StepHeader";
-import "@fontsource/tiktok-sans/latin.css";
 
 import { Button } from "./components/ui/button";
 import { Badge } from "@/components/ui/badge";

@@ -3,11 +3,15 @@ import path from "node:path";
 
 import { ImageResponse } from "@vercel/og";
 
-const fontPath = path.join(
-	process.cwd(),
-	"node_modules/@fontsource/tiktok-sans/files/tiktok-sans-latin-700-normal.woff",
+const fontResponse = await fetch(
+	"https://cdn.aviosans.lerbb.com/fonts/AvioSans-Bold.woff2",
 );
-const fontData = fs.readFileSync(fontPath);
+
+if (!fontResponse.ok) {
+	throw new Error(`Failed to load Avio Sans font: ${fontResponse.status}`);
+}
+
+const fontData = await fontResponse.arrayBuffer();
 
 const image = new ImageResponse(
 	<div
@@ -15,7 +19,7 @@ const image = new ImageResponse(
 			background: "#fff7ed",
 			display: "flex",
 			flexDirection: "column",
-			fontFamily: '"TikTok Sans"',
+			fontFamily: '"Avio Sans"',
 			height: "100%",
 			padding: "80px",
 			position: "relative",
@@ -159,7 +163,7 @@ const image = new ImageResponse(
 	{
 		fonts: [
 			{
-				name: "TikTok Sans",
+				name: "Avio Sans",
 				data: fontData,
 				weight: 700,
 				style: "normal" as const,
