@@ -21,18 +21,18 @@ function SPFOption({ level, selected, onSelect }: SPFOptionProps) {
 			onClick={() => onSelect(level)}
 			aria-label={`Select ${config.label} sunscreen protection`}
 		>
-			<CardContent className="p-4">
+			<CardContent className="p-3">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-4">
+					<div className="flex items-center gap-3">
 						<Badge
 							variant={selected ? "default" : "secondary"}
-							className="text-sm font-bold min-w-[2.5rem] justify-center"
+							className="min-w-[2.5rem] justify-center text-sm font-bold"
 						>
 							{level === SPFLevel.NONE ? "0" : config.label.replace("SPF ", "")}
 						</Badge>
 
 						<div className="text-left">
-							<div className="font-semibold">{config.label}</div>
+							<div className="text-sm font-semibold">{config.label}</div>
 						</div>
 					</div>
 
@@ -52,7 +52,7 @@ export function SPFSelector() {
 
 	return (
 		<div className="space-y-4">
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+			<div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
 				{Object.values(SPFLevel).map((level) => (
 					<SPFOption
 						key={level}

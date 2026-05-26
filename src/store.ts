@@ -6,12 +6,20 @@ import type {
 	GeolocationState,
 	Position,
 	WeatherData,
+	WeatherProvider,
 } from "./types";
 import {
 	type FitzpatrickType,
 	SPFLevel,
 	type SweatLevel,
 	DEFAULT_SWEAT_LEVEL,
+	type UnitSystem,
+	DEFAULT_UNIT_SYSTEM,
+	type StartTimeMode,
+	DEFAULT_START_TIME_MODE,
+	type ExposureGoal,
+	DEFAULT_EXPOSURE_GOAL,
+	DEFAULT_PLANNED_DURATION_MINUTES,
 } from "./types";
 
 interface AppStore extends AppState {
@@ -19,6 +27,12 @@ interface AppStore extends AppState {
 	setSkinType: (skinType: FitzpatrickType) => void;
 	setSPFLevel: (spfLevel: SPFLevel) => void;
 	setSweatLevel: (sweatLevel: SweatLevel) => void;
+	setUnitSystem: (unitSystem: UnitSystem) => void;
+	setStartTimeMode: (startTimeMode: StartTimeMode) => void;
+	setPlannedStartTime: (plannedStartTime: string) => void;
+	setPlannedDurationMinutes: (plannedDurationMinutes: number) => void;
+	setExposureGoal: (exposureGoal: ExposureGoal) => void;
+	setWeatherProvider: (weatherProvider: WeatherProvider) => void;
 	setGeolocationStatus: (status: GeolocationState["status"]) => void;
 	setPosition: (
 		position: Position,
@@ -33,6 +47,10 @@ interface AppStore extends AppState {
 }
 
 const initialState: AppState = {
+	unitSystem: DEFAULT_UNIT_SYSTEM,
+	startTimeMode: DEFAULT_START_TIME_MODE,
+	plannedDurationMinutes: DEFAULT_PLANNED_DURATION_MINUTES,
+	exposureGoal: DEFAULT_EXPOSURE_GOAL,
 	geolocation: {
 		status: "blank",
 	},
@@ -57,6 +75,33 @@ export const useAppStore = create<AppStore>()(
 				})),
 
 			setSweatLevel: (sweatLevel) => set((state) => ({ ...state, sweatLevel })),
+
+			setUnitSystem: (unitSystem) => set((state) => ({ ...state, unitSystem })),
+
+			setStartTimeMode: (startTimeMode) =>
+				set((state) => ({ ...state, startTimeMode })),
+
+			setPlannedStartTime: (plannedStartTime) =>
+				set((state) => ({ ...state, plannedStartTime })),
+
+			setPlannedDurationMinutes: (plannedDurationMinutes) =>
+				set((state) => ({ ...state, plannedDurationMinutes })),
+
+			setExposureGoal: (exposureGoal) =>
+				set((state) => ({ ...state, exposureGoal })),
+
+			setWeatherProvider: (weatherProvider) =>
+				set((state) => ({
+					...state,
+					weatherProvider,
+					calculation: undefined,
+					geolocation: {
+						...state.geolocation,
+						weather: undefined,
+						lastFetched: undefined,
+						error: undefined,
+					},
+				})),
 
 			setGeolocationStatus: (status) =>
 				set((state) => ({
@@ -111,6 +156,12 @@ export const useAppStore = create<AppStore>()(
 				skinType: state.skinType,
 				spfLevel: state.spfLevel,
 				sweatLevel: state.sweatLevel,
+				unitSystem: state.unitSystem,
+				startTimeMode: state.startTimeMode,
+				plannedStartTime: state.plannedStartTime,
+				plannedDurationMinutes: state.plannedDurationMinutes,
+				exposureGoal: state.exposureGoal,
+				weatherProvider: state.weatherProvider,
 				geolocation:
 					state.geolocation.status === "completed" && state.geolocation.position
 						? {

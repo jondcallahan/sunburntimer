@@ -1,22 +1,30 @@
-import { useEffect } from "react";
-import { RefreshCw, Sun } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { RefreshCw } from "lucide-react";
 import { haptic } from "ios-haptics";
 import { useAppStore, useIsReadyToCalculate } from "./store";
-import { findOptimalTimeSlicing } from "./calculations";
+import { findOptimalTimeSlicing, recommendSPF } from "./calculations";
 import {
 	SPF_CONFIG,
 	SPFLevel,
 	SWEAT_CONFIG,
 	DEFAULT_SWEAT_LEVEL,
+	StartTimeMode,
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
-import { fetchWeatherData } from "./services/weather";
+import { useCurrentTime } from "./hooks/useCurrentTime";
+import {
+	fetchWeatherData,
+	getActiveWeatherProvider,
+	isGoogleWeatherTestRoute,
+} from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
+import { parseDateTimeLocal } from "./utils/timezone";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
 import { SweatLevelSelector } from "./components/SweatLevelSelector";
 import { LocationSelector } from "./components/LocationSelector";
+import { PlanControls } from "./components/PlanControls";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
@@ -41,6 +49,11 @@ function App() {
 		skinType,
 		spfLevel,
 		sweatLevel,
+		startTimeMode,
+		plannedStartTime,
+		plannedDurationMinutes,
+		exposureGoal,
+		weatherProvider,
 		geolocation,
 		calculation,
 		setCalculation,
@@ -50,6 +63,7 @@ function App() {
 	} = useAppStore();
 
 	const isReadyToCalculate = useIsReadyToCalculate();
+	const currentTime = useCurrentTime();
 
 	// Check if user has pre-loaded preferences (returning user)
 	const hasPreloadedPrefs = !!(skinType && spfLevel);
@@ -57,29 +71,47 @@ function App() {
 	// Refresh weather data for saved locations
 	useLocationRefresh();
 
-	// Auto-calculate when all inputs are ready
-	useEffect(() => {
+	const calculationStartTime = useMemo(() => {
+		if (startTimeMode !== StartTimeMode.PLANNED || !plannedStartTime) {
+			return currentTime;
+		}
+
+		const parsedStartTime = parseDateTimeLocal(
+			plannedStartTime,
+			geolocation.weather?.timezone,
+		);
+
+		if (!parsedStartTime || parsedStartTime.getTime() < currentTime.getTime()) {
+			return currentTime;
+		}
+
+		return parsedStartTime;
+	}, [
+		startTimeMode,
+		plannedStartTime,
+		geolocation.weather?.timezone,
+		currentTime,
+	]);
+
+	const calculationInput = useMemo(() => {
 		if (
 			!isReadyToCalculate ||
 			!geolocation.weather ||
 			!geolocation.placeName ||
 			!skinType ||
-			!spfLevel
+			spfLevel === undefined
 		) {
-			return;
+			return undefined;
 		}
 
-		const input = {
+		return {
 			weather: geolocation.weather,
 			placeName: geolocation.placeName,
-			currentTime: new Date(),
+			currentTime: calculationStartTime,
 			skinType,
 			spfLevel,
 			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
 		};
-
-		const result = findOptimalTimeSlicing(input);
-		setCalculation(result);
 	}, [
 		isReadyToCalculate,
 		skinType,
@@ -87,8 +119,23 @@ function App() {
 		sweatLevel,
 		geolocation.weather,
 		geolocation.placeName,
-		setCalculation,
+		calculationStartTime,
 	]);
+
+	// Auto-calculate when all inputs are ready
+	useEffect(() => {
+		if (!calculationInput) {
+			return;
+		}
+
+		const result = findOptimalTimeSlicing(calculationInput);
+		setCalculation(result);
+	}, [calculationInput, setCalculation]);
+
+	const spfRecommendation = useMemo(() => {
+		if (!calculationInput) return undefined;
+		return recommendSPF(calculationInput, plannedDurationMinutes, exposureGoal);
+	}, [calculationInput, plannedDurationMinutes, exposureGoal]);
 
 	const handleRefresh = async () => {
 		if (!geolocation.position) return;
@@ -96,7 +143,14 @@ function App() {
 		try {
 			haptic();
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(geolocation.position);
+			const activeWeatherProvider =
+				isGoogleWeatherTestRoute() && weatherProvider
+					? weatherProvider
+					: getActiveWeatherProvider();
+			const weather = await fetchWeatherData(
+				geolocation.position,
+				activeWeatherProvider,
+			);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -111,12 +165,17 @@ function App() {
 
 	return (
 		<div className="min-h-screen bg-orange-50">
-			<div className="container mx-auto px-4 py-8 max-w-4xl">
+			<div className="container mx-auto max-w-5xl px-4 py-5">
 				{/* Header */}
-				<div className="mb-8">
+				<div className="mb-5">
 					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-4" />
-						<h1 className="text-3xl font-bold text-slate-800">
+						<img
+							src="/favicon.svg"
+							alt=""
+							aria-hidden="true"
+							className="mr-3 h-9 w-9"
+						/>
+						<h1 className="text-2xl font-bold text-slate-800">
 							Sunburn Calculator
 						</h1>
 					</div>
@@ -129,18 +188,26 @@ function App() {
 					</p>
 				</div>
 
+				<div className="mb-6">
+					<PlanControls
+						currentTime={currentTime}
+						timezone={geolocation.weather?.timezone}
+						recommendation={spfRecommendation}
+					/>
+				</div>
+
 				{/* Steps Accordion */}
 				<Accordion
 					type="multiple"
 					defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3"]}
-					className="space-y-4"
+					className="space-y-3"
 				>
 					{/* Step 1: Skin Type */}
 					<AccordionItem
 						value="step1"
 						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
 					>
-						<AccordionTrigger className="px-6 py-4 hover:no-underline">
+						<AccordionTrigger className="px-5 py-3 hover:no-underline">
 							<div className="flex-1 text-left">
 								<StepHeader
 									stepNumber={1}
@@ -156,7 +223,7 @@ function App() {
 								)}
 							</div>
 						</AccordionTrigger>
-						<AccordionContent className="px-6 pb-6">
+						<AccordionContent className="px-5 pb-5">
 							<SkinTypeSelector />
 						</AccordionContent>
 					</AccordionItem>
@@ -166,7 +233,7 @@ function App() {
 						value="step2"
 						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
 					>
-						<AccordionTrigger className="px-6 py-4 hover:no-underline">
+						<AccordionTrigger className="px-5 py-3 hover:no-underline">
 							<div className="flex-1 text-left">
 								<StepHeader
 									stepNumber={2}
@@ -189,7 +256,7 @@ function App() {
 								)}
 							</div>
 						</AccordionTrigger>
-						<AccordionContent className="px-6 pb-6">
+						<AccordionContent className="px-5 pb-5">
 							<div className="space-y-6">
 								<SPFSelector />
 
@@ -210,7 +277,7 @@ function App() {
 						value="step3"
 						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
 					>
-						<AccordionTrigger className="px-6 py-4 hover:no-underline">
+						<AccordionTrigger className="px-5 py-3 hover:no-underline">
 							<div className="flex-1 text-left">
 								<StepHeader
 									stepNumber={3}
@@ -258,7 +325,7 @@ function App() {
 									)}
 							</div>
 						</AccordionTrigger>
-						<AccordionContent className="px-6 pb-6">
+						<AccordionContent className="px-5 pb-5">
 							<LocationSelector />
 						</AccordionContent>
 					</AccordionItem>
@@ -266,9 +333,9 @@ function App() {
 
 				{/* Results */}
 				{calculation && (
-					<div className="mt-8 space-y-6">
+					<div className="mt-6 space-y-5">
 						<div className="flex items-center justify-between">
-							<h2 className="text-2xl font-bold text-slate-800">
+							<h2 className="text-xl font-bold text-slate-800">
 								Safe Sun Exposure Time
 							</h2>
 							<div className="flex space-x-2">
@@ -302,6 +369,8 @@ function App() {
 							<UVChart
 								result={calculation}
 								timezone={geolocation.weather?.timezone}
+								activityStartTime={calculationStartTime}
+								activityDurationMinutes={plannedDurationMinutes}
 							/>
 						</div>
 						<SunPositionCard />
@@ -328,6 +397,15 @@ function App() {
 							>
 								Jon Callahan
 							</a>
+							<span className="text-slate-400">+</span>
+							<a
+								href="https://github.com/coloboxp"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-amber-600 transition-colors"
+							>
+								@coloboxp additions
+							</a>
 						</div>
 						<div className="flex items-center gap-4">
 							<a
@@ -337,14 +415,6 @@ function App() {
 								className="hover:text-amber-600 transition-colors"
 							>
 								GitHub
-							</a>
-							<a
-								href="https://buymeacoffee.com/joncallahan"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full hover:bg-amber-200 transition-colors"
-							>
-								☕ Buy me a coffee
 							</a>
 						</div>
 					</div>

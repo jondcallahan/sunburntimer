@@ -2,17 +2,22 @@ import type {
 	CalculationInput,
 	CalculationResult,
 	CalculationPoint,
+	ExposureDamageEstimate,
 	TimeSlice,
-	HourlyWeather,
 	FitzpatrickType,
+	SPFRecommendation,
+	SPFRecommendationOption,
+	ExposureGoal as ExposureGoalType,
 } from "./types";
 import {
 	SweatLevel,
 	SPFLevel,
+	ExposureGoal,
 	CALCULATION_CONSTANTS,
 	SKIN_TYPE_CONFIG,
 	SPF_CONFIG,
 	SWEAT_CONFIG,
+	EXPOSURE_GOAL_CONFIG,
 } from "./types";
 import { getHoursInTimezone } from "./utils/timezone";
 
@@ -24,11 +29,80 @@ import { getHoursInTimezone } from "./utils/timezone";
 // It converts UV Index to skin-damaging energy, adjusts for sunscreen and skin sensitivity, and adds up damage percentages.**
 const UVI_DAMAGE_FACTOR_PER_MIN = 120;
 
+export const UVB_SKIN_RECOVERY = {
+	// Arbabi, Gange & Parrish measured normal-skin UVB recovery at 24-30h.
+	// This model uses the midpoint and treats "recovered" as 95% drained.
+	recoveryPeriodHours: 27,
+	remainingFractionAfterRecoveryPeriod: 0.05,
+} as const;
+
+const SKIN_DAMAGE_RECOVERY_RATE_PER_MIN =
+	-Math.log(UVB_SKIN_RECOVERY.remainingFractionAfterRecoveryPeriod) /
+	(UVB_SKIN_RECOVERY.recoveryPeriodHours * 60);
+
 // **Derive MED (J/m²) from your existing coefficients:
 // (your config's comments match MED = 80 * coefficient)
 // MED is the 'Minimal Erythemal Dose'—the UV energy threshold for skin to start reddening. Lower for fair skin.**
 function getMedInJm2(skinType: FitzpatrickType): number {
 	return 80 * SKIN_TYPE_CONFIG[skinType].coefficient;
+}
+
+export function recoverSkinDamagePercent(
+	damagePercent: number,
+	elapsedMinutes: number,
+): number {
+	if (damagePercent <= 0) return 0;
+	if (elapsedMinutes <= 0) return damagePercent;
+	return (
+		damagePercent *
+		Math.exp(-SKIN_DAMAGE_RECOVERY_RATE_PER_MIN * elapsedMinutes)
+	);
+}
+
+function applyLeakyBucketRecovery(
+	damageAtStart: number,
+	damageRatePerMinute: number,
+	minutes: number,
+): number {
+	const clampedDamageAtStart = Math.max(0, damageAtStart);
+	const clampedDamageRate = Math.max(0, damageRatePerMinute);
+	if (minutes <= 0) return clampedDamageAtStart;
+	if (clampedDamageRate === 0) {
+		return recoverSkinDamagePercent(clampedDamageAtStart, minutes);
+	}
+
+	const steadyStateDamage =
+		clampedDamageRate / SKIN_DAMAGE_RECOVERY_RATE_PER_MIN;
+	const decay = Math.exp(-SKIN_DAMAGE_RECOVERY_RATE_PER_MIN * minutes);
+	return Math.max(
+		0,
+		steadyStateDamage + (clampedDamageAtStart - steadyStateDamage) * decay,
+	);
+}
+
+function getMinutesToDamageThreshold(
+	damageAtStart: number,
+	damageRatePerMinute: number,
+	threshold: number,
+	maxMinutes: number,
+): number | undefined {
+	if (damageAtStart >= threshold) return 0;
+	if (damageRatePerMinute <= 0 || maxMinutes <= 0) return undefined;
+
+	const steadyStateDamage =
+		damageRatePerMinute / SKIN_DAMAGE_RECOVERY_RATE_PER_MIN;
+	if (steadyStateDamage <= threshold) return undefined;
+
+	const ratio =
+		(threshold - steadyStateDamage) / (damageAtStart - steadyStateDamage);
+	if (ratio <= 0 || ratio >= 1) return undefined;
+
+	const minutesToThreshold =
+		-Math.log(ratio) / SKIN_DAMAGE_RECOVERY_RATE_PER_MIN;
+	if (minutesToThreshold < 0 || minutesToThreshold > maxMinutes) {
+		return undefined;
+	}
+	return minutesToThreshold;
 }
 
 // **Effective SPF at time offset (hours since application)
@@ -74,38 +148,135 @@ type SliceWindow = {
 	uviEnd: number;
 };
 
+function interpolateUvi(
+	startUvi: number,
+	endUvi: number,
+	fraction: number,
+): number {
+	return startUvi * (1 - fraction) + endUvi * fraction;
+}
+
 // **Build fixed sub-hour slices, keeping start & end UV for trapezoid integration
 // Breaks hourly UV data into smaller windows (e.g., 10-min) with interpolated UV at start/end.
 // This allows averaging UV changes smoothly, like connecting dots on a graph.**
 function createSlices(
-	hourly: HourlyWeather[],
+	input: CalculationInput,
 	slicesPerHour: number,
 ): SliceWindow[] {
 	const sliceWindows: SliceWindow[] = [];
+	const { hourly, current } = input.weather;
 	if (!hourly || hourly.length < 2) return sliceWindows;
 	const sliceMinutes = 60 / slicesPerHour;
+	const sliceDurationMs = sliceMinutes * 60000;
+	const currentObservationMs = current.dt * 1000;
+
 	for (let i = 0; i < hourly.length - 1; i++) {
 		const currentHourWeather = hourly[i];
 		const nextHourWeather = hourly[i + 1];
 		const baseTimestampMs = currentHourWeather.dt * 1000;
-		for (let j = 0; j < slicesPerHour; j++) {
-			const sliceStartMs = baseTimestampMs + j * sliceMinutes * 60000;
-			const sliceEndMs = baseTimestampMs + (j + 1) * sliceMinutes * 60000;
-			const interpFractionStart = j / slicesPerHour;
-			const interpFractionEnd = (j + 1) / slicesPerHour;
+		const nextTimestampMs = nextHourWeather.dt * 1000;
+		let anchorStartMs = baseTimestampMs;
+		let anchorStartUvi = currentHourWeather.uvi;
+
+		if (
+			currentObservationMs >= baseTimestampMs &&
+			currentObservationMs < nextTimestampMs
+		) {
+			anchorStartMs = currentObservationMs;
+			anchorStartUvi = current.uvi;
+		}
+
+		const intervalDurationMs = nextTimestampMs - anchorStartMs;
+		if (intervalDurationMs <= 0) continue;
+
+		for (
+			let sliceStartMs = anchorStartMs;
+			sliceStartMs < nextTimestampMs;
+			sliceStartMs += sliceDurationMs
+		) {
+			const sliceEndMs = Math.min(
+				sliceStartMs + sliceDurationMs,
+				nextTimestampMs,
+			);
+			const interpFractionStart =
+				(sliceStartMs - anchorStartMs) / intervalDurationMs;
+			const interpFractionEnd =
+				(sliceEndMs - anchorStartMs) / intervalDurationMs;
+
 			sliceWindows.push({
 				start: new Date(sliceStartMs),
 				end: new Date(sliceEndMs),
-				uviStart:
-					currentHourWeather.uvi * (1 - interpFractionStart) +
-					nextHourWeather.uvi * interpFractionStart,
-				uviEnd:
-					currentHourWeather.uvi * (1 - interpFractionEnd) +
-					nextHourWeather.uvi * interpFractionEnd,
+				uviStart: interpolateUvi(
+					anchorStartUvi,
+					nextHourWeather.uvi,
+					interpFractionStart,
+				),
+				uviEnd: interpolateUvi(
+					anchorStartUvi,
+					nextHourWeather.uvi,
+					interpFractionEnd,
+				),
 			});
 		}
 	}
 	return sliceWindows;
+}
+
+function calculateSliceDamage(
+	input: CalculationInput,
+	currentSlice: SliceWindow,
+	effectiveStartMs: number,
+	effectiveEndMs: number,
+	startTimestampMs: number,
+	medInJm2: number,
+	baseSpfValue: number,
+): {
+	damageAddedInSlice: number;
+	damageRatePerMinute: number;
+	uviAtEffectiveStart: number;
+	uviAtEnd: number;
+} {
+	const minutes = (effectiveEndMs - effectiveStartMs) / 60000;
+	const sliceDurationMs =
+		currentSlice.end.getTime() - currentSlice.start.getTime();
+	const startFraction =
+		sliceDurationMs > 0
+			? (effectiveStartMs - currentSlice.start.getTime()) / sliceDurationMs
+			: 0;
+	const uviAtEffectiveStart =
+		currentSlice.uviStart * (1 - startFraction) +
+		currentSlice.uviEnd * startFraction;
+	const uviAtEnd = currentSlice.uviEnd;
+	const hoursFromStartAtEffective =
+		(effectiveStartMs - startTimestampMs) / 3600000;
+	const hoursFromStartAtEnd = (effectiveEndMs - startTimestampMs) / 3600000;
+	const spfAtEffectiveStart = spfAtTime(
+		baseSpfValue,
+		input.sweatLevel,
+		hoursFromStartAtEffective,
+	);
+	const spfAtEnd = spfAtTime(
+		baseSpfValue,
+		input.sweatLevel,
+		hoursFromStartAtEnd,
+	);
+	const effectiveIrradianceStart =
+		(uviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) *
+		lowUvWeight(uviAtEffectiveStart);
+	const effectiveIrradianceEnd =
+		(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
+	const averageEffectiveIrradiance =
+		0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
+	const damageRatePerMinute =
+		(UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance) / medInJm2;
+	const damageAddedInSlice = damageRatePerMinute * minutes;
+
+	return {
+		damageAddedInSlice,
+		damageRatePerMinute,
+		uviAtEffectiveStart,
+		uviAtEnd,
+	};
 }
 
 // **Check stopping conditions
@@ -174,7 +345,7 @@ function calculateBurnTimeWithSlices(
 	input: CalculationInput,
 	slicesPerHour: number,
 ): CalculationResult {
-	const sliceWindows = createSlices(input.weather.hourly, slicesPerHour);
+	const sliceWindows = createSlices(input, slicesPerHour);
 	const medInJm2 = getMedInJm2(input.skinType);
 	const baseSpfValue =
 		SPF_CONFIG[input.spfLevel]?.coefficient ??
@@ -196,65 +367,43 @@ function calculateBurnTimeWithSlices(
 		const effectiveEndMs = currentSlice.end.getTime();
 		const minutes = (effectiveEndMs - effectiveStartMs) / 60000;
 		if (minutes <= 0) continue;
-		// UV at effective start (if starting mid-slice)
-		const sliceDurationMs =
-			currentSlice.end.getTime() - currentSlice.start.getTime();
-		const startFraction =
-			sliceDurationMs > 0
-				? (effectiveStartMs - currentSlice.start.getTime()) / sliceDurationMs
-				: 0;
-		const uviAtEffectiveStart =
-			currentSlice.uviStart * (1 - startFraction) +
-			currentSlice.uviEnd * startFraction;
-		const uviAtEnd = currentSlice.uviEnd;
-		// SPF at endpoints (hours since application)
-		const hoursFromStartAtEffective =
-			(effectiveStartMs - startTimestampMs) / 3600000;
-		const hoursFromStartAtEnd = (effectiveEndMs - startTimestampMs) / 3600000;
-		const spfAtEffectiveStart = spfAtTime(
+		const sliceDamage = calculateSliceDamage(
+			input,
+			currentSlice,
+			effectiveStartMs,
+			effectiveEndMs,
+			startTimestampMs,
+			medInJm2,
 			baseSpfValue,
-			input.sweatLevel,
-			hoursFromStartAtEffective,
 		);
-		const spfAtEnd = spfAtTime(
-			baseSpfValue,
-			input.sweatLevel,
-			hoursFromStartAtEnd,
+		const damageAtEndOfSlice = applyLeakyBucketRecovery(
+			totalDamage,
+			sliceDamage.damageRatePerMinute,
+			minutes,
 		);
-		// Trapezoid on effective irradiance (UVI/SPF)
-		// **Effective irradiance: UV strength divided by SPF, weighted for low UV. Average start/end for smooth integration.**
-		const effectiveIrradianceStart =
-			(uviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) *
-			lowUvWeight(uviAtEffectiveStart);
-		const effectiveIrradianceEnd =
-			(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
-		const averageEffectiveIrradiance =
-			0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
-		// Damage% added in this (possibly partial) window
-		// **Core formula: Converts average effective UV to damage % based on time and skin's MED.**
-		let damageAddedInSlice =
-			(UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance * minutes) /
-			medInJm2;
+		let netDamageChangeInSlice = damageAtEndOfSlice - totalDamage;
 		// For display, record midpoint UV
 		const displayTimeSlice: TimeSlice = {
 			datetime: new Date(effectiveStartMs),
-			uvIndex: 0.5 * (uviAtEffectiveStart + uviAtEnd),
+			uvIndex: 0.5 * (sliceDamage.uviAtEffectiveStart + sliceDamage.uviAtEnd),
 		};
-		// Crossing inside the window? Clamp and compute exact burnTime
-		// **If damage would exceed threshold mid-slice, calculate exact time to hit 100% (linear approximation).**
-		if (!burnTime && totalDamage + damageAddedInSlice >= threshold) {
-			const damageRatePerMinute = damageAddedInSlice / minutes; // approx uniform within window
-			const minutesToThreshold =
-				(threshold - totalDamage) / damageRatePerMinute;
-			damageAddedInSlice = threshold - totalDamage; // clamp to reach exactly 100%
+		// Crossing inside the window? Solve the leaky-bucket exponential.
+		const minutesToThreshold = getMinutesToDamageThreshold(
+			totalDamage,
+			sliceDamage.damageRatePerMinute,
+			threshold,
+			minutes,
+		);
+		if (!burnTime && minutesToThreshold !== undefined) {
+			netDamageChangeInSlice = threshold - totalDamage; // clamp to reach exactly 100%
 			burnTime = new Date(effectiveStartMs + minutesToThreshold * 60000);
 		}
 		points.push({
 			slice: displayTimeSlice,
-			burnCost: damageAddedInSlice,
+			burnCost: netDamageChangeInSlice,
 			totalDamageAtStart: totalDamage,
 		});
-		totalDamage += damageAddedInSlice;
+		totalDamage = Math.max(0, totalDamage + netDamageChangeInSlice);
 		pointCount++;
 		if (
 			burnTime ||
@@ -290,4 +439,141 @@ export function findOptimalTimeSlicing(
 		}
 	}
 	return calculateBurnTimeWithSlices(input, 4);
+}
+
+export function calculateExposureDamage(
+	input: CalculationInput,
+	durationMinutes: number,
+	slicesPerHour = 30,
+): ExposureDamageEstimate {
+	const sliceWindows = createSlices(input, slicesPerHour);
+	const medInJm2 = getMedInJm2(input.skinType);
+	const baseSpfValue =
+		SPF_CONFIG[input.spfLevel]?.coefficient ??
+		SPF_CONFIG[SPFLevel.NONE].coefficient;
+	const startTimestampMs = input.currentTime.getTime();
+	const plannedEndMs = startTimestampMs + durationMinutes * 60000;
+	let totalDamage = 0;
+	let latestCoveredMs = startTimestampMs;
+
+	for (const currentSlice of sliceWindows) {
+		if (currentSlice.end.getTime() <= startTimestampMs) continue;
+		if (currentSlice.start.getTime() >= plannedEndMs) break;
+
+		const effectiveStartMs = Math.max(
+			currentSlice.start.getTime(),
+			startTimestampMs,
+		);
+		const effectiveEndMs = Math.min(currentSlice.end.getTime(), plannedEndMs);
+		if (effectiveEndMs <= effectiveStartMs) continue;
+
+		const sliceDamage = calculateSliceDamage(
+			input,
+			currentSlice,
+			effectiveStartMs,
+			effectiveEndMs,
+			startTimestampMs,
+			medInJm2,
+			baseSpfValue,
+		);
+		totalDamage = applyLeakyBucketRecovery(
+			totalDamage,
+			sliceDamage.damageRatePerMinute,
+			(effectiveEndMs - effectiveStartMs) / 60000,
+		);
+		latestCoveredMs = effectiveEndMs;
+	}
+
+	const coveredMinutes = Math.max(
+		0,
+		(latestCoveredMs - startTimestampMs) / 60000,
+	);
+
+	return {
+		damage: totalDamage,
+		coveredMinutes,
+		forecastComplete: coveredMinutes >= durationMinutes,
+	};
+}
+
+function getSpfRecommendationStatus(
+	goal: ExposureGoalType,
+	damage: number,
+): SPFRecommendation["status"] {
+	const goalConfig = EXPOSURE_GOAL_CONFIG[goal];
+	if (damage > goalConfig.maxDamage) return "too_risky";
+	if (damage < goalConfig.minDamage) return "below_goal";
+	return "fits_goal";
+}
+
+export function recommendSPF(
+	input: CalculationInput,
+	durationMinutes: number,
+	goal: ExposureGoalType,
+): SPFRecommendation {
+	const goalConfig = EXPOSURE_GOAL_CONFIG[goal];
+	const estimates = Object.values(SPFLevel).map((level) => ({
+		level,
+		estimate: calculateExposureDamage(
+			{
+				...input,
+				spfLevel: level,
+			},
+			durationMinutes,
+		),
+	}));
+	const options: SPFRecommendationOption[] = estimates.map(
+		({ level, estimate }) => ({
+			level,
+			damage: estimate.damage,
+		}),
+	);
+	const forecastComplete = estimates.every(
+		({ estimate }) => estimate.forecastComplete,
+	);
+
+	const exactMatches = options.filter(
+		(option) =>
+			option.damage >= goalConfig.minDamage &&
+			option.damage <= goalConfig.maxDamage,
+	);
+	const underMax = options.filter(
+		(option) => option.damage <= goalConfig.maxDamage,
+	);
+
+	let selected: SPFRecommendationOption;
+	if (goal === ExposureGoal.AVOID_CHANGE) {
+		selected = underMax.reduce(
+			(best, option) => (option.damage < best.damage ? option : best),
+			underMax[0] ?? options[options.length - 1],
+		);
+	} else if (exactMatches.length > 0) {
+		selected = exactMatches.reduce((best, option) =>
+			Math.abs(option.damage - goalConfig.targetDamage) <
+			Math.abs(best.damage - goalConfig.targetDamage)
+				? option
+				: best,
+		);
+	} else if (underMax.length > 0) {
+		selected = underMax.reduce((best, option) =>
+			Math.abs(option.damage - goalConfig.targetDamage) <
+			Math.abs(best.damage - goalConfig.targetDamage)
+				? option
+				: best,
+		);
+	} else {
+		selected = options.reduce((best, option) =>
+			option.damage < best.damage ? option : best,
+		);
+	}
+
+	return {
+		level: selected.level,
+		status: getSpfRecommendationStatus(goal, selected.damage),
+		damage: selected.damage,
+		goal,
+		durationMinutes,
+		options,
+		forecastComplete,
+	};
 }

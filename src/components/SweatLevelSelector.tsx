@@ -49,12 +49,12 @@ function SweatLevelOption({
 			onClick={() => onSelect(level)}
 			aria-label={`Select ${config.label} sweating level`}
 		>
-			<CardContent className="p-4">
+			<CardContent className="p-3">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-4">
+					<div className="flex items-center gap-3">
 						<div
 							className={`
-              flex items-center justify-center w-12 h-12 rounded-full
+              flex h-9 w-9 items-center justify-center rounded-full
               ${selected ? "bg-primary" : "bg-muted"}
             `}
 						>
@@ -78,8 +78,8 @@ function SweatLevelOption({
 						</div>
 
 						<div className="text-left">
-							<div className="font-semibold">{config.label}</div>
-							<div className="text-sm text-muted-foreground">
+							<div className="text-sm font-semibold">{config.label}</div>
+							<div className="text-xs text-muted-foreground">
 								{getDescription(level)}
 							</div>
 							{level !== SweatLevel.LOW && (
@@ -111,7 +111,7 @@ export function SweatLevelSelector() {
 				wears off.
 			</p>
 
-			<div className="space-y-4">
+			<div className="grid gap-3 lg:grid-cols-3">
 				{Object.values(SweatLevel).map((level) => (
 					<SweatLevelOption
 						key={level}

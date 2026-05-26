@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
 	CategoryScale,
 	Chart as ChartJS,
@@ -16,12 +16,19 @@ import {
 import annotationPlugin from "chartjs-plugin-annotation";
 import { Line } from "react-chartjs-2";
 import { format } from "date-fns";
+import { CalendarDays, Clock } from "lucide-react";
 import "chartjs-adapter-date-fns";
 import type { CalculationResult } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAppStore } from "../store";
 import { getUVIndexColor } from "../lib/utils";
-import { toTZDate, formatInTimeZone } from "../utils/timezone";
+import { Button } from "./ui/button";
+import {
+	buildFallbackUVSeriesForRange,
+	buildUVSeriesForRange,
+	type UVSeriesPoint,
+} from "../lib/uvSeries";
+import { formatInTimeZone, getDayBoundsInTimeZone } from "../utils/timezone";
 
 ChartJS.register(
 	CategoryScale,
@@ -39,49 +46,91 @@ ChartJS.register(
 interface UVChartProps {
 	result: CalculationResult;
 	timezone?: string;
+	activityStartTime: Date;
+	activityDurationMinutes: number;
 }
 
-export function UVChart({ result, timezone }: UVChartProps) {
+const UVChartViewMode = {
+	ACTIVITY: "activity",
+	DAY: "day",
+} as const;
+
+type UVChartViewMode = (typeof UVChartViewMode)[keyof typeof UVChartViewMode];
+
+function addMinutes(date: Date, minutes: number): Date {
+	return new Date(date.getTime() + minutes * 60000);
+}
+
+function formatChartTime(date: Date, timezone?: string): string {
+	return timezone
+		? formatInTimeZone(date, timezone, "h:mm a")
+		: format(date, "h:mm a");
+}
+
+function formatChartDateTime(date: Date, timezone?: string): string {
+	return timezone
+		? formatInTimeZone(date, timezone, "MMM d, h:mm a")
+		: format(date, "MMM d, h:mm a");
+}
+
+function getVisibleUVStats(points: UVSeriesPoint[]): {
+	startUV: number;
+	peakUV: number;
+} {
+	const uvValues = points.map((point) => point.uvIndex);
+	const startUV = uvValues[0] ?? 0;
+	const peakUV = uvValues.length > 0 ? Math.max(...uvValues) : 0;
+
+	return { startUV, peakUV };
+}
+
+export function UVChart({
+	result,
+	timezone,
+	activityStartTime,
+	activityDurationMinutes,
+}: UVChartProps) {
+	const [viewMode, setViewMode] = useState<UVChartViewMode>(
+		UVChartViewMode.ACTIVITY,
+	);
 	const { geolocation } = useAppStore();
 
-	// Calculate UV statistics from weather data or fallback to calculation points
 	const weatherData = geolocation.weather;
-	let currentUV: number;
-	let maxUV: number;
+	const activityRange = useMemo(
+		() => ({
+			start: activityStartTime,
+			end: addMinutes(activityStartTime, activityDurationMinutes),
+		}),
+		[activityStartTime, activityDurationMinutes],
+	);
+	const dayRange = useMemo(
+		() => getDayBoundsInTimeZone(activityStartTime, timezone),
+		[activityStartTime, timezone],
+	);
+	const visibleRange =
+		viewMode === UVChartViewMode.ACTIVITY ? activityRange : dayRange;
+	const chartPoints = useMemo(() => {
+		const points =
+			weatherData && weatherData.hourly.length > 0
+				? buildUVSeriesForRange(weatherData.hourly, visibleRange)
+				: buildFallbackUVSeriesForRange(result.points, visibleRange);
 
-	if (weatherData && weatherData.hourly.length > 0) {
-		currentUV = weatherData.current.uvi;
-		maxUV = Math.max(...weatherData.hourly.map((h) => h.uvi));
-	} else {
-		currentUV = result.points[0]?.slice.uvIndex || 0;
-		maxUV = Math.max(...result.points.map((p) => p.slice.uvIndex));
-	}
+		if (points.length > 0) return points;
+
+		return result.points.map((point) => ({
+			datetime: point.slice.datetime,
+			uvIndex: point.slice.uvIndex,
+		}));
+	}, [result.points, visibleRange, weatherData]);
+	const { startUV, peakUV } = getVisibleUVStats(chartPoints);
 
 	const chartData = useMemo(() => {
-		// Use full weather data instead of just calculation points for better forecast visualization
-		let times: Date[];
-		let uvData: number[];
-
-		if (!weatherData) {
-			// Fallback to calculation points if no weather data
-			times = result.points.map((point) =>
-				toTZDate(point.slice.datetime, timezone),
-			);
-			uvData = result.points.map((point) => point.slice.uvIndex);
-		} else {
-			// Show UV data for the next 3 days (up to 72 hours)
-			times = weatherData.hourly.map((hour) =>
-				toTZDate(new Date(hour.dt * 1000), timezone),
-			);
-			uvData = weatherData.hourly.map((hour) => hour.uvi);
-		}
-
 		return {
-			labels: times,
+			labels: chartPoints.map((point) => point.datetime),
 			datasets: [
 				{
 					label: "UV Index",
-					data: uvData,
+					data: chartPoints.map((point) => point.uvIndex),
 					borderColor: "#f59e0b", // amber-500
 					backgroundColor: (context: ScriptableContext<"line">) => {
 						const ctx = context.chart.ctx;
@@ -105,7 +154,7 @@ export function UVChart({ result, timezone }: UVChartProps) {
 				},
 			],
 		};
-	}, [result.points, weatherData?.hourly.map, weatherData, timezone]);
+	}, [chartPoints]);
 
 	const getUVRiskLevel = useCallback((uvIndex: number): string => {
 		if (uvIndex < 3) return "Low";
@@ -136,9 +185,7 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					callbacks: {
 						title: (context: TooltipItem<"line">[]) => {
 							const date = new Date(context[0].parsed.x);
-							return timezone
-								? formatInTimeZone(date, timezone, "h:mm a")
-								: format(date, "h:mm a");
+							return formatChartDateTime(date, timezone);
 						},
 						label: (context: TooltipItem<"line">) => {
 							const uvIndex = context.parsed.y.toFixed(1);
@@ -149,15 +196,16 @@ export function UVChart({ result, timezone }: UVChartProps) {
 				},
 				annotation: {
 					annotations: {
-						currentTime: {
+						activityStart: {
 							type: "line" as const,
-							xMin: Date.now(),
-							xMax: Date.now(),
-							borderColor: "#dc2626", // red-600
+							xMin: activityRange.start.getTime(),
+							xMax: activityRange.start.getTime(),
+							borderColor: "#dc2626",
 							borderWidth: 2,
 							borderDash: [3, 3],
 							label: {
-								content: "Now",
+								content:
+									viewMode === UVChartViewMode.ACTIVITY ? "Start" : "Plan",
 								enabled: true,
 								position: "start" as const,
 								backgroundColor: "#dc2626",
@@ -170,15 +218,47 @@ export function UVChart({ result, timezone }: UVChartProps) {
 								},
 							},
 						},
+						...(viewMode === UVChartViewMode.ACTIVITY
+							? {
+									activityEnd: {
+										type: "line" as const,
+										xMin: activityRange.end.getTime(),
+										xMax: activityRange.end.getTime(),
+										borderColor: "#475569",
+										borderWidth: 2,
+										borderDash: [3, 3],
+										label: {
+											content: "End",
+											enabled: true,
+											position: "end" as const,
+											backgroundColor: "#475569",
+											color: "white",
+											padding: 4,
+											borderRadius: 4,
+											font: {
+												size: 10,
+												weight: "bold" as const,
+											},
+										},
+									},
+								}
+							: {}),
 					},
 				},
 			},
 			scales: {
 				x: {
 					type: "time" as const,
+					min: visibleRange.start.getTime(),
+					max: visibleRange.end.getTime(),
 					time: {
-						unit: "hour" as const,
+						unit:
+							viewMode === UVChartViewMode.ACTIVITY &&
+							activityDurationMinutes <= 180
+								? ("minute" as const)
+								: ("hour" as const),
 						displayFormats: {
+							minute: "h:mm a",
 							hour: "h a",
 						},
 					},
@@ -198,15 +278,17 @@ export function UVChart({ result, timezone }: UVChartProps) {
 						color: "#64748b",
 						callback: (value: string | number) => {
 							const date = new Date(value as number);
-							return timezone
-								? formatInTimeZone(date, timezone, "h a")
-								: format(date, "h a");
+							return viewMode === UVChartViewMode.ACTIVITY
+								? formatChartTime(date, timezone)
+								: timezone
+									? formatInTimeZone(date, timezone, "h a")
+									: format(date, "h a");
 						},
 					},
 				},
 				y: {
 					min: 0,
-					max: Math.max(12, Math.ceil(maxUV + 1)),
+					max: Math.max(12, Math.ceil(peakUV + 1)),
 					title: {
 						display: true,
 						text: "UV Index",
@@ -231,7 +313,15 @@ export function UVChart({ result, timezone }: UVChartProps) {
 				},
 			},
 		}),
-		[maxUV, getUVRiskLevel, timezone],
+		[
+			activityDurationMinutes,
+			activityRange,
+			getUVRiskLevel,
+			peakUV,
+			timezone,
+			viewMode,
+			visibleRange,
+		],
 	);
 
 	const getUVRiskColor = (uvIndex: number): string => {
@@ -245,27 +335,61 @@ export function UVChart({ result, timezone }: UVChartProps) {
 	return (
 		<Card className="border-stone-200 shadow-sm">
 			<CardHeader>
-				<CardTitle className="flex items-center justify-between text-slate-800">
-					<span>UV Index Throughout the Day</span>
-					<div className="flex items-center space-x-4 text-sm">
+				<CardTitle className="flex flex-col gap-3 text-slate-800 sm:flex-row sm:items-start sm:justify-between">
+					<div>
+						<span>
+							{viewMode === UVChartViewMode.ACTIVITY
+								? "UV Index During Activity"
+								: "UV Index on Planned Day"}
+						</span>
+						<p className="mt-1 text-sm font-normal text-slate-600">
+							{formatChartDateTime(visibleRange.start, timezone)} to{" "}
+							{viewMode === UVChartViewMode.ACTIVITY
+								? formatChartDateTime(visibleRange.end, timezone)
+								: formatChartTime(visibleRange.end, timezone)}
+						</p>
+					</div>
+					<div className="flex items-center justify-between gap-4 text-sm sm:justify-end">
 						<div className="text-center">
-							<p className="text-xs text-slate-600">Current</p>
+							<p className="text-xs text-slate-600">Start</p>
 							<p
-								className={`font-bold tabular-nums ${getUVRiskColor(currentUV)}`}
+								className={`font-bold tabular-nums ${getUVRiskColor(startUV)}`}
 							>
-								{currentUV.toFixed(1)}
+								{startUV.toFixed(1)}
 							</p>
 						</div>
 						<div className="text-center">
 							<p className="text-xs text-slate-600">Peak</p>
-							<p className={`font-bold tabular-nums ${getUVRiskColor(maxUV)}`}>
-								{maxUV.toFixed(1)}
+							<p className={`font-bold tabular-nums ${getUVRiskColor(peakUV)}`}>
+								{peakUV.toFixed(1)}
 							</p>
 						</div>
 					</div>
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
+				<div className="mb-4 grid grid-cols-2 gap-1 rounded-md border border-stone-200 bg-stone-50 p-1">
+					<Button
+						type="button"
+						size="sm"
+						variant={
+							viewMode === UVChartViewMode.ACTIVITY ? "default" : "ghost"
+						}
+						onClick={() => setViewMode(UVChartViewMode.ACTIVITY)}
+					>
+						<Clock className="size-4" />
+						Activity
+					</Button>
+					<Button
+						type="button"
+						size="sm"
+						variant={viewMode === UVChartViewMode.DAY ? "default" : "ghost"}
+						onClick={() => setViewMode(UVChartViewMode.DAY)}
+					>
+						<CalendarDays className="size-4" />
+						Day
+					</Button>
+				</div>
 				<div className="h-64 w-full mb-4">
 					<Line data={chartData} options={options} />
 				</div>
@@ -306,8 +430,9 @@ export function UVChart({ result, timezone }: UVChartProps) {
 
 				<div className="mt-4 text-sm text-slate-600">
 					<p>
-						The UV Index measures the strength of ultraviolet radiation. Higher
-						values indicate greater risk of sunburn and need for protection.
+						The UV Index measures ultraviolet radiation strength. Activity view
+						uses the planned start and time outside. Day view is limited to that
+						local calendar day.
 					</p>
 				</div>
 			</CardContent>
