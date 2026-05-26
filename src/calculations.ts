@@ -24,11 +24,80 @@ import { getHoursInTimezone } from "./utils/timezone";
 // It converts UV Index to skin-damaging energy, adjusts for sunscreen and skin sensitivity, and adds up damage percentages.**
 const UVI_DAMAGE_FACTOR_PER_MIN = 120;
 
+export const UVB_SKIN_RECOVERY = {
+	// Arbabi, Gange & Parrish, J Invest Dermatol. 1983;81(1):78-82.
+	// They measured normal-skin UVB recovery at 24-30h.
+	// The model uses the midpoint and treats "recovered" as 95% drained.
+	recoveryPeriodHours: 27,
+	remainingFractionAfterRecoveryPeriod: 0.05,
+} as const;
+
+const SKIN_DAMAGE_RECOVERY_RATE_PER_MIN =
+	-Math.log(UVB_SKIN_RECOVERY.remainingFractionAfterRecoveryPeriod) /
+	(UVB_SKIN_RECOVERY.recoveryPeriodHours * 60);
+
 // **Derive MED (J/m²) from your existing coefficients:
 // (your config's comments match MED = 80 * coefficient)
 // MED is the 'Minimal Erythemal Dose'—the UV energy threshold for skin to start reddening. Lower for fair skin.**
 function getMedInJm2(skinType: FitzpatrickType): number {
 	return 80 * SKIN_TYPE_CONFIG[skinType].coefficient;
+}
+
+export function recoverSkinDamagePercent(
+	damagePercent: number,
+	elapsedMinutes: number,
+): number {
+	if (damagePercent <= 0) return 0;
+	if (elapsedMinutes <= 0) return damagePercent;
+	return (
+		damagePercent *
+		Math.exp(-SKIN_DAMAGE_RECOVERY_RATE_PER_MIN * elapsedMinutes)
+	);
+}
+
+function applyLeakyBucketRecovery(
+	damageAtStart: number,
+	damageRatePerMinute: number,
+	minutes: number,
+): number {
+	const clampedDamageAtStart = Math.max(0, damageAtStart);
+	const clampedDamageRate = Math.max(0, damageRatePerMinute);
+	if (minutes <= 0) return clampedDamageAtStart;
+	if (clampedDamageRate === 0) {
+		return recoverSkinDamagePercent(clampedDamageAtStart, minutes);
+	}
+	const steadyStateDamage =
+		clampedDamageRate / SKIN_DAMAGE_RECOVERY_RATE_PER_MIN;
+	const decay = Math.exp(-SKIN_DAMAGE_RECOVERY_RATE_PER_MIN * minutes);
+	return Math.max(
+		0,
+		steadyStateDamage + (clampedDamageAtStart - steadyStateDamage) * decay,
+	);
+}
+
+function getMinutesToDamageThreshold(
+	damageAtStart: number,
+	damageRatePerMinute: number,
+	threshold: number,
+	maxMinutes: number,
+): number | undefined {
+	if (damageAtStart >= threshold) return 0;
+	if (damageRatePerMinute <= 0 || maxMinutes <= 0) return undefined;
+
+	const steadyStateDamage =
+		damageRatePerMinute / SKIN_DAMAGE_RECOVERY_RATE_PER_MIN;
+	if (steadyStateDamage <= threshold) return undefined;
+
+	const ratio =
+		(threshold - steadyStateDamage) / (damageAtStart - steadyStateDamage);
+	if (ratio <= 0 || ratio >= 1) return undefined;
+
+	const minutesToThreshold =
+		-Math.log(ratio) / SKIN_DAMAGE_RECOVERY_RATE_PER_MIN;
+	if (minutesToThreshold < 0 || minutesToThreshold > maxMinutes) {
+		return undefined;
+	}
+	return minutesToThreshold;
 }
 
 // **Effective SPF at time offset (hours since application)
@@ -230,31 +299,39 @@ function calculateBurnTimeWithSlices(
 			(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
 		const averageEffectiveIrradiance =
 			0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
-		// Damage% added in this (possibly partial) window
-		// **Core formula: Converts average effective UV to damage % based on time and skin's MED.**
-		let damageAddedInSlice =
-			(UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance * minutes) /
-			medInJm2;
+		// Damage rate for this window.
+		// **Core formula: Converts average effective UV to damage %/minute based on the selected skin type's MED.**
+		const damageRatePerMinute =
+			(UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance) / medInJm2;
+		const damageAtEndOfSlice = applyLeakyBucketRecovery(
+			totalDamage,
+			damageRatePerMinute,
+			minutes,
+		);
+		let netDamageChangeInSlice = damageAtEndOfSlice - totalDamage;
 		// For display, record midpoint UV
 		const displayTimeSlice: TimeSlice = {
 			datetime: new Date(effectiveStartMs),
 			uvIndex: 0.5 * (uviAtEffectiveStart + uviAtEnd),
 		};
-		// Crossing inside the window? Clamp and compute exact burnTime
-		// **If damage would exceed threshold mid-slice, calculate exact time to hit 100% (linear approximation).**
-		if (!burnTime && totalDamage + damageAddedInSlice >= threshold) {
-			const damageRatePerMinute = damageAddedInSlice / minutes; // approx uniform within window
-			const minutesToThreshold =
-				(threshold - totalDamage) / damageRatePerMinute;
-			damageAddedInSlice = threshold - totalDamage; // clamp to reach exactly 100%
+		// Crossing inside the window? Clamp and compute exact burnTime.
+		// **The leaky bucket can recover while filling, so solve the exponential bucket equation instead of using simple addition.**
+		const minutesToThreshold = getMinutesToDamageThreshold(
+			totalDamage,
+			damageRatePerMinute,
+			threshold,
+			minutes,
+		);
+		if (!burnTime && minutesToThreshold !== undefined) {
+			netDamageChangeInSlice = threshold - totalDamage; // clamp to reach exactly 100%
 			burnTime = new Date(effectiveStartMs + minutesToThreshold * 60000);
 		}
 		points.push({
 			slice: displayTimeSlice,
-			burnCost: damageAddedInSlice,
+			burnCost: netDamageChangeInSlice,
 			totalDamageAtStart: totalDamage,
 		});
-		totalDamage += damageAddedInSlice;
+		totalDamage += netDamageChangeInSlice;
 		pointCount++;
 		if (
 			burnTime ||

@@ -61,13 +61,9 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 
 	const chartData = useMemo(() => {
 		const times = filteredPoints.map((point) => point.slice.datetime);
-		const damageData = filteredPoints.map((_, i) => {
-			// Calculate cumulative damage up to this point
-			const cumulativeDamage = filteredPoints
-				.slice(0, i + 1)
-				.reduce((sum, point) => sum + point.burnCost, 0);
-			return Math.min(cumulativeDamage, 100);
-		});
+		const damageData = filteredPoints.map((point) =>
+			Math.max(0, Math.min(point.totalDamageAtStart + point.burnCost, 100)),
+		);
 
 		return {
 			labels: times,
@@ -127,7 +123,7 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 							return [
 								`Damage: ${damage}%`,
 								`UV Index: ${point.slice.uvIndex.toFixed(1)}`,
-								`Rate: ${point.burnCost.toFixed(2)}%/interval`,
+								`Net change: ${point.burnCost.toFixed(2)}%/interval`,
 							];
 						},
 					},
@@ -191,12 +187,9 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 	);
 
 	const burnTimeReached = useMemo(() => {
-		return filteredPoints.some((_, i) => {
-			const cumulativeDamage = filteredPoints
-				.slice(0, i + 1)
-				.reduce((sum, point) => sum + point.burnCost, 0);
-			return cumulativeDamage >= 100;
-		});
+		return filteredPoints.some(
+			(point) => point.totalDamageAtStart + point.burnCost >= 100,
+		);
 	}, [filteredPoints]);
 
 	return (

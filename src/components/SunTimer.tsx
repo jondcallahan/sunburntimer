@@ -37,33 +37,49 @@ export function SunTimer({ result }: SunTimerProps) {
 	// Calculate real-time damage based on elapsed time
 	const calculateRealTimeDamage = useCallback(
 		(elapsedMs: number, startTime: Date) => {
-			const currentTime = addMilliseconds(startTime, elapsedMs);
-			let totalDamage = 0;
+			const currentTimeMs = addMilliseconds(startTime, elapsedMs).getTime();
+			let latestDamage = 0;
 
-			// Find relevant calculation points for the elapsed time
-			for (const point of result.points) {
-				if (point.slice.datetime <= currentTime) {
-					totalDamage += point.burnCost;
-				} else {
-					// Interpolate partial damage for current time slice
-					const prevPoint = result.points[result.points.indexOf(point) - 1];
-					if (prevPoint && prevPoint.slice.datetime <= startTime) {
-						const sliceDuration =
-							point.slice.datetime.getTime() -
-							prevPoint.slice.datetime.getTime();
-						const elapsedInSlice =
-							currentTime.getTime() - prevPoint.slice.datetime.getTime();
-						const partialDamage =
-							(elapsedInSlice / sliceDuration) * point.burnCost;
-						totalDamage += Math.min(partialDamage, point.burnCost);
-					}
-					break;
+			for (let i = 0; i < result.points.length; i++) {
+				const point = result.points[i];
+				const pointStartMs = point.slice.datetime.getTime();
+				const nextPointStartMs = result.points[i + 1]?.slice.datetime.getTime();
+				const previousPointStartMs =
+					result.points[i - 1]?.slice.datetime.getTime();
+				const inferredDurationMs =
+					nextPointStartMs ??
+					result.burnTime?.getTime() ??
+					(previousPointStartMs
+						? pointStartMs + (pointStartMs - previousPointStartMs)
+						: pointStartMs);
+				const pointEndMs = Math.max(pointStartMs, inferredDurationMs);
+				const pointEndDamage = point.totalDamageAtStart + point.burnCost;
+
+				if (currentTimeMs < pointStartMs) {
+					return Math.max(0, Math.min(latestDamage, 100));
 				}
+
+				if (currentTimeMs <= pointEndMs) {
+					const durationMs = pointEndMs - pointStartMs;
+					const progress =
+						durationMs > 0
+							? Math.max(
+									0,
+									Math.min(1, (currentTimeMs - pointStartMs) / durationMs),
+								)
+							: 1;
+					const interpolatedDamage =
+						point.totalDamageAtStart +
+						(pointEndDamage - point.totalDamageAtStart) * progress;
+					return Math.max(0, Math.min(interpolatedDamage, 100));
+				}
+
+				latestDamage = pointEndDamage;
 			}
 
-			return Math.min(totalDamage, 100);
+			return Math.max(0, Math.min(latestDamage, 100));
 		},
-		[result.points],
+		[result.burnTime, result.points],
 	);
 
 	// Timer effect
