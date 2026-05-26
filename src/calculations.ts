@@ -3,7 +3,6 @@ import type {
 	CalculationResult,
 	CalculationPoint,
 	TimeSlice,
-	HourlyWeather,
 	FitzpatrickType,
 } from "./types";
 import {
@@ -74,34 +73,72 @@ type SliceWindow = {
 	uviEnd: number;
 };
 
+function interpolateUvi(
+	startUvi: number,
+	endUvi: number,
+	fraction: number,
+): number {
+	return startUvi * (1 - fraction) + endUvi * fraction;
+}
+
 // **Build fixed sub-hour slices, keeping start & end UV for trapezoid integration
 // Breaks hourly UV data into smaller windows (e.g., 10-min) with interpolated UV at start/end.
 // This allows averaging UV changes smoothly, like connecting dots on a graph.**
 function createSlices(
-	hourly: HourlyWeather[],
+	input: CalculationInput,
 	slicesPerHour: number,
 ): SliceWindow[] {
 	const sliceWindows: SliceWindow[] = [];
+	const { hourly, current } = input.weather;
 	if (!hourly || hourly.length < 2) return sliceWindows;
 	const sliceMinutes = 60 / slicesPerHour;
+	const sliceDurationMs = sliceMinutes * 60000;
+	const currentObservationMs = current.dt * 1000;
 	for (let i = 0; i < hourly.length - 1; i++) {
 		const currentHourWeather = hourly[i];
 		const nextHourWeather = hourly[i + 1];
 		const baseTimestampMs = currentHourWeather.dt * 1000;
-		for (let j = 0; j < slicesPerHour; j++) {
-			const sliceStartMs = baseTimestampMs + j * sliceMinutes * 60000;
-			const sliceEndMs = baseTimestampMs + (j + 1) * sliceMinutes * 60000;
-			const interpFractionStart = j / slicesPerHour;
-			const interpFractionEnd = (j + 1) / slicesPerHour;
+		const nextTimestampMs = nextHourWeather.dt * 1000;
+		let anchorStartMs = baseTimestampMs;
+		let anchorStartUvi = currentHourWeather.uvi;
+
+		if (
+			currentObservationMs >= baseTimestampMs &&
+			currentObservationMs < nextTimestampMs
+		) {
+			anchorStartMs = currentObservationMs;
+			anchorStartUvi = current.uvi;
+		}
+
+		const intervalDurationMs = nextTimestampMs - anchorStartMs;
+		if (intervalDurationMs <= 0) continue;
+
+		for (
+			let sliceStartMs = anchorStartMs;
+			sliceStartMs < nextTimestampMs;
+			sliceStartMs += sliceDurationMs
+		) {
+			const sliceEndMs = Math.min(
+				sliceStartMs + sliceDurationMs,
+				nextTimestampMs,
+			);
+			const interpFractionStart =
+				(sliceStartMs - anchorStartMs) / intervalDurationMs;
+			const interpFractionEnd =
+				(sliceEndMs - anchorStartMs) / intervalDurationMs;
 			sliceWindows.push({
 				start: new Date(sliceStartMs),
 				end: new Date(sliceEndMs),
-				uviStart:
-					currentHourWeather.uvi * (1 - interpFractionStart) +
-					nextHourWeather.uvi * interpFractionStart,
-				uviEnd:
-					currentHourWeather.uvi * (1 - interpFractionEnd) +
-					nextHourWeather.uvi * interpFractionEnd,
+				uviStart: interpolateUvi(
+					anchorStartUvi,
+					nextHourWeather.uvi,
+					interpFractionStart,
+				),
+				uviEnd: interpolateUvi(
+					anchorStartUvi,
+					nextHourWeather.uvi,
+					interpFractionEnd,
+				),
 			});
 		}
 	}
@@ -174,7 +211,7 @@ function calculateBurnTimeWithSlices(
 	input: CalculationInput,
 	slicesPerHour: number,
 ): CalculationResult {
-	const sliceWindows = createSlices(input.weather.hourly, slicesPerHour);
+	const sliceWindows = createSlices(input, slicesPerHour);
 	const medInJm2 = getMedInJm2(input.skinType);
 	const baseSpfValue =
 		SPF_CONFIG[input.spfLevel]?.coefficient ??

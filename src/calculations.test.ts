@@ -17,7 +17,7 @@ function createMockWeatherData(
 			feels_like: 75,
 			pressure: 1013,
 			humidity: 50,
-			uvi: uvValues[0] || 5,
+			uvi: uvValues[0] ?? 5,
 			clouds: 20,
 			wind_speed: 5,
 			weather: [
@@ -62,6 +62,29 @@ function createTestScenario(
 		skinType,
 		spfLevel,
 		sweatLevel,
+	};
+}
+
+function createObservedCurrentUvScenario(
+	forecastUvValues: number[],
+	currentObservedUvi: number,
+	currentTime: Date,
+): CalculationInput {
+	const hourStartSeconds = Math.floor(
+		new Date(currentTime).setMinutes(0, 0, 0) / 1000,
+	);
+	const weather = createMockWeatherData(forecastUvValues, hourStartSeconds);
+
+	weather.current.dt = Math.floor(currentTime.getTime() / 1000);
+	weather.current.uvi = currentObservedUvi;
+
+	return {
+		weather,
+		placeName: "Test Location",
+		currentTime,
+		skinType: FitzpatrickType.II,
+		spfLevel: SPFLevel.NONE,
+		sweatLevel: SweatLevel.LOW,
 	};
 }
 
@@ -225,6 +248,60 @@ describe("Sunburn Calculation Algorithm", () => {
 				lowUVResult,
 				lowUV,
 				"High UV should cause faster burning than low UV",
+			);
+		});
+	});
+
+	describe("Current UV Anchoring", () => {
+		it("uses the observed current UV for the first forecast segment when current UV is lower", () => {
+			const currentTime = new Date("2025-09-06T09:30:00");
+			const anchoredInput = createObservedCurrentUvScenario(
+				[8, 8, 8, 8],
+				2,
+				currentTime,
+			);
+			const forecastOnlyInput = createObservedCurrentUvScenario(
+				[8, 8, 8, 8],
+				8,
+				currentTime,
+			);
+
+			const anchoredResult = findOptimalTimeSlicing(anchoredInput);
+			const forecastOnlyResult = findOptimalTimeSlicing(forecastOnlyInput);
+
+			expect(anchoredResult.points[0]?.slice.uvIndex).toBeLessThan(4);
+			expectRelativeBurnTime(
+				forecastOnlyResult,
+				forecastOnlyInput,
+				anchoredResult,
+				anchoredInput,
+				"Lower observed current UV should extend the near-term burn estimate",
+			);
+		});
+
+		it("uses the observed current UV for the first forecast segment when current UV is higher", () => {
+			const currentTime = new Date("2025-09-06T09:30:00");
+			const anchoredInput = createObservedCurrentUvScenario(
+				[6, 6, 6, 6],
+				10,
+				currentTime,
+			);
+			const forecastOnlyInput = createObservedCurrentUvScenario(
+				[6, 6, 6, 6],
+				6,
+				currentTime,
+			);
+
+			const anchoredResult = findOptimalTimeSlicing(anchoredInput);
+			const forecastOnlyResult = findOptimalTimeSlicing(forecastOnlyInput);
+
+			expect(anchoredResult.points[0]?.slice.uvIndex).toBeGreaterThan(7);
+			expectRelativeBurnTime(
+				anchoredResult,
+				anchoredInput,
+				forecastOnlyResult,
+				forecastOnlyInput,
+				"Higher observed current UV should shorten the near-term burn estimate",
 			);
 		});
 	});
