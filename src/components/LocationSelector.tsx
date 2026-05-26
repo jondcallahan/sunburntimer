@@ -14,6 +14,7 @@ import {
 	fetchWeatherData,
 	getActiveWeatherProvider,
 	getWeatherProviderLabel,
+	getWeatherProviderUrl,
 	isGoogleWeatherTestRoute,
 } from "../services/weather";
 import { formatElevation, formatTemperature } from "../lib/units";
@@ -44,6 +45,9 @@ export function LocationSelector() {
 		canChooseWeatherProvider && weatherProvider
 			? weatherProvider
 			: getActiveWeatherProvider();
+	const weatherProviderUrl = getWeatherProviderUrl(
+		geolocation.weather?.provider,
+	);
 
 	const refreshWeatherForProvider = async (
 		provider: WeatherProvider,
@@ -259,11 +263,24 @@ export function LocationSelector() {
 												<p className="text-sm text-muted-foreground">
 													Current Weather
 												</p>
-												<p className="text-xs text-muted-foreground">
-													{getWeatherProviderLabel(
-														geolocation.weather.provider,
-													)}
-												</p>
+												{weatherProviderUrl ? (
+													<a
+														href={weatherProviderUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+													>
+														{getWeatherProviderLabel(
+															geolocation.weather.provider,
+														)}
+													</a>
+												) : (
+													<p className="text-xs text-muted-foreground">
+														{getWeatherProviderLabel(
+															geolocation.weather.provider,
+														)}
+													</p>
+												)}
 												<p className="text-sm tabular-nums text-muted-foreground">
 													{formatTemperature(
 														geolocation.weather.current.temp,

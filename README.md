@@ -7,7 +7,7 @@ A modern web application that estimates sun exposure time based on your skin typ
 - **Fitzpatrick Skin Type Selection**: Choose from 6 scientifically-based skin types
 - **SPF Protection Modeling**: Account for different sunscreen strengths and degradation over time
 - **Activity Level Consideration**: Factor in sweating that reduces SPF effectiveness
-- **Real-time Weather Data**: Uses Open-Meteo API for UV index and weather conditions
+- **Real-time Weather Data**: Uses Open-Meteo API for UV index and weather conditions through a same-origin Vercel function in production, with a CurrentUVIndex + MET Norway fallback
 - **Plan Ahead**: Choose "now" or a later start time before you go outside
 - **Visible Unit Switching**: Switch between Fahrenheit/miles and Celsius/kilometers from the main planner
 - **SPF Recommendation**: Enter time outside and a skin-change goal to get a suggested SPF level
@@ -37,7 +37,7 @@ This implementation fixes critical bugs from the original OCaml version:
 - **UI Components**: shadcn/ui, Tailwind CSS
 - **State Management**: Zustand with persistence
 - **Charts**: Chart.js with react-chartjs-2
-- **APIs**: Open-Meteo, BigDataCloud Geocoding
+- **APIs**: Open-Meteo, BigDataCloud Geocoding, CurrentUVIndex, MET Norway, Vercel functions
 - **Build Tools**: Vite, Biome, TypeScript
 
 ## Getting Started
@@ -127,7 +127,7 @@ src/
 │   ├── useCurrentTime.ts
 │   └── useLocationRefresh.ts
 ├── services/           # External API services
-│   ├── weather.ts      # Open-Meteo integration
+│   ├── weather.ts      # Open-Meteo and Google weather integration
 │   ├── geolocation.ts  # GPS and BigDataCloud geocoding
 │   ├── geocoding.ts    # Manual location search
 │   └── aqi.ts          # Air quality data
@@ -145,9 +145,10 @@ src/
 ## API Integration
 
 ### Open-Meteo
-- **Endpoint**: Free Weather API
+- **Endpoint**: Free Weather API through `/api/open-meteo-weather` in production
 - **Data**: Current weather, hourly forecasts, UV index
 - **Rate Limits**: No API key required, generous free tier
+- **Notes**: The browser uses the same-origin function first to avoid third-party CORS failures, then falls back to direct Open-Meteo in plain local Vite development. If Open-Meteo is unavailable in production, the server uses CurrentUVIndex for UV data and MET Norway for temperature/weather.
 
 ### Google Weather Preview
 - **Endpoint**: Google Weather hourly forecast API through `/api/google-weather`
@@ -160,9 +161,13 @@ src/
 - **Features**: Location-based city/country lookup
 - **Rate Limits**: No API key required, free tier available
 
+### Fallback Weather Sources
+- **CurrentUVIndex**: No-key UV Index forecast fallback with attribution link shown in the weather card when active
+- **MET Norway**: No-key temperature and condition fallback used with a clear User-Agent header
+
 ## Security & Privacy
 
-- No API keys required - uses free public APIs
+- No API keys required for the default Open-Meteo flow
 - No personal data is stored on servers
 - User preferences saved locally with Zustand persist
 - HTTPS enforced for all API calls
@@ -194,6 +199,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Additions by [@coloboxp](https://github.com/coloboxp)
 - Fitzpatrick skin type scale for scientific accuracy
 - Open-Meteo and BigDataCloud for reliable, free data services
+- CurrentUVIndex and MET Norway for no-key fallback weather data
 - shadcn/ui for beautiful, accessible components
 
 ## Support

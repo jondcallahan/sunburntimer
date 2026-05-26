@@ -91,6 +91,11 @@ export async function fetchWeatherData(
 export async function fetchOpenMeteoWeatherData(
 	position: Position,
 ): Promise<WeatherData> {
+	const proxiedWeather = await fetchOpenMeteoWeatherDataFromApi(position);
+	if (proxiedWeather) {
+		return proxiedWeather;
+	}
+
 	const lat = position.latitude.toFixed(4);
 	const lon = position.longitude.toFixed(4);
 
@@ -199,6 +204,43 @@ export async function fetchOpenMeteoWeatherData(
 		).toISOString(),
 		timezone: locationTimezone,
 	};
+}
+
+async function fetchOpenMeteoWeatherDataFromApi(
+	position: Position,
+): Promise<WeatherData | undefined> {
+	if (typeof window === "undefined") {
+		return undefined;
+	}
+
+	const params = new URLSearchParams({
+		latitude: position.latitude.toString(),
+		longitude: position.longitude.toString(),
+		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+	});
+
+	let response: Response;
+	try {
+		response = await fetch(`/api/open-meteo-weather?${params.toString()}`, {
+			headers: {
+				Accept: "application/json",
+			},
+		});
+	} catch {
+		return undefined;
+	}
+
+	const contentType = response.headers.get("content-type");
+	if (!contentType?.includes("application/json")) {
+		return undefined;
+	}
+
+	if (!response.ok) {
+		const message = await readErrorMessage(response);
+		throw new Error(message || `Weather API error: ${response.status}`);
+	}
+
+	return response.json();
 }
 
 async function fetchGoogleWeatherData(
@@ -321,8 +363,25 @@ export function getWeatherProviderLabel(
 	switch (provider) {
 		case "google":
 			return "Google";
+		case "current-uv-index":
+			return "CurrentUVIndex + MET Norway";
 		case "open-meteo":
 		case undefined:
 			return "Open-Meteo";
+	}
+}
+
+export function getWeatherProviderUrl(
+	provider: ActualWeatherProvider | undefined,
+): string | undefined {
+	switch (provider) {
+		case "current-uv-index":
+			return "https://currentuvindex.com";
+		case "google":
+			return "https://weather.google.com";
+		case "open-meteo":
+			return "https://open-meteo.com";
+		case undefined:
+			return undefined;
 	}
 }

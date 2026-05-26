@@ -42,6 +42,9 @@ describe("weather providers", () => {
 	it("labels weather providers for compact UI display", () => {
 		expect(getWeatherProviderLabel("open-meteo")).toBe("Open-Meteo");
 		expect(getWeatherProviderLabel("google")).toBe("Google");
+		expect(getWeatherProviderLabel("current-uv-index")).toBe(
+			"CurrentUVIndex + MET Norway",
+		);
 		expect(getWeatherProviderLabel(undefined)).toBe("Open-Meteo");
 	});
 });

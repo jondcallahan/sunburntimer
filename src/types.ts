@@ -235,8 +235,11 @@ export interface AQIData {
 	us_aqi: number;
 }
 
-export type ActualWeatherProvider = "open-meteo" | "google";
-export type WeatherProvider = ActualWeatherProvider;
+export type ActualWeatherProvider =
+	| "open-meteo"
+	| "google"
+	| "current-uv-index";
+export type WeatherProvider = "open-meteo" | "google";
 
 export interface WeatherData {
 	provider?: ActualWeatherProvider;
