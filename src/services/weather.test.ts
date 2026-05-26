@@ -37,6 +37,9 @@ function jsonResponse(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), {
 		status,
 		statusText: status === 200 ? "OK" : "Error",
+		headers: {
+			"Content-Type": "application/json",
+		},
 	});
 }
 
@@ -48,31 +51,115 @@ function getFetchUrl(input: Parameters<typeof fetch>[0]): string {
 }
 
 describe("fetchWeatherData", () => {
-	it("throws a recoverable error when Open-Meteo returns no usable UV forecast", async () => {
-		globalThis.fetch = async () =>
-			jsonResponse(createForecastResponse([null, null, null]));
+	it("falls back to Google weather when Open-Meteo returns no usable UV forecast", async () => {
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("/api/google-weather")) {
+				return jsonResponse({
+					current: {
+						dt: 1779810300,
+						temp: 76,
+						uvi: 3,
+						weather: [
+							{
+								id: 800,
+								main: "Sunny",
+								description: "Sunny",
+								icon: "",
+							},
+						],
+					},
+					hourly: [
+						{
+							dt: 1779810300,
+							temp: 76,
+							uvi: 3,
+							weather: [
+								{
+									id: 800,
+									main: "Sunny",
+									description: "Sunny",
+									icon: "",
+								},
+							],
+						},
+					],
+					elevation: 160,
+					sunrise: "2026-05-26T11:31:00.000Z",
+					sunset: "2026-05-27T01:24:00.000Z",
+					nextSunrise: "2026-05-27T11:31:00.000Z",
+					timezone: "America/Chicago",
+				});
+			}
+
+			return jsonResponse(createForecastResponse([null, null, null]));
+		};
+
+		const weather = await fetchWeatherData({
+			latitude: 30.2672,
+			longitude: -97.7431,
+		});
+
+		expect(weather.current.uvi).toBe(3);
+		expect(weather.timezone).toBe("America/Chicago");
+	});
+
+	it("throws a recoverable error when Open-Meteo and Google weather are unavailable", async () => {
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("/api/google-weather")) {
+				return jsonResponse({ error: "Google weather unavailable" }, 502);
+			}
+
+			return jsonResponse(createForecastResponse([null, null, null]));
+		};
 
 		await expect(
 			fetchWeatherData({ latitude: 30.2672, longitude: -97.7431 }),
-		).rejects.toThrow("UV forecast is currently unavailable");
+		).rejects.toThrow("Weather providers unavailable");
+	});
+
+	it("throws a recoverable error when the Google fallback returns non-JSON", async () => {
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("/api/google-weather")) {
+				return new Response("<html>not json</html>", {
+					status: 200,
+					headers: { "Content-Type": "text/html" },
+				});
+			}
+
+			return jsonResponse(createForecastResponse([null, null, null]));
+		};
+
+		await expect(
+			fetchWeatherData({ latitude: 30.2672, longitude: -97.7431 }),
+		).rejects.toThrow("Google weather fallback did not return JSON");
 	});
 
 	it("throws a recoverable error when Open-Meteo returns a partial UV forecast", async () => {
-		globalThis.fetch = async () =>
-			jsonResponse(createForecastResponse([0.8, 4.5, null], 0.8));
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("/api/google-weather")) {
+				return jsonResponse({ error: "Google weather unavailable" }, 502);
+			}
+
+			return jsonResponse(createForecastResponse([0.8, 4.5, null], 0.8));
+		};
 
 		await expect(
 			fetchWeatherData({ latitude: 30.2672, longitude: -97.7431 }),
-		).rejects.toThrow("UV forecast is currently unavailable");
+		).rejects.toThrow("Weather providers unavailable");
 	});
 
 	it("throws a recoverable error when hourly UV values are unavailable", async () => {
-		globalThis.fetch = async () =>
-			jsonResponse(createForecastResponse([null, null, null], 0.8));
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("/api/google-weather")) {
+				return jsonResponse({ error: "Google weather unavailable" }, 502);
+			}
+
+			return jsonResponse(createForecastResponse([null, null, null], 0.8));
+		};
 
 		await expect(
 			fetchWeatherData({ latitude: 30.2672, longitude: -97.7431 }),
-		).rejects.toThrow("UV forecast is currently unavailable");
+		).rejects.toThrow("Weather providers unavailable");
 	});
 
 	it("returns weather when Open-Meteo returns a complete UV forecast", async () => {
