@@ -17,6 +17,7 @@ import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
 import { SweatLevelSelector } from "./components/SweatLevelSelector";
 import { LocationSelector } from "./components/LocationSelector";
+import { ActivityStartSelector } from "./components/ActivityStartSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
@@ -35,6 +36,10 @@ import { SunTimer } from "./components/SunTimer";
 import { RelativeTime } from "./components/RelativeTime";
 import { MathExplanation } from "./components/MathExplanation";
 import { SunPositionCard } from "./components/SunPositionCard";
+import {
+	formatActivityStartLabel,
+	resolveActivityStartDate,
+} from "./utils/activity-start";
 
 function App() {
 	const {
@@ -43,6 +48,7 @@ function App() {
 		sweatLevel,
 		geolocation,
 		calculation,
+		activityStart,
 		setCalculation,
 		setGeolocationStatus,
 		setWeather,
@@ -72,7 +78,7 @@ function App() {
 		const input = {
 			weather: geolocation.weather,
 			placeName: geolocation.placeName,
-			currentTime: new Date(),
+			currentTime: resolveActivityStartDate(activityStart),
 			skinType,
 			spfLevel,
 			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
@@ -87,6 +93,7 @@ function App() {
 		sweatLevel,
 		geolocation.weather,
 		geolocation.placeName,
+		activityStart,
 		setCalculation,
 	]);
 
@@ -108,6 +115,7 @@ function App() {
 	};
 
 	const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
+	const selectedActivityStartTime = resolveActivityStartDate(activityStart);
 
 	return (
 		<div className="min-h-screen bg-orange-50">
@@ -132,7 +140,9 @@ function App() {
 				{/* Steps Accordion */}
 				<Accordion
 					type="multiple"
-					defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3"]}
+					defaultValue={
+						hasPreloadedPrefs ? [] : ["step1", "step2", "step3", "step4"]
+					}
 					className="space-y-4"
 				>
 					{/* Step 1: Skin Type */}
@@ -262,15 +272,58 @@ function App() {
 							<LocationSelector />
 						</AccordionContent>
 					</AccordionItem>
+
+					{/* Step 4: Start Time */}
+					<AccordionItem
+						value="step4"
+						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
+					>
+						<AccordionTrigger className="group px-6 py-4 hover:no-underline">
+							<div className="flex-1 text-left">
+								<StepHeader
+									stepNumber={4}
+									title="When Are You Going Outside?"
+									description="Pick a start time from the usable forecast."
+									isCompleted={true}
+									hideDescription={true}
+								/>
+								<div className="mt-4 ml-12 flex items-center gap-2 group-data-[state=open]:hidden">
+									<Badge variant="outline">
+										{geolocation.weather
+											? formatActivityStartLabel(
+													activityStart,
+													geolocation.weather.timezone,
+												)
+											: "Now"}
+									</Badge>
+								</div>
+							</div>
+						</AccordionTrigger>
+						<AccordionContent className="px-6 pb-6">
+							<ActivityStartSelector />
+						</AccordionContent>
+					</AccordionItem>
 				</Accordion>
 
 				{/* Results */}
 				{calculation && (
 					<div className="mt-8 space-y-6">
 						<div className="flex items-center justify-between">
-							<h2 className="text-2xl font-bold text-slate-800">
-								Safe Sun Exposure Time
-							</h2>
+							<div>
+								<h2 className="text-2xl font-bold text-slate-800">
+									Safe Sun Exposure Time
+								</h2>
+								{geolocation.weather && (
+									<p className="text-sm text-slate-600">
+										For{" "}
+										{formatActivityStartLabel(
+											activityStart,
+											geolocation.weather.timezone,
+										)}{" "}
+										in {geolocation.placeName}
+									</p>
+								)}
+							</div>
 							<div className="flex space-x-2">
 								<Button
 									variant="outline"
@@ -302,6 +355,10 @@ function App() {
 							<UVChart
 								result={calculation}
 								timezone={geolocation.weather?.timezone}
+								startMarkerTime={selectedActivityStartTime}
+								startMarkerLabel={
+									activityStart.mode === "now" ? "Now" : "Start"
+								}
 							/>
 						</div>
 						<SunPositionCard />
