@@ -116,13 +116,13 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 					padding: 12,
 					callbacks: {
 						title: (context: TooltipItem<"line">[]) => {
-							const date = new Date(context[0].parsed.x);
+							const date = new Date(context[0].parsed.x || 0);
 							return timezone
 								? formatInTimeZone(date, timezone, "h:mm a")
 								: format(date, "h:mm a");
 						},
 						label: (context: TooltipItem<"line">) => {
-							const damage = context.parsed.y.toFixed(1);
+							const damage = (context.parsed.y || 0).toFixed(1);
 							const point = filteredPoints[context.dataIndex];
 							return [
 								`Damage: ${damage}%`,

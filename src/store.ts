@@ -30,6 +30,7 @@ interface AppStore extends AppState {
 	setCalculation: (calculation: CalculationResult) => void;
 	clearCalculation: () => void;
 	reset: () => void;
+	setActivityStartTime: (time: string | undefined) => void;
 }
 
 const initialState: AppState = {
@@ -104,6 +105,9 @@ export const useAppStore = create<AppStore>()(
 				set((state) => ({ ...state, calculation: undefined })),
 
 			reset: () => set(initialState),
+
+			setActivityStartTime: (activityStartTime) =>
+				set((state) => ({ ...state, activityStartTime })),
 		}),
 		{
 			name: "sunburntimer-storage",
@@ -111,6 +115,7 @@ export const useAppStore = create<AppStore>()(
 				skinType: state.skinType,
 				spfLevel: state.spfLevel,
 				sweatLevel: state.sweatLevel,
+				activityStartTime: state.activityStartTime,
 				geolocation:
 					state.geolocation.status === "completed" && state.geolocation.position
 						? {

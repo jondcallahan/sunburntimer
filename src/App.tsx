@@ -17,6 +17,7 @@ import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
 import { SweatLevelSelector } from "./components/SweatLevelSelector";
 import { LocationSelector } from "./components/LocationSelector";
+import { TimeSelector } from "./components/TimeSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
 import { UVChart } from "./components/UVChart";
@@ -43,6 +44,7 @@ function App() {
 		sweatLevel,
 		geolocation,
 		calculation,
+		activityStartTime,
 		setCalculation,
 		setGeolocationStatus,
 		setWeather,
@@ -72,7 +74,7 @@ function App() {
 		const input = {
 			weather: geolocation.weather,
 			placeName: geolocation.placeName,
-			currentTime: new Date(),
+			currentTime: activityStartTime ? new Date(activityStartTime) : new Date(),
 			skinType,
 			spfLevel,
 			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
@@ -87,6 +89,7 @@ function App() {
 		sweatLevel,
 		geolocation.weather,
 		geolocation.placeName,
+		activityStartTime,
 		setCalculation,
 	]);
 
@@ -132,7 +135,7 @@ function App() {
 				{/* Steps Accordion */}
 				<Accordion
 					type="multiple"
-					defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3"]}
+					defaultValue={hasPreloadedPrefs ? [] : ["step1", "step2", "step3", "step4"]}
 					className="space-y-4"
 				>
 					{/* Step 1: Skin Type */}
@@ -260,6 +263,32 @@ function App() {
 						</AccordionTrigger>
 						<AccordionContent className="px-6 pb-6">
 							<LocationSelector />
+						</AccordionContent>
+					</AccordionItem>
+
+					{/* Step 4: Time of Exposure */}
+					<AccordionItem
+						value="step4"
+						className="bg-card border-stone-200 shadow-sm rounded-lg mb-4"
+					>
+						<AccordionTrigger className="px-6 py-4 hover:no-underline">
+							<div className="flex-1 text-left">
+								<StepHeader
+									stepNumber={4}
+									title="Time of Exposure"
+									description="When do you plan to be in the sun?"
+									isCompleted={true}
+									hideDescription={true}
+								/>
+								<div className="flex items-center gap-2 mt-4 ml-12">
+									<Badge variant="outline">
+										{activityStartTime ? new Date(activityStartTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : "Starting Now"}
+									</Badge>
+								</div>
+							</div>
+						</AccordionTrigger>
+						<AccordionContent className="px-6 pb-6">
+							<TimeSelector />
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>

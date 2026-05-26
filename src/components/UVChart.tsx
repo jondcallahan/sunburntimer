@@ -135,14 +135,14 @@ export function UVChart({ result, timezone }: UVChartProps) {
 					padding: 12,
 					callbacks: {
 						title: (context: TooltipItem<"line">[]) => {
-							const date = new Date(context[0].parsed.x);
+							const date = new Date(context[0].parsed.x || 0);
 							return timezone
 								? formatInTimeZone(date, timezone, "h:mm a")
 								: format(date, "h:mm a");
 						},
 						label: (context: TooltipItem<"line">) => {
-							const uvIndex = context.parsed.y.toFixed(1);
-							const uvRisk = getUVRiskLevel(context.parsed.y);
+							const uvIndex = (context.parsed.y || 0).toFixed(1);
+							const uvRisk = getUVRiskLevel(context.parsed.y || 0);
 							return [`UV Index: ${uvIndex}`, `Risk Level: ${uvRisk}`];
 						},
 					},
