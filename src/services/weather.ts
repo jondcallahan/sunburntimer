@@ -71,6 +71,29 @@ function getHourlyUvIndex(hourly: OpenMeteoResponse["hourly"]): number[] {
 export async function fetchWeatherData(
 	position: Position,
 ): Promise<WeatherData> {
+	try {
+		return await fetchOpenMeteoWeatherData(position);
+	} catch (openMeteoError) {
+		console.warn(
+			"Open-Meteo weather failed, trying Google fallback:",
+			openMeteoError,
+		);
+
+		try {
+			return await fetchGoogleWeatherFallback(position);
+		} catch (googleError) {
+			throw new Error(
+				`Weather providers unavailable. Open-Meteo: ${getErrorMessage(
+					openMeteoError,
+				)} Google: ${getErrorMessage(googleError)}`,
+			);
+		}
+	}
+}
+
+export async function fetchOpenMeteoWeatherData(
+	position: Position,
+): Promise<WeatherData> {
 	const lat = position.latitude.toFixed(4);
 	const lon = position.longitude.toFixed(4);
 
@@ -174,4 +197,51 @@ export async function fetchWeatherData(
 		).toISOString(),
 		timezone: locationTimezone,
 	};
+}
+
+async function fetchGoogleWeatherFallback(
+	position: Position,
+): Promise<WeatherData> {
+	const params = new URLSearchParams({
+		latitude: position.latitude.toString(),
+		longitude: position.longitude.toString(),
+	});
+	const response = await fetch(`/api/google-weather?${params.toString()}`, {
+		headers: {
+			Accept: "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		const message = await readErrorMessage(response);
+		throw new Error(
+			message || `Google weather fallback error: ${response.status}`,
+		);
+	}
+
+	const contentType = response.headers.get("content-type");
+	if (!contentType?.includes("application/json")) {
+		throw new Error("Google weather fallback did not return JSON");
+	}
+
+	return response.json();
+}
+
+async function readErrorMessage(
+	response: Response,
+): Promise<string | undefined> {
+	const contentType = response.headers.get("content-type");
+
+	if (contentType?.includes("application/json")) {
+		const body = (await response.json().catch(() => undefined)) as
+			| { error?: string }
+			| undefined;
+		return body?.error;
+	}
+
+	return response.text().catch(() => undefined);
+}
+
+function getErrorMessage(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
 }
