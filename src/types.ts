@@ -141,6 +141,74 @@ export const SWEAT_CONFIG: Record<
 
 export const DEFAULT_SWEAT_LEVEL = SweatLevel.LOW;
 
+// Display units
+export const UnitSystem = {
+	IMPERIAL: "imperial",
+	METRIC: "metric",
+} as const;
+
+export type UnitSystem = (typeof UnitSystem)[keyof typeof UnitSystem];
+
+export const DEFAULT_UNIT_SYSTEM = UnitSystem.IMPERIAL;
+
+// Exposure planning
+export const StartTimeMode = {
+	NOW: "now",
+	PLANNED: "planned",
+} as const;
+
+export type StartTimeMode = (typeof StartTimeMode)[keyof typeof StartTimeMode];
+
+export const DEFAULT_START_TIME_MODE = StartTimeMode.NOW;
+
+export const ExposureGoal = {
+	AVOID_CHANGE: "avoid_change",
+	LIGHT_COLOR: "light_color",
+	MORE_COLOR: "more_color",
+} as const;
+
+export type ExposureGoal = (typeof ExposureGoal)[keyof typeof ExposureGoal];
+
+export const DEFAULT_EXPOSURE_GOAL = ExposureGoal.AVOID_CHANGE;
+export const DEFAULT_PLANNED_DURATION_MINUTES = 60;
+
+export const EXPOSURE_GOAL_CONFIG: Record<
+	ExposureGoal,
+	{
+		label: string;
+		shortLabel: string;
+		description: string;
+		minDamage: number;
+		targetDamage: number;
+		maxDamage: number;
+	}
+> = {
+	[ExposureGoal.AVOID_CHANGE]: {
+		label: "Avoid visible change",
+		shortLabel: "Zero tan",
+		description: "Keep the UV dose as low as practical.",
+		minDamage: 0,
+		targetDamage: 5,
+		maxDamage: 10,
+	},
+	[ExposureGoal.LIGHT_COLOR]: {
+		label: "Light color",
+		shortLabel: "Light tan",
+		description: "Aim for a small dose without getting close to burning.",
+		minDamage: 15,
+		targetDamage: 25,
+		maxDamage: 35,
+	},
+	[ExposureGoal.MORE_COLOR]: {
+		label: "More color",
+		shortLabel: "More tan",
+		description: "Allow more UV dose, still below the burn line.",
+		minDamage: 35,
+		targetDamage: 45,
+		maxDamage: 60,
+	},
+};
+
 // Weather Data
 export interface WeatherOverview {
 	id: number;
@@ -167,7 +235,11 @@ export interface AQIData {
 	us_aqi: number;
 }
 
+export type ActualWeatherProvider = "open-meteo" | "google";
+export type WeatherProvider = ActualWeatherProvider;
+
 export interface WeatherData {
+	provider?: ActualWeatherProvider;
 	current: CurrentWeather;
 	hourly: HourlyWeather[];
 	elevation: number; // meters above sea level
@@ -228,11 +300,38 @@ export interface CalculationResult {
 	advice: string[];
 }
 
+export interface ExposureDamageEstimate {
+	damage: number;
+	coveredMinutes: number;
+	forecastComplete: boolean;
+}
+
+export interface SPFRecommendationOption {
+	level: SPFLevel;
+	damage: number;
+}
+
+export interface SPFRecommendation {
+	level: SPFLevel;
+	status: "fits_goal" | "below_goal" | "too_risky";
+	damage: number;
+	goal: ExposureGoal;
+	durationMinutes: number;
+	options: SPFRecommendationOption[];
+	forecastComplete: boolean;
+}
+
 // App State
 export interface AppState {
 	skinType?: FitzpatrickType;
 	spfLevel?: SPFLevel;
 	sweatLevel?: SweatLevel;
+	unitSystem: UnitSystem;
+	startTimeMode: StartTimeMode;
+	plannedStartTime?: string;
+	plannedDurationMinutes: number;
+	exposureGoal: ExposureGoal;
+	weatherProvider?: WeatherProvider;
 	geolocation: GeolocationState;
 	calculation?: CalculationResult;
 }

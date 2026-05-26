@@ -1,5 +1,4 @@
 import { Check } from "lucide-react";
-import { useLayoutEffect, useRef, useMemo } from "react";
 import { FitzpatrickType, SKIN_TYPE_CONFIG } from "../types";
 import { useAppStore } from "../store";
 import { CardContent } from "./ui/card";
@@ -10,15 +9,9 @@ interface SkinTypeCardProps {
 	type: FitzpatrickType;
 	selected: boolean;
 	onSelect: (type: FitzpatrickType) => void;
-	cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-function SkinTypeCard({
-	type,
-	selected,
-	onSelect,
-	cardRef,
-}: SkinTypeCardProps) {
+function SkinTypeCard({ type, selected, onSelect }: SkinTypeCardProps) {
 	const config = SKIN_TYPE_CONFIG[type];
 
 	// Use consistent dark text on white background
@@ -28,71 +21,70 @@ function SkinTypeCard({
 
 	return (
 		<SelectableCard
-			ref={cardRef}
 			selected={selected}
-			className="relative h-80 w-72 flex-shrink-0 snap-center overflow-hidden bg-white scroll-m-12"
+			className="relative min-h-36 overflow-hidden bg-white"
 			onClick={() => onSelect(type)}
 			aria-label={`Select skin type ${type}: ${config.subtitle}`}
 		>
 			{/* Skin tone stripe */}
 			<div
-				className="absolute left-0 top-0 bottom-0 w-6"
+				className="absolute left-0 top-0 bottom-0 w-2.5"
 				style={{ backgroundColor: config.color }}
 			/>
-			<CardContent className="p-4 pl-10 relative h-full flex flex-col">
-				<div className="flex-1 space-y-3">
+			<CardContent className="relative flex h-full flex-col p-3 pl-5">
+				<div className="flex-1 space-y-2">
 					{/* Header */}
 					<div className="flex items-start justify-between">
 						<div className="flex-1 min-w-0">
-							<div className="flex items-center space-x-2 mb-2">
-								<div className="text-3xl leading-none" aria-hidden="true">
+							<div className="flex items-center gap-1.5 mb-1">
+								<div className="text-2xl leading-none" aria-hidden="true">
 									{config.emoji}
 								</div>
 								<Badge
 									variant="secondary"
-									className="font-bold text-sm px-2 py-1 flex-shrink-0 bg-gray-100 text-gray-800"
+									className="flex-shrink-0 bg-gray-100 px-1.5 py-0.5 text-xs font-bold text-gray-800"
 								>
 									Type {type}
 								</Badge>
-								<div className={`font-bold text-base ${textColor} truncate`}>
+								<div className={`truncate text-sm font-bold ${textColor}`}>
 									{config.subtitle}
 								</div>
 							</div>
 						</div>
 
 						{selected && (
-							<div className="flex items-center justify-center w-6 h-6 bg-green-600 rounded-full shadow-lg flex-shrink-0 ml-2">
-								<Check className="w-4 h-4 text-white stroke-[3]" />
+							<div className="ml-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-600 shadow-lg">
+								<Check className="h-3.5 w-3.5 text-white stroke-[3]" />
 							</div>
 						)}
 					</div>
 
 					{/* Description */}
 					<div
-						className={`text-sm ${descriptionColor} font-medium leading-snug`}
+						className={`text-xs ${descriptionColor} font-medium leading-snug`}
 					>
 						{config.description}
 					</div>
 
 					{/* Attributes */}
-					<div className="space-y-2.5">
+					<div className="space-y-1.5">
 						<div>
 							<div className={`text-xs ${labelColor} mb-0.5`}>Hair</div>
-							<div className={`text-sm ${textColor} leading-snug`}>
+							<div className={`text-xs ${textColor} leading-snug`}>
 								{config.hairColors.join(", ")}
 							</div>
 						</div>
 
 						<div>
 							<div className={`text-xs ${labelColor} mb-0.5`}>Eyes</div>
-							<div className={`text-sm ${textColor} leading-snug`}>
+							<div className={`text-xs ${textColor} leading-snug`}>
 								{config.eyeColors.join(", ")}
 							</div>
 						</div>
 
 						<div>
 							<div className={`text-xs ${labelColor} mb-0.5`}>Freckles</div>
-							<div className={`text-sm ${textColor} leading-snug`}>
+							<div className={`text-xs ${textColor} leading-snug`}>
 								{config.freckles}
 							</div>
 						</div>
@@ -105,59 +97,18 @@ function SkinTypeCard({
 
 export function SkinTypeSelector() {
 	const { skinType, setSkinType } = useAppStore();
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	// Create refs for each skin type - must be called outside of any loops
-	const typeIRef = useRef<HTMLDivElement>(null);
-	const typeIIRef = useRef<HTMLDivElement>(null);
-	const typeIIIRef = useRef<HTMLDivElement>(null);
-	const typeIVRef = useRef<HTMLDivElement>(null);
-	const typeVRef = useRef<HTMLDivElement>(null);
-	const typeVIRef = useRef<HTMLDivElement>(null);
-
-	const cardRefs = useMemo(
-		() => ({
-			[FitzpatrickType.I]: typeIRef,
-			[FitzpatrickType.II]: typeIIRef,
-			[FitzpatrickType.III]: typeIIIRef,
-			[FitzpatrickType.IV]: typeIVRef,
-			[FitzpatrickType.V]: typeVRef,
-			[FitzpatrickType.VI]: typeVIRef,
-		}),
-		[],
-	);
-
-	// Scroll selected card into view
-	useLayoutEffect(() => {
-		if (skinType && cardRefs[skinType]?.current) {
-			const selectedCard = cardRefs[skinType].current;
-
-			selectedCard.scrollIntoView({
-				behavior: "smooth",
-				block: "nearest",
-				inline: "center",
-			});
-		}
-	}, [skinType, cardRefs]);
 
 	return (
 		<div className="w-full">
-			<div
-				ref={containerRef}
-				className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide"
-			>
+			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 				{Object.values(FitzpatrickType).map((type) => (
 					<SkinTypeCard
 						key={type}
 						type={type}
 						selected={skinType === type}
 						onSelect={setSkinType}
-						cardRef={cardRefs[type]}
 					/>
 				))}
-			</div>
-			<div className="text-center text-sm text-gray-500 mt-2">
-				Swipe to browse skin types
 			</div>
 		</div>
 	);

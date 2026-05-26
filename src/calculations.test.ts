@@ -1,7 +1,13 @@
 import { describe, it, expect } from "bun:test";
-import { findOptimalTimeSlicing } from "./calculations";
+import {
+	calculateExposureDamage,
+	findOptimalTimeSlicing,
+	recommendSPF,
+	recoverSkinDamagePercent,
+	UVB_SKIN_RECOVERY,
+} from "./calculations";
 import type { CalculationInput, WeatherData, CalculationResult } from "./types";
-import { FitzpatrickType, SPFLevel, SweatLevel } from "./types";
+import { ExposureGoal, FitzpatrickType, SPFLevel, SweatLevel } from "./types";
 
 // Test helper functions
 function createMockWeatherData(
@@ -17,7 +23,7 @@ function createMockWeatherData(
 			feels_like: 75,
 			pressure: 1013,
 			humidity: 50,
-			uvi: uvValues[0] || 5,
+			uvi: uvValues[0] ?? 5,
 			clouds: 20,
 			wind_speed: 5,
 			weather: [
@@ -65,6 +71,29 @@ function createTestScenario(
 	};
 }
 
+function createObservedCurrentUvScenario(
+	forecastUvValues: number[],
+	currentObservedUvi: number,
+	currentTime: Date,
+): CalculationInput {
+	const hourStartSeconds = Math.floor(
+		new Date(currentTime).setMinutes(0, 0, 0) / 1000,
+	);
+	const weather = createMockWeatherData(forecastUvValues, hourStartSeconds);
+
+	weather.current.dt = Math.floor(currentTime.getTime() / 1000);
+	weather.current.uvi = currentObservedUvi;
+
+	return {
+		weather,
+		placeName: "Test Location",
+		currentTime,
+		skinType: FitzpatrickType.II,
+		spfLevel: SPFLevel.NONE,
+		sweatLevel: SweatLevel.LOW,
+	};
+}
+
 // Utility functions for test assertions
 function getBurnTimeMinutes(
 	result: CalculationResult,
@@ -80,6 +109,11 @@ function getBurnTimeHours(
 	input: CalculationInput,
 ): number {
 	return getBurnTimeMinutes(result, input) / 60;
+}
+
+function getPointEndDamage(result: CalculationResult, index: number): number {
+	const point = result.points[index];
+	return point ? point.totalDamageAtStart + point.burnCost : 0;
 }
 
 function expectRelativeBurnTime(
@@ -229,6 +263,60 @@ describe("Sunburn Calculation Algorithm", () => {
 		});
 	});
 
+	describe("Current UV Anchoring", () => {
+		it("uses the observed current UV for the first forecast segment when current UV is lower", () => {
+			const currentTime = new Date("2025-09-06T09:30:00");
+			const anchoredInput = createObservedCurrentUvScenario(
+				[8, 8, 8, 8],
+				2,
+				currentTime,
+			);
+			const forecastOnlyInput = createObservedCurrentUvScenario(
+				[8, 8, 8, 8],
+				8,
+				currentTime,
+			);
+
+			const anchoredResult = findOptimalTimeSlicing(anchoredInput);
+			const forecastOnlyResult = findOptimalTimeSlicing(forecastOnlyInput);
+
+			expect(anchoredResult.points[0]?.slice.uvIndex).toBeLessThan(4);
+			expectRelativeBurnTime(
+				forecastOnlyResult,
+				forecastOnlyInput,
+				anchoredResult,
+				anchoredInput,
+				"Lower observed current UV should extend the near-term burn estimate",
+			);
+		});
+
+		it("uses the observed current UV for the first forecast segment when current UV is higher", () => {
+			const currentTime = new Date("2025-09-06T09:30:00");
+			const anchoredInput = createObservedCurrentUvScenario(
+				[6, 6, 6, 6],
+				10,
+				currentTime,
+			);
+			const forecastOnlyInput = createObservedCurrentUvScenario(
+				[6, 6, 6, 6],
+				6,
+				currentTime,
+			);
+
+			const anchoredResult = findOptimalTimeSlicing(anchoredInput);
+			const forecastOnlyResult = findOptimalTimeSlicing(forecastOnlyInput);
+
+			expect(anchoredResult.points[0]?.slice.uvIndex).toBeGreaterThan(7);
+			expectRelativeBurnTime(
+				anchoredResult,
+				anchoredInput,
+				forecastOnlyResult,
+				forecastOnlyInput,
+				"Higher observed current UV should shorten the near-term burn estimate",
+			);
+		});
+	});
+
 	describe("SPF Protection Levels", () => {
 		it("should provide appropriate protection for SPF 15", () => {
 			const withoutSPF = createTestScenario(
@@ -359,6 +447,52 @@ describe("Sunburn Calculation Algorithm", () => {
 				typeVI.input,
 				"Type I should burn much faster than Type VI",
 			);
+		});
+	});
+
+	describe("Leaky Bucket Recovery", () => {
+		it("should recover accumulated UVB damage over the published recovery window", () => {
+			const startingDamage = 80;
+			const recoveredDamage = recoverSkinDamagePercent(
+				startingDamage,
+				UVB_SKIN_RECOVERY.recoveryPeriodHours * 60,
+			);
+
+			expect(recoveredDamage).toBeCloseTo(
+				startingDamage * UVB_SKIN_RECOVERY.remainingFractionAfterRecoveryPeriod,
+				6,
+			);
+		});
+
+		it("should leak accumulated damage during a no-UV break before later exposure", () => {
+			const fixedTime = new Date("2025-09-06T08:00:00-06:00");
+			const input = createTestScenario(
+				FitzpatrickType.VI,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				[6, 6, 0, 0, 0, 0, 6, 6],
+				fixedTime,
+			);
+
+			const result = findOptimalTimeSlicing(input);
+			const morningCutoffMs = fixedTime.getTime() + 2.5 * 60 * 60 * 1000;
+			const afternoonRestartMs = fixedTime.getTime() + 5.5 * 60 * 60 * 1000;
+			const morningPeakDamage = Math.max(
+				...result.points
+					.map((point, index) => ({
+						time: point.slice.datetime.getTime(),
+						damage: getPointEndDamage(result, index),
+					}))
+					.filter((point) => point.time <= morningCutoffMs)
+					.map((point) => point.damage),
+			);
+			const damageBeforeAfternoon = result.points.find(
+				(point) => point.slice.datetime.getTime() >= afternoonRestartMs,
+			)?.totalDamageAtStart;
+
+			expect(morningPeakDamage).toBeGreaterThan(30);
+			expect(damageBeforeAfternoon).toBeDefined();
+			expect(damageBeforeAfternoon ?? 0).toBeLessThan(morningPeakDamage * 0.8);
 		});
 	});
 
@@ -604,6 +738,62 @@ describe("Sunburn Calculation Algorithm", () => {
 			if (lowSweatTime !== Infinity && highSweatTime !== Infinity) {
 				expect(highSweatTime).toBeLessThanOrEqual(lowSweatTime);
 			}
+		});
+	});
+
+	describe("Exposure Planning", () => {
+		it("should estimate lower planned dose with stronger SPF", () => {
+			const fixedTime = new Date("2025-09-06T09:00:00");
+			const noSpf = createTestScenario(
+				FitzpatrickType.II,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(4).fill(8),
+				fixedTime,
+			);
+			const spf30 = {
+				...noSpf,
+				spfLevel: SPFLevel.SPF_30,
+			};
+
+			const noSpfDamage = calculateExposureDamage(noSpf, 60);
+			const spf30Damage = calculateExposureDamage(spf30, 60);
+
+			expect(noSpfDamage.forecastComplete).toBe(true);
+			expect(spf30Damage.forecastComplete).toBe(true);
+			expect(spf30Damage.damage).toBeLessThan(noSpfDamage.damage);
+		});
+
+		it("should recommend high SPF when the goal is no visible change", () => {
+			const fixedTime = new Date("2025-09-06T09:00:00");
+			const input = createTestScenario(
+				FitzpatrickType.II,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(4).fill(8),
+				fixedTime,
+			);
+
+			const recommendation = recommendSPF(input, 60, ExposureGoal.AVOID_CHANGE);
+
+			expect(recommendation.level).toBe(SPFLevel.SPF_50_PLUS);
+			expect(recommendation.status).toBe("fits_goal");
+		});
+
+		it("should recommend a lower SPF when the user accepts light color", () => {
+			const fixedTime = new Date("2025-09-06T09:00:00");
+			const input = createTestScenario(
+				FitzpatrickType.II,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(4).fill(8),
+				fixedTime,
+			);
+
+			const recommendation = recommendSPF(input, 120, ExposureGoal.LIGHT_COLOR);
+
+			expect(recommendation.level).toBe(SPFLevel.SPF_15);
+			expect(recommendation.status).toBe("fits_goal");
 		});
 	});
 });

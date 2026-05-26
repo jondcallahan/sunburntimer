@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
 	MapPin,
 	LoaderIcon,
@@ -8,26 +9,52 @@ import {
 } from "lucide-react";
 import { haptic } from "ios-haptics";
 import { useAppStore } from "../store";
+import { getCurrentPosition, reverseGeocode } from "../services/geolocation";
 import {
-	getCurrentPosition,
-	reverseGeocode,
-	formatElevation,
-} from "../services/geolocation";
-import { fetchWeatherData } from "../services/weather";
+	fetchWeatherData,
+	getActiveWeatherProvider,
+	getWeatherProviderLabel,
+	isGoogleWeatherTestRoute,
+} from "../services/weather";
+import { formatElevation, formatTemperature } from "../lib/units";
 import { LocationSearch } from "./LocationSearch";
 import type { GeocodingResult } from "../services/geocoding";
+import type { WeatherProvider } from "../types";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "./ui/alert";
+import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 export function LocationSelector() {
+	const openMeteoProviderId = useId();
+	const googleProviderId = useId();
 	const {
 		geolocation,
+		unitSystem,
+		weatherProvider,
 		setGeolocationStatus,
 		setPosition,
 		setWeather,
 		setGeolocationError,
+		setWeatherProvider,
 	} = useAppStore();
+	const canChooseWeatherProvider = isGoogleWeatherTestRoute();
+	const activeWeatherProvider =
+		canChooseWeatherProvider && weatherProvider
+			? weatherProvider
+			: getActiveWeatherProvider();
+
+	const refreshWeatherForProvider = async (
+		provider: WeatherProvider,
+		position = geolocation.position,
+	) => {
+		if (!position) return;
+
+		setGeolocationStatus("fetching_weather");
+		const weather = await fetchWeatherData(position, provider);
+		setWeather(weather);
+	};
 
 	const handleSearchSelect = async (result: GeocodingResult) => {
 		try {
@@ -42,7 +69,7 @@ export function LocationSelector() {
 			setPosition(position, placeName, result.countryCode);
 
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(position);
+			const weather = await fetchWeatherData(position, activeWeatherProvider);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -63,7 +90,7 @@ export function LocationSelector() {
 			setPosition(position, placeName, countryCode);
 
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(position);
+			const weather = await fetchWeatherData(position, activeWeatherProvider);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -74,13 +101,27 @@ export function LocationSelector() {
 		}
 	};
 
+	const handleWeatherProviderChange = async (provider: WeatherProvider) => {
+		try {
+			haptic();
+			setWeatherProvider(provider);
+			await refreshWeatherForProvider(provider);
+			haptic.confirm();
+		} catch (error) {
+			haptic.error();
+			setGeolocationError(
+				error instanceof Error ? error.message : "Failed to fetch weather",
+			);
+		}
+	};
+
 	const renderStatus = () => {
 		switch (geolocation.status) {
 			case "blank":
 				return (
 					<Card>
-						<CardContent className="p-8 text-center">
-							<MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+						<CardContent className="p-4 text-center">
+							<MapPin className="mx-auto mb-2 h-7 w-7 text-muted-foreground" />
 							<p className="text-muted-foreground">
 								Choose your location to get weather data
 							</p>
@@ -189,10 +230,7 @@ export function LocationSelector() {
 								</span>
 								{geolocation.weather && (
 									<p className="text-sm text-green-700">
-										{formatElevation(
-											geolocation.weather.elevation,
-											geolocation.countryCode || "US",
-										)}{" "}
+										{formatElevation(geolocation.weather.elevation, unitSystem)}{" "}
 										elevation
 									</p>
 								)}
@@ -221,15 +259,26 @@ export function LocationSelector() {
 												<p className="text-sm text-muted-foreground">
 													Current Weather
 												</p>
+												<p className="text-xs text-muted-foreground">
+													{getWeatherProviderLabel(
+														geolocation.weather.provider,
+													)}
+												</p>
 												<p className="text-sm tabular-nums text-muted-foreground">
-													{Math.round(geolocation.weather.current.temp)}°F, UV
-													Index: {geolocation.weather.current.uvi}
+													{formatTemperature(
+														geolocation.weather.current.temp,
+														unitSystem,
+													)}
+													, UV Index: {geolocation.weather.current.uvi}
 												</p>
 											</div>
 										</div>
 										<div className="text-right">
 											<p className="text-2xl font-bold tabular-nums">
-												{Math.round(geolocation.weather.current.temp)}°
+												{formatTemperature(
+													geolocation.weather.current.temp,
+													unitSystem,
+												)}
 											</p>
 											<p className="text-sm text-muted-foreground capitalize">
 												{geolocation.weather.current.weather[0]?.description ||
@@ -267,12 +316,47 @@ export function LocationSelector() {
 
 	return (
 		<div className="space-y-6">
+			{canChooseWeatherProvider && (
+				<div className="space-y-3">
+					<Label className="text-sm font-medium text-slate-700">
+						Weather provider
+					</Label>
+					<RadioGroup
+						value={activeWeatherProvider}
+						onValueChange={(value) =>
+							handleWeatherProviderChange(value as WeatherProvider)
+						}
+						disabled={isLoading}
+						className="grid grid-cols-2 gap-2"
+					>
+						<Label
+							htmlFor={openMeteoProviderId}
+							className="flex cursor-pointer items-center gap-3 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-slate-700 transition-colors has-[[data-state=checked]]:border-amber-500 has-[[data-state=checked]]:bg-amber-50 has-[[data-state=checked]]:text-amber-950"
+						>
+							<RadioGroupItem id={openMeteoProviderId} value="open-meteo" />
+							Open-Meteo
+						</Label>
+						<Label
+							htmlFor={googleProviderId}
+							className="flex cursor-pointer items-center gap-3 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-slate-700 transition-colors has-[[data-state=checked]]:border-amber-500 has-[[data-state=checked]]:bg-amber-50 has-[[data-state=checked]]:text-amber-950"
+						>
+							<RadioGroupItem id={googleProviderId} value="google" />
+							Google
+						</Label>
+					</RadioGroup>
+					<p className="text-xs text-slate-500">
+						Google Weather is a preview path and needs `GOOGLE_MAPS_API_KEY` in
+						Vercel.
+					</p>
+				</div>
+			)}
+
 			<div className="grid grid-cols-1 gap-4">
 				<Button
 					variant="outline"
 					onClick={handleCurrentLocation}
 					disabled={isLoading}
-					className="h-auto p-4 border-dashed"
+					className="h-auto border-dashed p-3"
 				>
 					<MapPin className="w-5 h-5 mr-2" />
 					Use Current Location

@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+.serena/
+.playwright-mcp/
+.vercel/
 
 # Editor directories and files
 .vscode/*
@@ -24,3 +27,4 @@ dist-ssr
 *.sw?
 
 .env
+.vercel

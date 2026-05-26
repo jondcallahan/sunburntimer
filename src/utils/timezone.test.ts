@@ -1,6 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import {
 	formatInTimeZone,
+	getDayBoundsInTimeZone,
 	getHoursInTimezone,
 	getFractionalHoursInTimezone,
 } from "./timezone";
@@ -60,6 +61,22 @@ describe("Timezone Utilities", () => {
 			const tokyoResult = formatInTimeZone(utcDate, "Asia/Tokyo", "h:mm a");
 			expect(utcResult).toBe("6:30 PM");
 			expect(tokyoResult).toBe("3:30 AM");
+		});
+	});
+
+	describe("getDayBoundsInTimeZone", () => {
+		it("returns local day bounds for the selected timezone", () => {
+			const result = getDayBoundsInTimeZone(
+				new Date("2026-06-15T18:30:00Z"),
+				"America/Denver",
+			);
+
+			expect(result.start.getTime()).toBe(
+				new Date("2026-06-15T06:00:00.000Z").getTime(),
+			);
+			expect(result.end.getTime()).toBe(
+				new Date("2026-06-16T05:59:59.000Z").getTime(),
+			);
 		});
 	});
 });

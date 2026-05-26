@@ -100,20 +100,23 @@ export function MathExplanation() {
 								4. The calculation
 							</h3>
 							<p className="text-sm text-slate-600 mb-3">
-								Think of it as filling a bucket. Each minute adds UV damage, and
-								at 100% you're burnt.
+								Think of it as a leaky bucket. Each minute adds UV damage, while
+								normal skin recovery drains part of the accumulated dose.
 							</p>
 							<div className="bg-slate-900 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
 								<div className="mb-2 text-slate-400">Each minute:</div>
-								<div>Damage % = (UV_Energy_Per_Min / (MED × SPF)) × 100</div>
+								<div>Net damage = UV dose added - recovery leak</div>
 							</div>
 							<p className="text-sm text-slate-600 mt-3">
 								This runs minute-by-minute using hourly UV forecasts,
-								interpolating between data points.
+								interpolating between data points and anchoring the first
+								segment to the observed current UV reading.
 							</p>
 							<p className="text-xs text-slate-500 mt-2">
-								For low UV (UVI &lt; 3), a smoothing curve accounts for reduced
-								effective exposure at dawn/dusk sun angles.
+								Recovery is modeled from UVB studies showing normal skin
+								recovers over roughly 24-30 hours. For low UV (UVI &lt; 3), a
+								smoothing curve accounts for reduced effective exposure at
+								dawn/dusk sun angles.
 							</p>
 						</div>
 
@@ -148,6 +151,16 @@ export function MathExplanation() {
 								<li className="text-slate-500">
 									McKinlay, A.F. & Diffey, B.L. (1987). "A reference action
 									spectrum for ultraviolet induced erythema in human skin."
+								</li>
+								<li>
+									<a
+										href="https://pubmed.ncbi.nlm.nih.gov/6863984/"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-slate-600 hover:text-amber-600 hover:underline transition-colors"
+									>
+										Arbabi, Gange & Parrish: UVB recovery in normal skin
+									</a>
 								</li>
 								<li>
 									<a

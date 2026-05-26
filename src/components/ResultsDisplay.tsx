@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Card, CardContent } from "./ui/card";
 import type { CalculationResult } from "../types";
 import { CALCULATION_CONSTANTS } from "../types";
-import { getHoursInTimezone } from "../utils/timezone";
+import { formatInTimeZone, getHoursInTimezone } from "../utils/timezone";
 import { formatDuration, calculateEnvironmentalTimes } from "../lib/utils";
 
 interface ResultsDisplayProps {
@@ -14,6 +14,11 @@ interface ResultsDisplayProps {
 
 export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 	const { burnTime, startTime, points, advice } = result;
+
+	const formatDisplayTime = (date: Date) =>
+		timezone
+			? formatInTimeZone(date, timezone, "h:mm a")
+			: format(date, "h:mm a");
 
 	const finalDamage = useMemo(() => {
 		if (points.length === 0) return 0;
@@ -25,9 +30,13 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 		if (!startTime || !burnTime) return null;
 
 		// Check if burn time is past midnight (next day)
-		const startDate = new Date(startTime);
-		const burnDate = new Date(burnTime);
-		const isNextDay = burnDate.getDate() !== startDate.getDate();
+		const startDate = timezone
+			? formatInTimeZone(startTime, timezone, "yyyy-MM-dd")
+			: format(startTime, "yyyy-MM-dd");
+		const burnDate = timezone
+			? formatInTimeZone(burnTime, timezone, "yyyy-MM-dd")
+			: format(burnTime, "yyyy-MM-dd");
+		const isNextDay = burnDate !== startDate;
 		const isPastMidnight = isNextDay;
 
 		if (isPastMidnight) {
@@ -36,7 +45,7 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 
 		const diffMs = burnTime.getTime() - startTime.getTime();
 		return formatDuration(diffMs);
-	}, [startTime, burnTime]);
+	}, [startTime, burnTime, timezone]);
 
 	const environmentalTimes = useMemo(() => {
 		if (!startTime || !burnTime || safeTime === "unlikely") return null;
@@ -90,8 +99,10 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 									</p>
 									<p className="text-slate-600 tabular-nums">
 										{isHighRisk
-											? `Use sunscreen by ${format(burnTime, "h:mm a")}, sun damage may occur after`
-											: `Until ${format(burnTime, "h:mm a")}`}
+											? `Burn risk around ${formatDisplayTime(burnTime)}`
+											: startTime
+												? `${formatDisplayTime(startTime)} to ${formatDisplayTime(burnTime)}`
+												: `Until ${formatDisplayTime(burnTime)}`}
 									</p>
 									{environmentalTimes && (
 										<p className="text-sm tabular-nums text-slate-500 mt-2">

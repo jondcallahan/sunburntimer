@@ -1,5 +1,11 @@
 import { TZDate } from "@date-fns/tz";
-import type { Position, WeatherData, AQIData } from "../types";
+import type {
+	ActualWeatherProvider,
+	Position,
+	WeatherData,
+	AQIData,
+	WeatherProvider,
+} from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
 
@@ -24,6 +30,33 @@ interface OpenMeteoResponse {
 	};
 }
 
+interface GoogleForecastHour {
+	interval?: {
+		startTime?: string;
+	};
+	weatherCondition?: {
+		iconBaseUri?: string;
+		type?: string;
+		description?: {
+			text?: string;
+		};
+	};
+	temperature?: {
+		degrees?: number;
+	};
+	uvIndex?: number;
+}
+
+interface GoogleHourlyResponse {
+	forecastHours?: GoogleForecastHour[];
+	timeZone?: {
+		id?: string;
+	};
+	nextPageToken?: string;
+}
+
+const GOOGLE_FORECAST_HOURS = 72;
+
 /**
  * Parse a naive datetime string from Open-Meteo (e.g. "2026-02-22T14:00")
  * as local time in the given IANA timezone, returning a UTC timestamp (ms).
@@ -35,7 +68,27 @@ function parseLocationTime(timeStr: string, timezone: string): number {
 	return new TZDate(y, m - 1, d, h, min, 0, timezone).getTime();
 }
 
+export function isGoogleWeatherTestRoute(): boolean {
+	if (typeof window === "undefined") return false;
+	return window.location.pathname.replace(/\/+$/, "") === "/google";
+}
+
+export function getActiveWeatherProvider(): WeatherProvider {
+	return isGoogleWeatherTestRoute() ? "google" : "open-meteo";
+}
+
 export async function fetchWeatherData(
+	position: Position,
+	provider: WeatherProvider = getActiveWeatherProvider(),
+): Promise<WeatherData> {
+	if (provider === "google") {
+		return fetchGoogleWeatherData(position);
+	}
+
+	return fetchOpenMeteoWeatherData(position);
+}
+
+export async function fetchOpenMeteoWeatherData(
 	position: Position,
 ): Promise<WeatherData> {
 	const lat = position.latitude.toFixed(4);
@@ -130,6 +183,7 @@ export async function fetchWeatherData(
 	}
 
 	return {
+		provider: "open-meteo",
 		current,
 		hourly,
 		elevation: data.elevation,
@@ -145,4 +199,130 @@ export async function fetchWeatherData(
 		).toISOString(),
 		timezone: locationTimezone,
 	};
+}
+
+async function fetchGoogleWeatherData(
+	position: Position,
+): Promise<WeatherData> {
+	const params = new URLSearchParams({
+		latitude: position.latitude.toString(),
+		longitude: position.longitude.toString(),
+	});
+
+	const response = await fetch(`/api/google-weather?${params.toString()}`, {
+		headers: {
+			Accept: "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		const message = await readErrorMessage(response);
+		throw new Error(message || `Google Weather API error: ${response.status}`);
+	}
+
+	const contentType = response.headers.get("content-type");
+	if (!contentType?.includes("application/json")) {
+		throw new Error(
+			"Google weather needs Vercel dev or a Vercel preview deployment.",
+		);
+	}
+
+	return response.json();
+}
+
+async function readErrorMessage(
+	response: Response,
+): Promise<string | undefined> {
+	const contentType = response.headers.get("content-type");
+
+	if (contentType?.includes("application/json")) {
+		const body = (await response.json().catch(() => undefined)) as
+			| { error?: string }
+			| undefined;
+		return body?.error;
+	}
+
+	return response.text().catch(() => undefined);
+}
+
+export function normalizeGoogleWeatherData(
+	googleWeather: GoogleHourlyResponse,
+	metadata: Pick<
+		WeatherData,
+		"elevation" | "sunrise" | "sunset" | "nextSunrise" | "timezone" | "aqi"
+	>,
+): WeatherData {
+	const timezone = googleWeather.timeZone?.id || metadata.timezone;
+	if (!timezone) {
+		throw new Error("Missing weather timezone");
+	}
+
+	const hourly = (googleWeather.forecastHours ?? []).flatMap((hour) => {
+		const startTime = hour.interval?.startTime;
+		const temperature = hour.temperature?.degrees;
+		const uvIndex = hour.uvIndex;
+
+		if (
+			!startTime ||
+			typeof temperature !== "number" ||
+			typeof uvIndex !== "number"
+		) {
+			return [];
+		}
+
+		return [
+			{
+				dt: Math.floor(Date.parse(startTime) / 1000),
+				temp: temperature,
+				uvi: uvIndex,
+				weather: [normalizeGoogleWeatherOverview(hour)],
+			},
+		];
+	});
+	const filteredHourly = hourly.slice(0, GOOGLE_FORECAST_HOURS);
+	const current = filteredHourly[0];
+	if (!current) {
+		throw new Error("Invalid Google weather data received");
+	}
+
+	return {
+		provider: "google",
+		current,
+		hourly: filteredHourly,
+		elevation: metadata.elevation,
+		aqi: metadata.aqi,
+		sunrise: metadata.sunrise,
+		sunset: metadata.sunset,
+		nextSunrise: metadata.nextSunrise,
+		timezone,
+	};
+}
+
+function normalizeGoogleWeatherOverview(hour: GoogleForecastHour) {
+	const type = hour.weatherCondition?.type ?? "UNKNOWN";
+	const description =
+		hour.weatherCondition?.description?.text ?? type.replaceAll("_", " ");
+
+	return {
+		id: 800,
+		main: toTitleCase(type.replaceAll("_", " ").toLowerCase()),
+		description,
+		icon: hour.weatherCondition?.iconBaseUri ?? "",
+	};
+}
+
+function toTitleCase(value: string): string {
+	return value.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function getWeatherProviderLabel(
+	provider: ActualWeatherProvider | undefined,
+): string {
+	switch (provider) {
+		case "google":
+			return "Google";
+		case "open-meteo":
+		case undefined:
+			return "Open-Meteo";
+	}
 }
