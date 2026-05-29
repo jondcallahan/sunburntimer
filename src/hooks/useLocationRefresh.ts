@@ -17,7 +17,10 @@ export function useLocationRefresh() {
 			const refreshWeather = async () => {
 				try {
 					setGeolocationStatus("fetching_weather");
-					const weather = await fetchWeatherData(position);
+					const weather = await fetchWeatherData(
+						position,
+						geolocation.countryCode || "US",
+					);
 					setWeather(weather);
 				} catch (error) {
 					setGeolocationError(
@@ -33,6 +36,7 @@ export function useLocationRefresh() {
 	}, [
 		geolocation.status,
 		geolocation.position,
+		geolocation.countryCode,
 		geolocation.weather,
 		setGeolocationStatus,
 		setWeather,

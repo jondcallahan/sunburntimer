@@ -142,6 +142,8 @@ export const SWEAT_CONFIG: Record<
 export const DEFAULT_SWEAT_LEVEL = SweatLevel.LOW;
 
 // Weather Data
+export type TemperatureUnit = "fahrenheit" | "celsius";
+
 export interface WeatherOverview {
 	id: number;
 	main: string;
@@ -170,6 +172,7 @@ export interface AQIData {
 export interface WeatherData {
 	current: CurrentWeather;
 	hourly: HourlyWeather[];
+	temperatureUnit: TemperatureUnit;
 	elevation: number; // meters above sea level
 	aqi?: AQIData;
 	sunrise: string; // ISO8601 datetime

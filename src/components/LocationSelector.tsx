@@ -16,6 +16,7 @@ import {
 import { fetchWeatherData } from "../services/weather";
 import { LocationSearch } from "./LocationSearch";
 import type { GeocodingResult } from "../services/geocoding";
+import { formatTemperature } from "../utils/temperature";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "./ui/alert";
@@ -42,7 +43,7 @@ export function LocationSelector() {
 			setPosition(position, placeName, result.countryCode);
 
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(position);
+			const weather = await fetchWeatherData(position, result.countryCode);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -63,7 +64,7 @@ export function LocationSelector() {
 			setPosition(position, placeName, countryCode);
 
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(position);
+			const weather = await fetchWeatherData(position, countryCode);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
@@ -222,14 +223,20 @@ export function LocationSelector() {
 													Current Weather
 												</p>
 												<p className="text-sm tabular-nums text-muted-foreground">
-													{Math.round(geolocation.weather.current.temp)}°F, UV
-													Index: {geolocation.weather.current.uvi}
+													{formatTemperature(
+														geolocation.weather.current.temp,
+														geolocation.weather.temperatureUnit,
+													)}
+													, UV Index: {geolocation.weather.current.uvi}
 												</p>
 											</div>
 										</div>
 										<div className="text-right">
 											<p className="text-2xl font-bold tabular-nums">
-												{Math.round(geolocation.weather.current.temp)}°
+												{formatTemperature(
+													geolocation.weather.current.temp,
+													geolocation.weather.temperatureUnit,
+												)}
 											</p>
 											<p className="text-sm text-muted-foreground capitalize">
 												{geolocation.weather.current.weather[0]?.description ||

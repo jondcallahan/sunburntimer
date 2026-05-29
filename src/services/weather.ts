@@ -2,6 +2,7 @@ import { TZDate } from "@date-fns/tz";
 import type { Position, WeatherData, AQIData } from "../types";
 import { WMO_DESCRIPTIONS } from "../constants/wmo-descriptions";
 import { fetchAQIData } from "./aqi";
+import { getTemperatureUnitForCountry } from "../utils/temperature";
 
 const UV_FORECAST_UNAVAILABLE_ERROR =
 	"UV forecast is currently unavailable. Please try again later.";
@@ -60,19 +61,40 @@ function requireUvIndex(value: unknown): number {
 	return value;
 }
 
-function getHourlyUvIndex(hourly: OpenMeteoResponse["hourly"]): number[] {
-	if (hourly.time.length === 0 || hourly.uv_index.length < hourly.time.length) {
+function getUsableHourlyLength(hourly: OpenMeteoResponse["hourly"]): number {
+	const availableHours = Math.min(
+		hourly.time.length,
+		hourly.temperature_2m.length,
+		hourly.uv_index.length,
+	);
+	let usableHours = 0;
+
+	for (let i = 0; i < availableHours; i++) {
+		if (
+			!hourly.time[i] ||
+			!isFiniteNumber(hourly.temperature_2m[i]) ||
+			!isFiniteNumber(hourly.uv_index[i])
+		) {
+			break;
+		}
+
+		usableHours++;
+	}
+
+	if (usableHours < 2) {
 		throw new Error(UV_FORECAST_UNAVAILABLE_ERROR);
 	}
 
-	return hourly.time.map((_, i) => requireUvIndex(hourly.uv_index[i]));
+	return usableHours;
 }
 
 export async function fetchWeatherData(
 	position: Position,
+	countryCode?: string,
 ): Promise<WeatherData> {
 	const lat = position.latitude.toFixed(4);
 	const lon = position.longitude.toFixed(4);
+	const temperatureUnit = getTemperatureUnitForCountry(countryCode);
 
 	const url = new URL("https://api.open-meteo.com/v1/forecast");
 	const params = new URLSearchParams({
@@ -81,7 +103,7 @@ export async function fetchWeatherData(
 		current: "temperature_2m,uv_index,weather_code",
 		hourly: "temperature_2m,uv_index,weather_code",
 		daily: "sunrise,sunset",
-		temperature_unit: "fahrenheit",
+		temperature_unit: temperatureUnit,
 		wind_speed_unit: "mph",
 		timezone: "auto",
 		forecast_days: "3",
@@ -128,8 +150,7 @@ export async function fetchWeatherData(
 
 	// Convert hourly data (use all available data from 3-day forecast)
 	const hourlyData = data.hourly;
-	const maxHours = hourlyData.time.length;
-	const hourlyUvIndex = getHourlyUvIndex(hourlyData);
+	const maxHours = getUsableHourlyLength(hourlyData);
 
 	const hourly = Array.from({ length: maxHours }, (_, i) => {
 		return {
@@ -137,7 +158,7 @@ export async function fetchWeatherData(
 				parseLocationTime(hourlyData.time[i], locationTimezone) / 1000,
 			),
 			temp: hourlyData.temperature_2m[i],
-			uvi: hourlyUvIndex[i],
+			uvi: requireUvIndex(hourlyData.uv_index[i]),
 			weather: [
 				{
 					id: 800,
@@ -161,6 +182,7 @@ export async function fetchWeatherData(
 	return {
 		current,
 		hourly,
+		temperatureUnit,
 		elevation: data.elevation,
 		aqi,
 		sunrise: new Date(

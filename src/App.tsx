@@ -96,7 +96,10 @@ function App() {
 		try {
 			haptic();
 			setGeolocationStatus("fetching_weather");
-			const weather = await fetchWeatherData(geolocation.position);
+			const weather = await fetchWeatherData(
+				geolocation.position,
+				geolocation.countryCode || "US",
+			);
 			haptic.confirm();
 			setWeather(weather);
 		} catch (error) {
