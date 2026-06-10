@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { RefreshCw, Sun } from "lucide-react";
 import { haptic } from "ios-haptics";
-import { useAppStore, useIsReadyToCalculate, useSweatIndex } from "./store";
+import { useAppStore, useIsReadyToCalculate } from "./store";
+import { useSweatIndex } from "./hooks/useSweatIndex";
 import { findOptimalTimeSlicing } from "./calculations";
 import {
 	SPF_CONFIG,

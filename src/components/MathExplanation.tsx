@@ -5,6 +5,7 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Activity, Calculator, Sun, Shield, User } from "lucide-react";
+import { SWEAT_INDEX_BANDS } from "../utils/sweat-index";
 
 export function MathExplanation() {
 	return (
@@ -129,26 +130,17 @@ export function MathExplanation() {
 								sweat doesn&apos;t evaporate as easily.
 							</p>
 							<div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-								<div className="bg-white/70 rounded border border-orange-100 p-2">
-									<p className="font-semibold text-slate-800">&lt;130</p>
-									<p className="text-slate-600">Comfortable</p>
-								</div>
-								<div className="bg-white/70 rounded border border-orange-100 p-2">
-									<p className="font-semibold text-slate-800">130-139</p>
-									<p className="text-slate-600">Warm</p>
-								</div>
-								<div className="bg-white/70 rounded border border-orange-100 p-2">
-									<p className="font-semibold text-slate-800">140-149</p>
-									<p className="text-slate-600">Muggy</p>
-								</div>
-								<div className="bg-white/70 rounded border border-orange-100 p-2">
-									<p className="font-semibold text-slate-800">150-159</p>
-									<p className="text-slate-600">Very muggy</p>
-								</div>
-								<div className="bg-white/70 rounded border border-orange-100 p-2">
-									<p className="font-semibold text-slate-800">160+</p>
-									<p className="text-slate-600">Oppressive</p>
-								</div>
+								{[...SWEAT_INDEX_BANDS].reverse().map((band) => (
+									<div
+										key={band.rangeLabel}
+										className="bg-white/70 rounded border border-orange-100 p-2"
+									>
+										<p className="font-semibold text-slate-800">
+											{band.rangeLabel}
+										</p>
+										<p className="text-slate-600">{band.label}</p>
+									</div>
+								))}
 							</div>
 							<p className="text-xs text-orange-800 mt-3">
 								This does not change UV strength or your calculated sunburn

@@ -8,7 +8,8 @@ import {
 	Info,
 } from "lucide-react";
 import { haptic } from "ios-haptics";
-import { useAppStore, useSweatIndex } from "../store";
+import { useAppStore } from "../store";
+import { useSweatIndex } from "../hooks/useSweatIndex";
 import {
 	getCurrentPosition,
 	reverseGeocode,

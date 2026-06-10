@@ -18,84 +18,96 @@ interface WeatherIconDetails {
 	className: string;
 }
 
+interface WeatherIconRule {
+	match: (weatherCode: number) => boolean;
+	Icon: LucideIcon;
+	className: string;
+}
+
+const inRange = (code: number, min: number, max: number) =>
+	code >= min && code <= max;
+
+const WEATHER_ICON_RULES: WeatherIconRule[] = [
+	{ match: (code) => code === 0, Icon: Sun, className: "text-sun" },
+	{
+		match: (code) => code === 1 || code === 2,
+		Icon: CloudSun,
+		className: "text-sun",
+	},
+	{ match: (code) => code === 3, Icon: Cloud, className: "text-slate-500" },
+	{
+		match: (code) =>
+			code === 13 ||
+			code === 17 ||
+			code === 29 ||
+			inRange(code, 95, 99),
+		Icon: CloudLightning,
+		className: "text-violet-600",
+	},
+	{ match: (code) => code === 18, Icon: Wind, className: "text-slate-500" },
+	{ match: (code) => code === 19, Icon: Tornado, className: "text-slate-700" },
+	{
+		match: (code) =>
+			inRange(code, 10, 12) || code === 28 || inRange(code, 40, 49),
+		Icon: CloudFog,
+		className: "text-slate-500",
+	},
+	{
+		match: (code) =>
+			inRange(code, 20, 21) ||
+			inRange(code, 24, 25) ||
+			inRange(code, 50, 59),
+		Icon: CloudDrizzle,
+		className: "text-sky-600",
+	},
+	{
+		match: (code) =>
+			inRange(code, 60, 67) ||
+			inRange(code, 80, 82) ||
+			inRange(code, 91, 92) ||
+			code === 94,
+		Icon: CloudRain,
+		className: "text-sky-700",
+	},
+	{
+		match: (code) =>
+			inRange(code, 22, 23) ||
+			inRange(code, 36, 39) ||
+			inRange(code, 68, 78) ||
+			inRange(code, 83, 86) ||
+			code === 93,
+		Icon: CloudSnow,
+		className: "text-cyan-700",
+	},
+	{
+		match: (code) =>
+			code === 27 || code === 79 || inRange(code, 87, 90),
+		Icon: CloudHail,
+		className: "text-cyan-800",
+	},
+	{
+		match: (code) => inRange(code, 4, 9),
+		Icon: Wind,
+		className: "text-stone-500",
+	},
+];
+
+const DEFAULT_WEATHER_ICON: WeatherIconDetails = {
+	Icon: Cloud,
+	className: "text-primary",
+};
+
 export function getWeatherIconDetails(
 	weatherCode?: number,
 ): WeatherIconDetails {
-	if (weatherCode === 0) {
-		return { Icon: Sun, className: "text-sun" };
+	if (!Number.isFinite(weatherCode)) {
+		return DEFAULT_WEATHER_ICON;
 	}
 
-	if (weatherCode === 1 || weatherCode === 2) {
-		return { Icon: CloudSun, className: "text-sun" };
-	}
+	const code = Math.trunc(weatherCode as number);
+	const rule = WEATHER_ICON_RULES.find((entry) => entry.match(code));
 
-	if (weatherCode === 3) {
-		return { Icon: Cloud, className: "text-slate-500" };
-	}
-
-	if (
-		weatherCode === 13 ||
-		weatherCode === 17 ||
-		weatherCode === 29 ||
-		(weatherCode !== undefined && weatherCode >= 95 && weatherCode <= 99)
-	) {
-		return { Icon: CloudLightning, className: "text-violet-600" };
-	}
-
-	if (weatherCode === 18) {
-		return { Icon: Wind, className: "text-slate-500" };
-	}
-
-	if (weatherCode === 19) {
-		return { Icon: Tornado, className: "text-slate-700" };
-	}
-
-	if (
-		(weatherCode !== undefined && weatherCode >= 10 && weatherCode <= 12) ||
-		weatherCode === 28 ||
-		(weatherCode !== undefined && weatherCode >= 40 && weatherCode <= 49)
-	) {
-		return { Icon: CloudFog, className: "text-slate-500" };
-	}
-
-	if (
-		(weatherCode !== undefined && weatherCode >= 20 && weatherCode <= 21) ||
-		(weatherCode !== undefined && weatherCode >= 24 && weatherCode <= 25) ||
-		(weatherCode !== undefined && weatherCode >= 50 && weatherCode <= 59)
-	) {
-		return { Icon: CloudDrizzle, className: "text-sky-600" };
-	}
-
-	if (
-		(weatherCode !== undefined && weatherCode >= 60 && weatherCode <= 67) ||
-		(weatherCode !== undefined && weatherCode >= 80 && weatherCode <= 82) ||
-		(weatherCode !== undefined && weatherCode >= 91 && weatherCode <= 92) ||
-		weatherCode === 94
-	) {
-		return { Icon: CloudRain, className: "text-sky-700" };
-	}
-
-	if (
-		(weatherCode !== undefined && weatherCode >= 22 && weatherCode <= 23) ||
-		(weatherCode !== undefined && weatherCode >= 36 && weatherCode <= 39) ||
-		(weatherCode !== undefined && weatherCode >= 68 && weatherCode <= 78) ||
-		(weatherCode !== undefined && weatherCode >= 83 && weatherCode <= 86) ||
-		weatherCode === 93
-	) {
-		return { Icon: CloudSnow, className: "text-cyan-700" };
-	}
-
-	if (
-		weatherCode === 27 ||
-		weatherCode === 79 ||
-		(weatherCode !== undefined && weatherCode >= 87 && weatherCode <= 90)
-	) {
-		return { Icon: CloudHail, className: "text-cyan-800" };
-	}
-
-	if (weatherCode !== undefined && weatherCode >= 4 && weatherCode <= 9) {
-		return { Icon: Wind, className: "text-stone-500" };
-	}
-
-	return { Icon: Cloud, className: "text-primary" };
+	return rule
+		? { Icon: rule.Icon, className: rule.className }
+		: DEFAULT_WEATHER_ICON;
 }

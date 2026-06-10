@@ -1,15 +1,52 @@
 import type { TemperatureUnit } from "../types";
 
-export type SweatIndexLevel =
-	| "easy"
-	| "warm"
-	| "sweaty"
-	| "verySweaty"
-	| "oppressive";
+export const SWEAT_INDEX_BANDS = [
+	{
+		min: 160,
+		rangeLabel: "160+",
+		label: "Oppressive",
+		description: "Extremely hot and humid",
+		badgeClassName: "bg-red-100 text-red-800 border-red-200",
+		textClassName: "text-red-700",
+	},
+	{
+		min: 150,
+		rangeLabel: "150-159",
+		label: "Very muggy",
+		description: "Very hot and sticky",
+		badgeClassName: "bg-orange-100 text-orange-800 border-orange-200",
+		textClassName: "text-orange-700",
+	},
+	{
+		min: 140,
+		rangeLabel: "140-149",
+		label: "Muggy",
+		description: "Hot and humid",
+		badgeClassName: "bg-amber-100 text-amber-800 border-amber-200",
+		textClassName: "text-amber-700",
+	},
+	{
+		min: 130,
+		rangeLabel: "130-139",
+		label: "Warm",
+		description: "Warm and slightly humid",
+		badgeClassName: "bg-yellow-100 text-yellow-800 border-yellow-200",
+		textClassName: "text-yellow-700",
+	},
+	{
+		min: Number.NEGATIVE_INFINITY,
+		rangeLabel: "<130",
+		label: "Comfortable",
+		description: "Pleasant to be outside",
+		badgeClassName: "bg-emerald-100 text-emerald-800 border-emerald-200",
+		textClassName: "text-emerald-700",
+	},
+] as const;
+
+export type SweatIndexBand = (typeof SWEAT_INDEX_BANDS)[number];
 
 export interface SweatIndexDetails {
 	value: number;
-	level: SweatIndexLevel;
 	label: string;
 	description: string;
 	badgeClassName: string;
@@ -31,56 +68,13 @@ export function calculateSweatIndex(
 }
 
 export function getSweatIndexDetails(value: number): SweatIndexDetails {
-	if (value >= 160) {
-		return {
-			value,
-			level: "oppressive",
-			label: "Oppressive",
-			description: "Extremely hot and humid",
-			badgeClassName: "bg-red-100 text-red-800 border-red-200",
-			textClassName: "text-red-700",
-		};
-	}
-
-	if (value >= 150) {
-		return {
-			value,
-			level: "verySweaty",
-			label: "Very muggy",
-			description: "Very hot and sticky",
-			badgeClassName: "bg-orange-100 text-orange-800 border-orange-200",
-			textClassName: "text-orange-700",
-		};
-	}
-
-	if (value >= 140) {
-		return {
-			value,
-			level: "sweaty",
-			label: "Muggy",
-			description: "Hot and humid",
-			badgeClassName: "bg-amber-100 text-amber-800 border-amber-200",
-			textClassName: "text-amber-700",
-		};
-	}
-
-	if (value >= 130) {
-		return {
-			value,
-			level: "warm",
-			label: "Warm",
-			description: "Warm and slightly humid",
-			badgeClassName: "bg-yellow-100 text-yellow-800 border-yellow-200",
-			textClassName: "text-yellow-700",
-		};
-	}
+	const band = SWEAT_INDEX_BANDS.find((entry) => value >= entry.min)!;
 
 	return {
 		value,
-		level: "easy",
-		label: "Comfortable",
-		description: "Pleasant to be outside",
-		badgeClassName: "bg-emerald-100 text-emerald-800 border-emerald-200",
-		textClassName: "text-emerald-700",
+		label: band.label,
+		description: band.description,
+		badgeClassName: band.badgeClassName,
+		textClassName: band.textClassName,
 	};
 }
