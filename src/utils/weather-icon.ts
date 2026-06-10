@@ -37,10 +37,7 @@ const WEATHER_ICON_RULES: WeatherIconRule[] = [
 	{ match: (code) => code === 3, Icon: Cloud, className: "text-slate-500" },
 	{
 		match: (code) =>
-			code === 13 ||
-			code === 17 ||
-			code === 29 ||
-			inRange(code, 95, 99),
+			code === 13 || code === 17 || code === 29 || inRange(code, 95, 99),
 		Icon: CloudLightning,
 		className: "text-violet-600",
 	},
@@ -54,9 +51,7 @@ const WEATHER_ICON_RULES: WeatherIconRule[] = [
 	},
 	{
 		match: (code) =>
-			inRange(code, 20, 21) ||
-			inRange(code, 24, 25) ||
-			inRange(code, 50, 59),
+			inRange(code, 20, 21) || inRange(code, 24, 25) || inRange(code, 50, 59),
 		Icon: CloudDrizzle,
 		className: "text-sky-600",
 	},
@@ -80,8 +75,7 @@ const WEATHER_ICON_RULES: WeatherIconRule[] = [
 		className: "text-cyan-700",
 	},
 	{
-		match: (code) =>
-			code === 27 || code === 79 || inRange(code, 87, 90),
+		match: (code) => code === 27 || code === 79 || inRange(code, 87, 90),
 		Icon: CloudHail,
 		className: "text-cyan-800",
 	},

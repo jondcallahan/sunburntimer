@@ -139,5 +139,3 @@ export const useIsReadyToCalculate = () => {
 		geolocation.weather
 	);
 };
-
-

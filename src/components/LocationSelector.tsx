@@ -278,9 +278,9 @@ export function LocationSelector() {
 															aria-label="Sweat Index is an outdoor comfort score based on temperature and dew point in Fahrenheit. Higher values mean hotter, muggier air."
 														>
 															<title>
-																Sweat Index is an outdoor comfort score based
-																on temperature and dew point in Fahrenheit.
-																Higher values mean hotter, muggier air.
+																Sweat Index is an outdoor comfort score based on
+																temperature and dew point in Fahrenheit. Higher
+																values mean hotter, muggier air.
 															</title>
 														</Info>
 													</div>

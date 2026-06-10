@@ -1,5 +1,8 @@
 import { useAppStore } from "../store";
-import { calculateSweatIndex, getSweatIndexDetails } from "../utils/sweat-index";
+import {
+	calculateSweatIndex,
+	getSweatIndexDetails,
+} from "../utils/sweat-index";
 
 export function useSweatIndex() {
 	const weather = useAppStore((s) => s.geolocation.weather);

@@ -125,9 +125,9 @@ export function MathExplanation() {
 								Sweat Index
 							</h3>
 							<p className="text-sm text-slate-700 mb-3">
-								Sweat Index is an outdoor comfort score based on temperature
-								and dew point. Higher values mean hotter, muggier air where
-								sweat doesn&apos;t evaporate as easily.
+								Sweat Index is an outdoor comfort score based on temperature and
+								dew point. Higher values mean hotter, muggier air where sweat
+								doesn&apos;t evaporate as easily.
 							</p>
 							<div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
 								{[...SWEAT_INDEX_BANDS].reverse().map((band) => (

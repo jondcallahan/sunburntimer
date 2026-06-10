@@ -253,7 +253,10 @@ function App() {
 												)}
 												{sweatIndex && (
 													<Badge
-														className={cn(sweatIndex.badgeClassName, "border-0")}
+														className={cn(
+															sweatIndex.badgeClassName,
+															"border-0",
+														)}
 													>
 														Sweat Index {sweatIndex.value}
 													</Badge>
