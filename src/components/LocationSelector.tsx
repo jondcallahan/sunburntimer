@@ -286,12 +286,12 @@ export function LocationSelector() {
 														</p>
 														<Info
 															className="h-3.5 w-3.5 text-muted-foreground"
-															aria-label="Sweat Index is a quick workout comfort score combining temperature and dew point in farenheit."
+															aria-label="Sweat Index is a quick workout comfort score combining temperature and dew point in fahrenheit."
 														>
 															<title>
 																Sweat Index is a quick workout comfort score
 																combining temperature and dew point in
-																farenheit.
+																fahrenheit.
 															</title>
 														</Info>
 													</div>
