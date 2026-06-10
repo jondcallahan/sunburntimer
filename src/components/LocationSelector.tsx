@@ -8,7 +8,7 @@ import {
 	Info,
 } from "lucide-react";
 import { haptic } from "ios-haptics";
-import { useAppStore } from "../store";
+import { useAppStore, useSweatIndex } from "../store";
 import {
 	getCurrentPosition,
 	reverseGeocode,
@@ -18,10 +18,6 @@ import { fetchWeatherData } from "../services/weather";
 import { LocationSearch } from "./LocationSearch";
 import type { GeocodingResult } from "../services/geocoding";
 import { formatTemperature } from "../utils/temperature";
-import {
-	calculateSweatIndex,
-	getSweatIndexDetails,
-} from "../utils/sweat-index";
 import { getWeatherIconDetails } from "../utils/weather-icon";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
@@ -35,15 +31,7 @@ export function LocationSelector() {
 		setWeather,
 		setGeolocationError,
 	} = useAppStore();
-	const sweatIndex = geolocation.weather
-		? getSweatIndexDetails(
-				calculateSweatIndex(
-					geolocation.weather.current.temp,
-					geolocation.weather.current.dewPoint,
-					geolocation.weather.temperatureUnit,
-				),
-			)
-		: null;
+	const sweatIndex = useSweatIndex();
 	const currentWeather = geolocation.weather?.current.weather[0];
 	const weatherIcon = getWeatherIconDetails(currentWeather?.id);
 	const WeatherIcon = weatherIcon.Icon;

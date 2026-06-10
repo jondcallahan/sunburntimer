@@ -13,6 +13,7 @@ import {
 	type SweatLevel,
 	DEFAULT_SWEAT_LEVEL,
 } from "./types";
+import { calculateSweatIndex, getSweatIndexDetails } from "./utils/sweat-index";
 
 interface AppStore extends AppState {
 	// Actions
@@ -139,4 +140,15 @@ export const useIsReadyToCalculate = () => {
 		geolocation.status === "completed" &&
 		geolocation.weather
 	);
+};
+
+export const useSweatIndex = () => {
+	const weather = useAppStore((s) => s.geolocation.weather);
+	if (!weather) return null;
+	const value = calculateSweatIndex(
+		weather.current.temp,
+		weather.current.dewPoint,
+		weather.temperatureUnit,
+	);
+	return getSweatIndexDetails(value);
 };

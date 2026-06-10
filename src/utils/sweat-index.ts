@@ -7,7 +7,7 @@ export type SweatIndexLevel =
 	| "verySweaty"
 	| "oppressive";
 
-interface SweatIndexDetails {
+export interface SweatIndexDetails {
 	value: number;
 	level: SweatIndexLevel;
 	label: string;

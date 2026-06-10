@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { RefreshCw, Sun } from "lucide-react";
 import { haptic } from "ios-haptics";
-import { useAppStore, useIsReadyToCalculate } from "./store";
+import { useAppStore, useIsReadyToCalculate, useSweatIndex } from "./store";
 import { findOptimalTimeSlicing } from "./calculations";
 import {
 	SPF_CONFIG,
@@ -12,7 +12,6 @@ import {
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
-import { calculateSweatIndex, getSweatIndexDetails } from "./utils/sweat-index";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -112,15 +111,7 @@ function App() {
 	};
 
 	const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
-	const sweatIndex = geolocation.weather
-		? getSweatIndexDetails(
-				calculateSweatIndex(
-					geolocation.weather.current.temp,
-					geolocation.weather.current.dewPoint,
-					geolocation.weather.temperatureUnit,
-				),
-			)
-		: null;
+	const sweatIndex = useSweatIndex();
 
 	return (
 		<div className="min-h-screen bg-orange-50">
