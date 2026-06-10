@@ -78,7 +78,7 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 					{/* Main Message */}
 					<div className="flex flex-col items-center gap-3">
 						{isHighRisk ? (
-							<Sun className="w-8 h-8 text-orange-500" />
+							<Sun className="w-8 h-8 text-sun" />
 						) : (
 							<CheckCircle className="w-8 h-8 text-green-600" />
 						)}

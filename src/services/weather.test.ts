@@ -19,6 +19,7 @@ function createForecastResponse(
 		current: {
 			time: "2026-05-26T10:45",
 			temperature_2m: 75.9,
+			dew_point_2m: 67.2,
 			uv_index: currentUvIndex,
 			weather_code: 3,
 		},
@@ -29,6 +30,7 @@ function createForecastResponse(
 				return time.toISOString().slice(0, 16);
 			}),
 			temperature_2m: uvIndex.map((_, index) => 75 + index * 2),
+			dew_point_2m: uvIndex.map((_, index) => 65 + index),
 			uv_index: uvIndex,
 			weather_code: uvIndex.map((_, index) => (index % 2 === 0 ? 3 : 2)),
 		},
@@ -157,7 +159,9 @@ describe("fetchWeatherData", () => {
 		});
 
 		expect(weather.current.uvi).toBe(0.8);
+		expect(weather.current.dewPoint).toBe(67.2);
 		expect(weather.hourly.map((hour) => hour.uvi)).toEqual([0.8, 4.5, 6.2]);
+		expect(weather.hourly.map((hour) => hour.dewPoint)).toEqual([65, 66, 67]);
 		expect(weather.aqi?.us_aqi).toBe(42);
 	});
 });

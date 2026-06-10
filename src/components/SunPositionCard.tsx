@@ -367,7 +367,7 @@ export function SunPositionCard() {
 				<div className="flex justify-between items-center mt-2 px-2">
 					<div className="flex items-center gap-1.5">
 						<Sunrise
-							className={`w-4 h-4 transition-colors duration-1000 ${currentSunData.isDay ? "text-amber-500" : "text-amber-400"}`}
+							className={`w-4 h-4 transition-colors duration-1000 ${currentSunData.isDay ? "text-sun" : "text-sun-muted"}`}
 						/>
 						<span
 							className={`text-sm font-medium font-mono transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-700" : "text-slate-200"}`}
@@ -392,7 +392,7 @@ export function SunPositionCard() {
 
 					<div className="flex items-center gap-1.5">
 						<Sunset
-							className={`w-4 h-4 transition-colors duration-1000 ${currentSunData.isDay ? "text-orange-500" : "text-orange-400"}`}
+							className={`w-4 h-4 transition-colors duration-1000 ${currentSunData.isDay ? "text-sun" : "text-sun-muted"}`}
 						/>
 						<span
 							className={`text-sm font-medium font-mono transition-colors duration-1000 ${currentSunData.isDay ? "text-slate-700" : "text-slate-200"}`}

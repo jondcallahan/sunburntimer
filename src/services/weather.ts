@@ -13,12 +13,14 @@ interface OpenMeteoResponse {
 	current: {
 		time: string;
 		temperature_2m: number;
+		dew_point_2m: number;
 		uv_index: number | null;
 		weather_code: number | null;
 	};
 	hourly: {
 		time: string[];
 		temperature_2m: number[];
+		dew_point_2m: number[];
 		uv_index: (number | null)[];
 		weather_code: (number | null)[];
 	};
@@ -53,6 +55,18 @@ function getWeatherDescription(code: number | null | undefined): string {
 	);
 }
 
+function getWeatherOverview(code: number | null | undefined) {
+	const id = isFiniteNumber(code) ? Math.trunc(code) : -1;
+	const description = getWeatherDescription(code);
+
+	return {
+		id,
+		main: description,
+		description,
+		icon: id.toString(),
+	};
+}
+
 function requireUvIndex(value: unknown): number {
 	if (!isFiniteNumber(value)) {
 		throw new Error(UV_FORECAST_UNAVAILABLE_ERROR);
@@ -65,6 +79,7 @@ function getUsableHourlyLength(hourly: OpenMeteoResponse["hourly"]): number {
 	const availableHours = Math.min(
 		hourly.time.length,
 		hourly.temperature_2m.length,
+		hourly.dew_point_2m.length,
 		hourly.uv_index.length,
 	);
 	let usableHours = 0;
@@ -73,6 +88,7 @@ function getUsableHourlyLength(hourly: OpenMeteoResponse["hourly"]): number {
 		if (
 			!hourly.time[i] ||
 			!isFiniteNumber(hourly.temperature_2m[i]) ||
+			!isFiniteNumber(hourly.dew_point_2m[i]) ||
 			!isFiniteNumber(hourly.uv_index[i])
 		) {
 			break;
@@ -100,8 +116,8 @@ export async function fetchWeatherData(
 	const params = new URLSearchParams({
 		latitude: lat,
 		longitude: lon,
-		current: "temperature_2m,uv_index,weather_code",
-		hourly: "temperature_2m,uv_index,weather_code",
+		current: "temperature_2m,dew_point_2m,uv_index,weather_code",
+		hourly: "temperature_2m,dew_point_2m,uv_index,weather_code",
 		daily: "sunrise,sunset",
 		temperature_unit: temperatureUnit,
 		wind_speed_unit: "mph",
@@ -137,15 +153,9 @@ export async function fetchWeatherData(
 			parseLocationTime(data.current.time, locationTimezone) / 1000,
 		),
 		temp: data.current.temperature_2m,
+		dewPoint: data.current.dew_point_2m,
 		uvi: currentUv,
-		weather: [
-			{
-				id: 800,
-				main: "Clear",
-				description: getWeatherDescription(data.current.weather_code),
-				icon: "01d",
-			},
-		],
+		weather: [getWeatherOverview(data.current.weather_code)],
 	};
 
 	// Convert hourly data (use all available data from 3-day forecast)
@@ -158,15 +168,9 @@ export async function fetchWeatherData(
 				parseLocationTime(hourlyData.time[i], locationTimezone) / 1000,
 			),
 			temp: hourlyData.temperature_2m[i],
+			dewPoint: hourlyData.dew_point_2m[i],
 			uvi: requireUvIndex(hourlyData.uv_index[i]),
-			weather: [
-				{
-					id: 800,
-					main: "Clear",
-					description: getWeatherDescription(hourlyData.weather_code[i]),
-					icon: "01d",
-				},
-			],
+			weather: [getWeatherOverview(hourlyData.weather_code[i])],
 		};
 	});
 

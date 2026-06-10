@@ -12,6 +12,7 @@ import {
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
 import { getUVIndexColor, getAQIColor } from "./lib/utils";
+import { calculateSweatIndex, getSweatIndexDetails } from "./utils/sweat-index";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -111,6 +112,15 @@ function App() {
 	};
 
 	const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
+	const sweatIndex = geolocation.weather
+		? getSweatIndexDetails(
+				calculateSweatIndex(
+					geolocation.weather.current.temp,
+					geolocation.weather.current.dewPoint,
+					geolocation.weather.temperatureUnit,
+				),
+			)
+		: null;
 
 	return (
 		<div className="min-h-screen bg-orange-50">
@@ -118,7 +128,7 @@ function App() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-4" />
+						<Sun className="w-8 h-8 text-sun mr-4" />
 						<h1 className="text-3xl font-bold text-slate-800">
 							Sunburn Calculator
 						</h1>
@@ -247,6 +257,13 @@ function App() {
 														className={`${getAQIColor(geolocation.weather.aqi.us_aqi).bg} ${getAQIColor(geolocation.weather.aqi.us_aqi).text} border-0`}
 													>
 														AQI {geolocation.weather.aqi.us_aqi}
+													</Badge>
+												)}
+												{sweatIndex && (
+													<Badge
+														className={`${sweatIndex.badgeClassName} border-0`}
+													>
+														Sweat {sweatIndex.value}
 													</Badge>
 												)}
 											</div>
