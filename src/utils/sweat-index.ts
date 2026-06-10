@@ -68,7 +68,9 @@ export function calculateSweatIndex(
 }
 
 export function getSweatIndexDetails(value: number): SweatIndexDetails {
-	const band = SWEAT_INDEX_BANDS.find((entry) => value >= entry.min)!;
+	const band =
+		SWEAT_INDEX_BANDS.find((entry) => value >= entry.min) ??
+		SWEAT_INDEX_BANDS[SWEAT_INDEX_BANDS.length - 1];
 
 	return {
 		value,

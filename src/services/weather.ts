@@ -13,14 +13,14 @@ interface OpenMeteoResponse {
 	current: {
 		time: string;
 		temperature_2m: number;
-		dew_point_2m: number;
+		dew_point_2m?: number | null;
 		uv_index: number | null;
 		weather_code: number | null;
 	};
 	hourly: {
 		time: string[];
 		temperature_2m: number[];
-		dew_point_2m: number[];
+		dew_point_2m?: (number | null)[];
 		uv_index: (number | null)[];
 		weather_code: (number | null)[];
 	};
@@ -73,27 +73,6 @@ function requireUvIndex(value: unknown): number {
 	}
 
 	return value;
-}
-
-/** Dry-ish assumption when dew point is missing (same unit as temperature). */
-const NEUTRAL_DEW_POINT_OFFSET = 15;
-
-function neutralDewPointFallback(temperature: number): number {
-	return temperature - NEUTRAL_DEW_POINT_OFFSET;
-}
-
-function resolveDewPoint(
-	value: unknown,
-	temperature: number,
-): { dewPoint: number; usedFallback: boolean } {
-	if (isFiniteNumber(value)) {
-		return { dewPoint: value, usedFallback: false };
-	}
-
-	return {
-		dewPoint: neutralDewPointFallback(temperature),
-		usedFallback: true,
-	};
 }
 
 function getUsableHourlyLength(hourly: OpenMeteoResponse["hourly"]): number {
@@ -166,23 +145,16 @@ export async function fetchWeatherData(
 
 	const locationTimezone = data.timezone;
 	const currentUv = requireUvIndex(data.current.uv_index);
-	const currentDewPoint = resolveDewPoint(
-		data.current.dew_point_2m,
-		data.current.temperature_2m,
-	);
-
-	if (currentDewPoint.usedFallback) {
-		console.warn(
-			"Missing current dew point; using neutral fallback for Sweat Index display.",
-		);
-	}
+	const currentDewPoint = isFiniteNumber(data.current.dew_point_2m)
+		? data.current.dew_point_2m
+		: undefined;
 
 	const current = {
 		dt: Math.floor(
 			parseLocationTime(data.current.time, locationTimezone) / 1000,
 		),
 		temp: data.current.temperature_2m,
-		dewPoint: currentDewPoint.dewPoint,
+		dewPoint: currentDewPoint,
 		uvi: currentUv,
 		weather: [getWeatherOverview(data.current.weather_code)],
 	};
@@ -190,35 +162,23 @@ export async function fetchWeatherData(
 	// Convert hourly data (use all available data from 3-day forecast)
 	const hourlyData = data.hourly;
 	const maxHours = getUsableHourlyLength(hourlyData);
-	let hourlyDewPointFallbackCount = 0;
 
 	const hourly = Array.from({ length: maxHours }, (_, i) => {
 		const temperature = hourlyData.temperature_2m[i];
-		const dewPoint = resolveDewPoint(
-			hourlyData.dew_point_2m[i],
-			temperature,
-		);
-
-		if (dewPoint.usedFallback) {
-			hourlyDewPointFallbackCount++;
-		}
+		const dewPoint = isFiniteNumber(hourlyData.dew_point_2m?.[i])
+			? hourlyData.dew_point_2m[i]
+			: undefined;
 
 		return {
 			dt: Math.floor(
 				parseLocationTime(hourlyData.time[i], locationTimezone) / 1000,
 			),
 			temp: temperature,
-			dewPoint: dewPoint.dewPoint,
+			dewPoint,
 			uvi: requireUvIndex(hourlyData.uv_index[i]),
 			weather: [getWeatherOverview(hourlyData.weather_code[i])],
 		};
 	});
-
-	if (hourlyDewPointFallbackCount > 0) {
-		console.warn(
-			`Missing dew point for ${hourlyDewPointFallbackCount} hourly forecast hour(s); using neutral fallback.`,
-		);
-	}
 
 	// Fetch AQI data
 	let aqi: AQIData | undefined;

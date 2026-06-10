@@ -6,7 +6,7 @@ import {
 
 export function useSweatIndex() {
 	const weather = useAppStore((s) => s.geolocation.weather);
-	if (!weather) return null;
+	if (!weather || weather.current.dewPoint === undefined) return null;
 
 	const value = calculateSweatIndex(
 		weather.current.temp,

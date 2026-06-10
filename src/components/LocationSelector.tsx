@@ -34,6 +34,7 @@ export function LocationSelector() {
 	} = useAppStore();
 	const sweatIndex = useSweatIndex();
 	const currentWeather = geolocation.weather?.current.weather[0];
+	const currentDewPoint = geolocation.weather?.current.dewPoint;
 	const weatherIcon = getWeatherIconDetails(currentWeather?.id);
 	const WeatherIcon = weatherIcon.Icon;
 
@@ -248,17 +249,19 @@ export function LocationSelector() {
 													)}
 												</p>
 											</div>
-											<div>
-												<p className="text-xs font-medium text-muted-foreground">
-													Dew point
-												</p>
-												<p className="text-xl font-bold tabular-nums">
-													{formatTemperature(
-														geolocation.weather.current.dewPoint,
-														geolocation.weather.temperatureUnit,
-													)}
-												</p>
-											</div>
+											{currentDewPoint !== undefined && (
+												<div>
+													<p className="text-xs font-medium text-muted-foreground">
+														Dew point
+													</p>
+													<p className="text-xl font-bold tabular-nums">
+														{formatTemperature(
+															currentDewPoint,
+															geolocation.weather.temperatureUnit,
+														)}
+													</p>
+												</div>
+											)}
 											<div>
 												<p className="text-xs font-medium text-muted-foreground">
 													UV Index

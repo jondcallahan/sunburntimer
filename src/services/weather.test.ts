@@ -11,6 +11,7 @@ function createForecastResponse(
 	uvIndex: Array<number | null>,
 	currentUvIndex: number | null = null,
 	dewPoints?: Array<number | null>,
+	currentDewPoint: number | null = 67.2,
 ) {
 	const startTime = new Date("2026-05-26T10:00:00");
 
@@ -20,7 +21,7 @@ function createForecastResponse(
 		current: {
 			time: "2026-05-26T10:45",
 			temperature_2m: 75.9,
-			dew_point_2m: 67.2,
+			dew_point_2m: currentDewPoint,
 			uv_index: currentUvIndex,
 			weather_code: 3,
 		},
@@ -145,7 +146,7 @@ describe("fetchWeatherData", () => {
 		).rejects.toThrow("UV forecast is currently unavailable");
 	});
 
-	it("uses neutral dew point fallback when later hourly dew points are unavailable", async () => {
+	it("keeps missing hourly dew points unavailable without truncating the UV forecast", async () => {
 		globalThis.fetch = async (input) => {
 			if (getFetchUrl(input).includes("air-quality")) {
 				return jsonResponse({ current: { us_aqi: 42 } });
@@ -162,7 +163,30 @@ describe("fetchWeatherData", () => {
 		});
 
 		expect(weather.hourly.map((hour) => hour.uvi)).toEqual([0.8, 4.5, 6.2]);
-		expect(weather.hourly.map((hour) => hour.dewPoint)).toEqual([65, 62, 67]);
+		expect(weather.hourly.map((hour) => hour.dewPoint)).toEqual([
+			65,
+			undefined,
+			67,
+		]);
+	});
+
+	it("keeps missing current dew point unavailable", async () => {
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("air-quality")) {
+				return jsonResponse({ current: { us_aqi: 42 } });
+			}
+
+			return jsonResponse(
+				createForecastResponse([0.8, 4.5, 6.2], 0.8, undefined, null),
+			);
+		};
+
+		const weather = await fetchWeatherData({
+			latitude: 30.2672,
+			longitude: -97.7431,
+		});
+
+		expect(weather.current.dewPoint).toBeUndefined();
 	});
 
 	it("returns weather when Open-Meteo returns a complete UV forecast", async () => {
