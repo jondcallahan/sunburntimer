@@ -94,11 +94,34 @@ export function MathExplanation() {
 							</p>
 						</div>
 
-						{/* 4. Sweat Index */}
+						{/* 4. The math */}
+						<div className="border-t pt-4">
+							<h3 className="font-semibold text-slate-800 mb-3">
+								4. The calculation
+							</h3>
+							<p className="text-sm text-slate-600 mb-3">
+								Think of it as filling a bucket. Each minute adds UV damage, and
+								at 100% you're burnt.
+							</p>
+							<div className="bg-slate-900 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+								<div className="mb-2 text-slate-400">Each minute:</div>
+								<div>Damage % = (UV_Energy_Per_Min / (MED × SPF)) × 100</div>
+							</div>
+							<p className="text-sm text-slate-600 mt-3">
+								This runs minute-by-minute using hourly UV forecasts,
+								interpolating between data points.
+							</p>
+							<p className="text-xs text-slate-500 mt-2">
+								For low UV (UVI &lt; 3), a smoothing curve accounts for reduced
+								effective exposure at dawn/dusk sun angles.
+							</p>
+						</div>
+
+						{/* Sweat Index */}
 						<div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
 							<h3 className="font-semibold text-orange-900 flex items-center gap-2 mb-2">
 								<Activity className="w-5 h-5" />
-								4. Sweat Index™ context
+								Sweat Index™
 							</h3>
 							<p className="text-sm text-slate-700 mb-3">
 								Sweat Index™ is a quick workout comfort score: temperature plus
@@ -131,29 +154,6 @@ export function MathExplanation() {
 								This does not change UV strength or your calculated sunburn
 								time. Use it as context for workout comfort, sunscreen
 								reapplication, and choosing a more cautious activity level.
-							</p>
-						</div>
-
-						{/* 5. The math */}
-						<div className="border-t pt-4">
-							<h3 className="font-semibold text-slate-800 mb-3">
-								5. The calculation
-							</h3>
-							<p className="text-sm text-slate-600 mb-3">
-								Think of it as filling a bucket. Each minute adds UV damage, and
-								at 100% you're burnt.
-							</p>
-							<div className="bg-slate-900 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-								<div className="mb-2 text-slate-400">Each minute:</div>
-								<div>Damage % = (UV_Energy_Per_Min / (MED × SPF)) × 100</div>
-							</div>
-							<p className="text-sm text-slate-600 mt-3">
-								This runs minute-by-minute using hourly UV forecasts,
-								interpolating between data points.
-							</p>
-							<p className="text-xs text-slate-500 mt-2">
-								For low UV (UVI &lt; 3), a smoothing curve accounts for reduced
-								effective exposure at dawn/dusk sun angles.
 							</p>
 						</div>
 
