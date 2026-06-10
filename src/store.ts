@@ -13,7 +13,6 @@ import {
 	type SweatLevel,
 	DEFAULT_SWEAT_LEVEL,
 } from "./types";
-
 interface AppStore extends AppState {
 	// Actions
 	setSkinType: (skinType: FitzpatrickType) => void;

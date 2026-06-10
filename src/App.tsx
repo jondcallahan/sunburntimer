@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { RefreshCw, Sun } from "lucide-react";
 import { haptic } from "ios-haptics";
 import { useAppStore, useIsReadyToCalculate } from "./store";
+import { useSweatIndex } from "./hooks/useSweatIndex";
 import { findOptimalTimeSlicing } from "./calculations";
 import {
 	SPF_CONFIG,
@@ -11,7 +12,7 @@ import {
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
-import { getUVIndexColor, getAQIColor } from "./lib/utils";
+import { cn, getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -111,6 +112,7 @@ function App() {
 	};
 
 	const showSweatLevel = spfLevel !== undefined && spfLevel !== SPFLevel.NONE;
+	const sweatIndex = useSweatIndex();
 
 	return (
 		<div className="min-h-screen bg-orange-50">
@@ -118,7 +120,7 @@ function App() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center mb-2">
-						<Sun className="w-8 h-8 text-amber-600 mr-4" />
+						<Sun className="w-8 h-8 text-sun mr-4" />
 						<h1 className="text-3xl font-bold text-slate-800">
 							Sunburn Calculator
 						</h1>
@@ -247,6 +249,16 @@ function App() {
 														className={`${getAQIColor(geolocation.weather.aqi.us_aqi).bg} ${getAQIColor(geolocation.weather.aqi.us_aqi).text} border-0`}
 													>
 														AQI {geolocation.weather.aqi.us_aqi}
+													</Badge>
+												)}
+												{sweatIndex && (
+													<Badge
+														className={cn(
+															sweatIndex.badgeClassName,
+															"border-0",
+														)}
+													>
+														Sweat Index {sweatIndex.value}
 													</Badge>
 												)}
 											</div>

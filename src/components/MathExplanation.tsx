@@ -4,7 +4,8 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Calculator, Sun, Shield, User } from "lucide-react";
+import { Activity, Calculator, Sun, Shield, User } from "lucide-react";
+import { SWEAT_INDEX_BANDS } from "../utils/sweat-index";
 
 export function MathExplanation() {
 	return (
@@ -114,6 +115,38 @@ export function MathExplanation() {
 							<p className="text-xs text-slate-500 mt-2">
 								For low UV (UVI &lt; 3), a smoothing curve accounts for reduced
 								effective exposure at dawn/dusk sun angles.
+							</p>
+						</div>
+
+						{/* Sweat Index */}
+						<div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+							<h3 className="font-semibold text-orange-900 flex items-center gap-2 mb-2">
+								<Activity className="w-5 h-5" />
+								Sweat Index
+							</h3>
+							<p className="text-sm text-slate-700 mb-3">
+								Sweat Index is an outdoor comfort score based on temperature and
+								dew point. Higher values mean hotter, muggier air where sweat
+								doesn&apos;t evaporate as easily.
+							</p>
+							<div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+								{[...SWEAT_INDEX_BANDS].reverse().map((band) => (
+									<div
+										key={band.rangeLabel}
+										className="bg-white/70 rounded border border-orange-100 p-2"
+									>
+										<p className="font-semibold text-slate-800">
+											{band.rangeLabel}
+										</p>
+										<p className="text-slate-600">{band.label}</p>
+									</div>
+								))}
+							</div>
+							<p className="text-xs text-orange-800 mt-3">
+								This does not change UV strength or your calculated sunburn
+								time. Use it as context for outdoor comfort, sunscreen
+								reapplication, and deciding whether conditions feel manageable
+								for time outside.
 							</p>
 						</div>
 

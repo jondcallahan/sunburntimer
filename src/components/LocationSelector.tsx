@@ -15,8 +15,8 @@ import {
 } from "../services/geolocation";
 import { fetchWeatherData } from "../services/weather";
 import { LocationSearch } from "./LocationSearch";
+import { CurrentConditionsCard } from "./CurrentConditionsCard";
 import type { GeocodingResult } from "../services/geocoding";
-import { formatTemperature } from "../utils/temperature";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "./ui/alert";
@@ -213,39 +213,7 @@ export function LocationSelector() {
 						</div>
 
 						{geolocation.weather && (
-							<Card>
-								<CardContent className="p-4">
-									<div className="flex items-center justify-between">
-										<div className="flex items-center space-x-4">
-											<Cloud className="w-8 h-8 text-primary" />
-											<div>
-												<p className="text-sm text-muted-foreground">
-													Current Weather
-												</p>
-												<p className="text-sm tabular-nums text-muted-foreground">
-													{formatTemperature(
-														geolocation.weather.current.temp,
-														geolocation.weather.temperatureUnit,
-													)}
-													, UV Index: {geolocation.weather.current.uvi}
-												</p>
-											</div>
-										</div>
-										<div className="text-right">
-											<p className="text-2xl font-bold tabular-nums">
-												{formatTemperature(
-													geolocation.weather.current.temp,
-													geolocation.weather.temperatureUnit,
-												)}
-											</p>
-											<p className="text-sm text-muted-foreground capitalize">
-												{geolocation.weather.current.weather[0]?.description ||
-													"Clear"}
-											</p>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
+							<CurrentConditionsCard weather={geolocation.weather} />
 						)}
 					</div>
 				);

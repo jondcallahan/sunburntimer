@@ -154,6 +154,7 @@ export interface WeatherOverview {
 export interface CurrentWeather {
 	dt: number;
 	temp: number;
+	dewPoint?: number;
 	uvi: number;
 	weather: WeatherOverview[];
 }
@@ -161,6 +162,7 @@ export interface CurrentWeather {
 export interface HourlyWeather {
 	dt: number;
 	temp: number;
+	dewPoint?: number;
 	uvi: number;
 	weather: WeatherOverview[];
 }
