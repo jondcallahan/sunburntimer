@@ -36,7 +36,7 @@ export function getSweatIndexDetails(value: number): SweatIndexDetails {
 			value,
 			level: "oppressive",
 			label: "Oppressive",
-			description: "Oppressive workout conditions",
+			description: "Extremely hot and humid",
 			badgeClassName: "bg-red-100 text-red-800 border-red-200",
 			textClassName: "text-red-700",
 		};
@@ -46,8 +46,8 @@ export function getSweatIndexDetails(value: number): SweatIndexDetails {
 		return {
 			value,
 			level: "verySweaty",
-			label: "Very sweaty",
-			description: "Very sweaty conditions",
+			label: "Very muggy",
+			description: "Very hot and sticky",
 			badgeClassName: "bg-orange-100 text-orange-800 border-orange-200",
 			textClassName: "text-orange-700",
 		};
@@ -57,8 +57,8 @@ export function getSweatIndexDetails(value: number): SweatIndexDetails {
 		return {
 			value,
 			level: "sweaty",
-			label: "Sweaty",
-			description: "Sweaty workout conditions",
+			label: "Muggy",
+			description: "Hot and humid",
 			badgeClassName: "bg-amber-100 text-amber-800 border-amber-200",
 			textClassName: "text-amber-700",
 		};
@@ -69,7 +69,7 @@ export function getSweatIndexDetails(value: number): SweatIndexDetails {
 			value,
 			level: "warm",
 			label: "Warm",
-			description: "Warm workout conditions",
+			description: "Warm and slightly humid",
 			badgeClassName: "bg-yellow-100 text-yellow-800 border-yellow-200",
 			textClassName: "text-yellow-700",
 		};
@@ -78,8 +78,8 @@ export function getSweatIndexDetails(value: number): SweatIndexDetails {
 	return {
 		value,
 		level: "easy",
-		label: "Easy",
-		description: "Pleasant workout conditions",
+		label: "Comfortable",
+		description: "Pleasant to be outside",
 		badgeClassName: "bg-emerald-100 text-emerald-800 border-emerald-200",
 		textClassName: "text-emerald-700",
 	};

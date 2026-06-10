@@ -270,16 +270,16 @@ export function LocationSelector() {
 												<div>
 													<div className="flex items-center gap-1">
 														<p className="text-xs font-medium text-muted-foreground">
-															Sweat Index™
+															Sweat Index
 														</p>
 														<Info
 															className="h-3.5 w-3.5 text-muted-foreground"
-															aria-label="Sweat Index is a quick workout comfort score combining temperature and dew point in fahrenheit."
+															aria-label="Sweat Index is an outdoor comfort score based on temperature and dew point in Fahrenheit. Higher values mean hotter, muggier air."
 														>
 															<title>
-																Sweat Index is a quick workout comfort score
-																combining temperature and dew point in
-																fahrenheit.
+																Sweat Index is an outdoor comfort score based
+																on temperature and dew point in Fahrenheit.
+																Higher values mean hotter, muggier air.
 															</title>
 														</Info>
 													</div>

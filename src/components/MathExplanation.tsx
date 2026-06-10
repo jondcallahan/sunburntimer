@@ -121,17 +121,17 @@ export function MathExplanation() {
 						<div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
 							<h3 className="font-semibold text-orange-900 flex items-center gap-2 mb-2">
 								<Activity className="w-5 h-5" />
-								Sweat Index™
+								Sweat Index
 							</h3>
 							<p className="text-sm text-slate-700 mb-3">
-								Sweat Index™ is a quick workout comfort score: temperature plus
-								dew point. Higher values mean hotter, muggier conditions where
-								sweat evaporates less easily.
+								Sweat Index is an outdoor comfort score based on temperature
+								and dew point. Higher values mean hotter, muggier air where
+								sweat doesn&apos;t evaporate as easily.
 							</p>
 							<div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
 								<div className="bg-white/70 rounded border border-orange-100 p-2">
 									<p className="font-semibold text-slate-800">&lt;130</p>
-									<p className="text-slate-600">Easy</p>
+									<p className="text-slate-600">Comfortable</p>
 								</div>
 								<div className="bg-white/70 rounded border border-orange-100 p-2">
 									<p className="font-semibold text-slate-800">130-139</p>
@@ -139,11 +139,11 @@ export function MathExplanation() {
 								</div>
 								<div className="bg-white/70 rounded border border-orange-100 p-2">
 									<p className="font-semibold text-slate-800">140-149</p>
-									<p className="text-slate-600">Sweaty</p>
+									<p className="text-slate-600">Muggy</p>
 								</div>
 								<div className="bg-white/70 rounded border border-orange-100 p-2">
 									<p className="font-semibold text-slate-800">150-159</p>
-									<p className="text-slate-600">Very sweaty</p>
+									<p className="text-slate-600">Very muggy</p>
 								</div>
 								<div className="bg-white/70 rounded border border-orange-100 p-2">
 									<p className="font-semibold text-slate-800">160+</p>
@@ -152,8 +152,9 @@ export function MathExplanation() {
 							</div>
 							<p className="text-xs text-orange-800 mt-3">
 								This does not change UV strength or your calculated sunburn
-								time. Use it as context for workout comfort, sunscreen
-								reapplication, and choosing a more cautious activity level.
+								time. Use it as context for outdoor comfort, sunscreen
+								reapplication, and deciding whether conditions feel manageable
+								for time outside.
 							</p>
 						</div>
 
