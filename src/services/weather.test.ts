@@ -10,6 +10,7 @@ afterEach(() => {
 function createForecastResponse(
 	uvIndex: Array<number | null>,
 	currentUvIndex: number | null = null,
+	dewPoints?: Array<number | null>,
 ) {
 	const startTime = new Date("2026-05-26T10:00:00");
 
@@ -30,7 +31,7 @@ function createForecastResponse(
 				return time.toISOString().slice(0, 16);
 			}),
 			temperature_2m: uvIndex.map((_, index) => 75 + index * 2),
-			dew_point_2m: uvIndex.map((_, index) => 65 + index),
+			dew_point_2m: dewPoints ?? uvIndex.map((_, index) => 65 + index),
 			uv_index: uvIndex,
 			weather_code: uvIndex.map((_, index) => (index % 2 === 0 ? 3 : 2)),
 		},
@@ -142,6 +143,26 @@ describe("fetchWeatherData", () => {
 		await expect(
 			fetchWeatherData({ latitude: 30.2672, longitude: -97.7431 }),
 		).rejects.toThrow("UV forecast is currently unavailable");
+	});
+
+	it("uses neutral dew point fallback when later hourly dew points are unavailable", async () => {
+		globalThis.fetch = async (input) => {
+			if (getFetchUrl(input).includes("air-quality")) {
+				return jsonResponse({ current: { us_aqi: 42 } });
+			}
+
+			return jsonResponse(
+				createForecastResponse([0.8, 4.5, 6.2], 0.8, [65, null, 67]),
+			);
+		};
+
+		const weather = await fetchWeatherData({
+			latitude: 30.2672,
+			longitude: -97.7431,
+		});
+
+		expect(weather.hourly.map((hour) => hour.uvi)).toEqual([0.8, 4.5, 6.2]);
+		expect(weather.hourly.map((hour) => hour.dewPoint)).toEqual([65, 62, 67]);
 	});
 
 	it("returns weather when Open-Meteo returns a complete UV forecast", async () => {
