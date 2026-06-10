@@ -11,7 +11,7 @@ import {
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
-import { getUVIndexColor, getAQIColor } from "./lib/utils";
+import { cn, getUVIndexColor, getAQIColor } from "./lib/utils";
 
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
@@ -252,7 +252,7 @@ function App() {
 												)}
 												{sweatIndex && (
 													<Badge
-														className={`${sweatIndex.badgeClassName} border-0`}
+														className={cn(sweatIndex.badgeClassName, "border-0")}
 													>
 														Sweat Index {sweatIndex.value}
 													</Badge>
