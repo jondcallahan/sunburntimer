@@ -52,7 +52,7 @@ export function getWeatherIconDetails(
 
 	if (
 		(weatherCode !== undefined && weatherCode >= 10 && weatherCode <= 12) ||
-		(weatherCode !== undefined && weatherCode >= 28 && weatherCode <= 29) ||
+		weatherCode === 28 ||
 		(weatherCode !== undefined && weatherCode >= 40 && weatherCode <= 49)
 	) {
 		return { Icon: CloudFog, className: "text-slate-500" };
