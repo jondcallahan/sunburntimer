@@ -4,7 +4,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Calculator, Sun, Shield, User } from "lucide-react";
+import { Activity, Calculator, Sun, Shield, User } from "lucide-react";
 
 export function MathExplanation() {
 	return (
@@ -94,10 +94,50 @@ export function MathExplanation() {
 							</p>
 						</div>
 
-						{/* 4. The math */}
+						{/* 4. Sweat Index */}
+						<div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+							<h3 className="font-semibold text-orange-900 flex items-center gap-2 mb-2">
+								<Activity className="w-5 h-5" />
+								4. Sweat Index™ context
+							</h3>
+							<p className="text-sm text-slate-700 mb-3">
+								Sweat Index™ is a quick workout comfort score: temperature plus
+								dew point. Higher values mean hotter, muggier conditions where
+								sweat evaporates less easily.
+							</p>
+							<div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+								<div className="bg-white/70 rounded border border-orange-100 p-2">
+									<p className="font-semibold text-slate-800">&lt;130</p>
+									<p className="text-slate-600">Easy</p>
+								</div>
+								<div className="bg-white/70 rounded border border-orange-100 p-2">
+									<p className="font-semibold text-slate-800">130-139</p>
+									<p className="text-slate-600">Warm</p>
+								</div>
+								<div className="bg-white/70 rounded border border-orange-100 p-2">
+									<p className="font-semibold text-slate-800">140-149</p>
+									<p className="text-slate-600">Sweaty</p>
+								</div>
+								<div className="bg-white/70 rounded border border-orange-100 p-2">
+									<p className="font-semibold text-slate-800">150-159</p>
+									<p className="text-slate-600">Very sweaty</p>
+								</div>
+								<div className="bg-white/70 rounded border border-orange-100 p-2">
+									<p className="font-semibold text-slate-800">160+</p>
+									<p className="text-slate-600">Oppressive</p>
+								</div>
+							</div>
+							<p className="text-xs text-orange-800 mt-3">
+								This does not change UV strength or your calculated sunburn
+								time. Use it as context for workout comfort, sunscreen
+								reapplication, and choosing a more cautious activity level.
+							</p>
+						</div>
+
+						{/* 5. The math */}
 						<div className="border-t pt-4">
 							<h3 className="font-semibold text-slate-800 mb-3">
-								4. The calculation
+								5. The calculation
 							</h3>
 							<p className="text-sm text-slate-600 mb-3">
 								Think of it as filling a bucket. Each minute adds UV damage, and
