@@ -8,7 +8,7 @@ A modern web application that calculates safe sun exposure time based on your sk
 - **SPF Protection Modeling**: Account for different sunscreen strengths and degradation over time
 - **Activity Level Consideration**: Factor in sweating that reduces SPF effectiveness
 - **Real-time Weather Data**: Uses Open-Meteo API for UV index and weather conditions
-- **Interactive Visualization**: Chart.js displays skin damage accumulation over time
+- **Interactive Visualization**: TanStack Charts displays skin damage and UV forecasts with accessible tooltips
 - **Location Services**: Support for both GPS location and manual address entry
 - **Responsive Design**: Beautiful UI built with shadcn/ui components
 - **Progressive Web App Ready**: Modern architecture with offline capabilities
@@ -26,7 +26,7 @@ This implementation fixes critical bugs from the original OCaml version:
 - **Frontend**: React 18, TypeScript, Vite
 - **UI Components**: shadcn/ui, Tailwind CSS
 - **State Management**: Zustand with persistence
-- **Charts**: Chart.js with react-chartjs-2
+- **Charts**: TanStack Charts proof of concept with explicit D3 scales
 - **APIs**: Open-Meteo, BigDataCloud Geocoding
 - **Build Tools**: Vite, ESLint, TypeScript
 

@@ -4,7 +4,8 @@ import { format } from "date-fns";
 /**
  * Convert a Date to a TZDate in the given timezone.
  * TZDate is a Date subclass where .getHours(), .setHours(), format(), etc.
- * all operate in the target timezone. Chart.js and date-fns work with it natively.
+ * all operate in the target timezone. D3 time scales and date-fns work with it
+ * natively.
  */
 export function toTZDate(date: Date, timezone?: string): Date {
 	if (!timezone) return date;
