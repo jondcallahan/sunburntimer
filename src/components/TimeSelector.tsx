@@ -59,6 +59,7 @@ export function TimeSelector() {
 				selected={!activityStartTime}
 				onClick={selectNow}
 				aria-label="Calculate exposure starting now"
+				className="min-w-0 overflow-hidden"
 			>
 				<CardContent className="p-4 flex items-center justify-between h-full">
 					<div className="flex items-center space-x-2">
@@ -78,8 +79,9 @@ export function TimeSelector() {
 				disabled={!laterTodayAvailable}
 				onClick={selectLater}
 				aria-label="Calculate exposure starting later today"
+				className="min-w-0 overflow-hidden"
 			>
-				<CardContent className="p-4 space-y-3 h-full">
+				<CardContent className="min-w-0 p-4 space-y-3 h-full">
 					<div className="flex items-center justify-between">
 						<label
 							htmlFor={inputId}
@@ -102,7 +104,7 @@ export function TimeSelector() {
 						disabled={!laterTodayAvailable}
 						onClick={(event) => event.stopPropagation()}
 						onChange={(event) => updateTime(event.target.value)}
-						className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 font-semibold"
+						className="block w-full min-w-0 max-w-full rounded-md border border-stone-300 bg-white px-3 py-2 font-semibold"
 					/>
 				</CardContent>
 			</SelectableCard>
