@@ -128,6 +128,26 @@ const TEST_SCENARIOS = {
 
 describe("Sunburn Calculation Algorithm", () => {
 	describe("Core Algorithm Validation", () => {
+		it("starts a projected calculation at the selected future time", () => {
+			const forecastStart = new Date("2026-08-23T00:00:00Z");
+			const projectedStart = new Date("2026-08-23T02:30:00Z");
+			const input = createTestScenario(
+				FitzpatrickType.I,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(8).fill(8),
+				forecastStart,
+			);
+			input.currentTime = projectedStart;
+
+			const result = findOptimalTimeSlicing(input);
+
+			expect(result.points.length).toBeGreaterThan(0);
+			expect(result.points[0]?.slice.datetime.getTime()).toBeGreaterThanOrEqual(
+				projectedStart.getTime(),
+			);
+		});
+
 		it("should calculate reasonable burn times for Type I skin without sunscreen", () => {
 			// Type I skin, UV 8, no protection - should burn quickly (~20 minutes)
 			const input = createTestScenario(
