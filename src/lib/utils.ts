@@ -100,23 +100,3 @@ export function formatDuration(diffMs: number): string {
 		return `${hours}h ${minutes}m`;
 	}
 }
-
-/**
- * Environmental UV multipliers based on scientific research
- * Snow: 88% reflection, Sand: 15% reflection, Shade: 50% reduction
- */
-export const ENVIRONMENTAL_MULTIPLIERS = {
-	SNOW: 1.88,
-	SAND: 1.15,
-	SHADE: 0.5,
-} as const;
-
-export function calculateEnvironmentalTimes(startTime: Date, burnTime: Date) {
-	const baseDiffMs = burnTime.getTime() - startTime.getTime();
-
-	return {
-		snow: formatDuration(baseDiffMs / ENVIRONMENTAL_MULTIPLIERS.SNOW),
-		sand: formatDuration(baseDiffMs / ENVIRONMENTAL_MULTIPLIERS.SAND),
-		shade: formatDuration(baseDiffMs / ENVIRONMENTAL_MULTIPLIERS.SHADE),
-	};
-}

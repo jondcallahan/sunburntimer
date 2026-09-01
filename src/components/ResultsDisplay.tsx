@@ -5,7 +5,7 @@ import { Card, CardContent } from "./ui/card";
 import type { CalculationResult } from "../types";
 import { CALCULATION_CONSTANTS } from "../types";
 import { getHoursInTimezone } from "../utils/timezone";
-import { formatDuration, calculateEnvironmentalTimes } from "../lib/utils";
+import { formatDuration } from "../lib/utils";
 
 interface ResultsDisplayProps {
 	result: CalculationResult;
@@ -37,11 +37,6 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 		const diffMs = burnTime.getTime() - startTime.getTime();
 		return formatDuration(diffMs);
 	}, [startTime, burnTime]);
-
-	const environmentalTimes = useMemo(() => {
-		if (!startTime || !burnTime || safeTime === "unlikely") return null;
-		return calculateEnvironmentalTimes(startTime, burnTime);
-	}, [startTime, burnTime, safeTime]);
 
 	const isHighRisk = useMemo(() => {
 		// If sunburn is unlikely, it's not high risk
@@ -93,13 +88,6 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 											? `Use sunscreen by ${format(burnTime, "h:mm a")}, sun damage may occur after`
 											: `Until ${format(burnTime, "h:mm a")}`}
 									</p>
-									{environmentalTimes && (
-										<p className="text-sm tabular-nums text-slate-500 mt-2">
-											Full shade: {environmentalTimes.shade} • Beach:{" "}
-											{environmentalTimes.sand} • Snow:{" "}
-											{environmentalTimes.snow}
-										</p>
-									)}
 								</div>
 							) : (
 								<p className="text-2xl font-bold text-green-600">

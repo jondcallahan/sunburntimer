@@ -1,7 +1,13 @@
 import { describe, it, expect } from "bun:test";
 import { findOptimalTimeSlicing } from "./calculations";
 import type { CalculationInput, WeatherData, CalculationResult } from "./types";
-import { FitzpatrickType, SPFLevel, SweatLevel } from "./types";
+import {
+	Environment,
+	ENVIRONMENT_CONFIG,
+	FitzpatrickType,
+	SPFLevel,
+	SweatLevel,
+} from "./types";
 
 // Test helper functions
 function createMockWeatherData(
@@ -567,6 +573,77 @@ describe("Sunburn Calculation Algorithm", () => {
 			expect(result.advice.length).toBeGreaterThan(0);
 			// Should handle interpolation without errors
 			expect(() => result).not.toThrow();
+		});
+	});
+
+	describe("Surroundings (ground reflection)", () => {
+		const fixedTime = new Date("2025-09-06T10:00:00");
+
+		it("should re-integrate dose so snow burns faster and shade slower than open ground", () => {
+			const base = createTestScenario(
+				FitzpatrickType.II,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(8).fill(6),
+				fixedTime,
+			);
+			const open = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.OPEN,
+			});
+			const snow = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.SNOW,
+			});
+			const shade = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.SHADE,
+			});
+
+			const openMinutes = getBurnTimeMinutes(open, base);
+			const snowMinutes = getBurnTimeMinutes(snow, base);
+			const shadeMinutes = getBurnTimeMinutes(shade, base);
+
+			expect(snowMinutes).toBeLessThan(openMinutes);
+			expect(shadeMinutes).toBeGreaterThan(openMinutes);
+			// Constant UV, no SPF decay: burn time scales inversely with the multiplier
+			expect(openMinutes / snowMinutes).toBeCloseTo(
+				ENVIRONMENT_CONFIG[Environment.SNOW].uvMultiplier,
+				1,
+			);
+		});
+
+		it("should default to open ground when no environment is given", () => {
+			const base = createTestScenario(
+				FitzpatrickType.III,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(8).fill(7),
+				fixedTime,
+			);
+			const implicit = findOptimalTimeSlicing(base);
+			const explicit = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.OPEN,
+			});
+			expect(getBurnTimeMinutes(implicit, base)).toBe(
+				getBurnTimeMinutes(explicit, base),
+			);
+		});
+
+		it("should keep the displayed UV index as the forecast value", () => {
+			const base = createTestScenario(
+				FitzpatrickType.II,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(4).fill(5),
+				fixedTime,
+			);
+			const snow = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.SNOW,
+			});
+			expect(snow.points[0]?.slice.uvIndex).toBeCloseTo(5, 5);
 		});
 	});
 
