@@ -184,9 +184,12 @@ src/
 
 ## License
 
-Copyright © 2025–2026 Jon Callahan. All rights reserved.
+SunburnTimer is source-available, not open source. It is released under the
+[SunburnTimer Source-Available License](LICENSE).
 
-This project is **source available** (not open source). You may view the source; other use requires permission. See the [LICENSE](LICENSE) file for details.
+You may read, build, run, and modify SunburnTimer for personal or internal use. You may not
+sell it, redistribute it (source or compiled builds), rebrand it, or offer it as a
+commercial product or service without prior written permission.
 
 ## Acknowledgments
 
