@@ -141,6 +141,54 @@ export const SWEAT_CONFIG: Record<
 
 export const DEFAULT_SWEAT_LEVEL = SweatLevel.LOW;
 
+// Surroundings: ground reflection (albedo) adds to the down-welling UV that
+// the UV Index measures. Multipliers follow the WHO Global Solar UV Index
+// guide: fresh snow reflects up to 80% and "can double" exposure, dry sand
+// ~15%, sea foam ~25%, water/grass <10%. Shade blocks the direct beam but
+// roughly half the diffuse sky UV still reaches you.
+export const Environment = {
+	SHADE: "SHADE",
+	OPEN: "OPEN",
+	WATER: "WATER",
+	SAND: "SAND",
+	SNOW: "SNOW",
+} as const;
+
+export type Environment = (typeof Environment)[keyof typeof Environment];
+
+export const ENVIRONMENT_CONFIG: Record<
+	Environment,
+	{ label: string; description: string; uvMultiplier: number }
+> = {
+	[Environment.SHADE]: {
+		label: "Shade",
+		description: "Under a tree or umbrella; only diffuse sky UV reaches you",
+		uvMultiplier: 0.5,
+	},
+	[Environment.OPEN]: {
+		label: "Grass / city",
+		description: "Lawns, soil, pavement reflect less than 10%",
+		uvMultiplier: 1.0,
+	},
+	[Environment.WATER]: {
+		label: "Water",
+		description: "Lakes, pools, boats; open water reflects ~8%",
+		uvMultiplier: 1.1,
+	},
+	[Environment.SAND]: {
+		label: "Beach",
+		description: "Dry sand reflects ~15%, surf and foam up to 25%",
+		uvMultiplier: 1.2,
+	},
+	[Environment.SNOW]: {
+		label: "Snow",
+		description: "Fresh snow reflects up to 80% and can double your dose",
+		uvMultiplier: 1.8,
+	},
+};
+
+export const DEFAULT_ENVIRONMENT = Environment.OPEN;
+
 // Weather Data
 export type TemperatureUnit = "fahrenheit" | "celsius";
 
@@ -212,6 +260,7 @@ export interface CalculationInput {
 	skinType: FitzpatrickType;
 	spfLevel: SPFLevel;
 	sweatLevel: SweatLevel;
+	environment?: Environment;
 }
 
 export interface TimeSlice {
@@ -238,6 +287,7 @@ export interface AppState {
 	skinType?: FitzpatrickType;
 	spfLevel?: SPFLevel;
 	sweatLevel?: SweatLevel;
+	environment?: Environment;
 	geolocation: GeolocationState;
 	calculation?: CalculationResult;
 }

@@ -8,7 +8,9 @@ import {
 	SPF_CONFIG,
 	SPFLevel,
 	SWEAT_CONFIG,
+	DEFAULT_ENVIRONMENT,
 	DEFAULT_SWEAT_LEVEL,
+	ENVIRONMENT_CONFIG,
 } from "./types";
 import { useLocationRefresh } from "./hooks/useLocationRefresh";
 import { fetchWeatherData } from "./services/weather";
@@ -17,6 +19,7 @@ import { cn, getUVIndexColor, getAQIColor } from "./lib/utils";
 import { SkinTypeSelector } from "./components/SkinTypeSelector";
 import { SPFSelector } from "./components/SPFSelector";
 import { SweatLevelSelector } from "./components/SweatLevelSelector";
+import { EnvironmentSelector } from "./components/EnvironmentSelector";
 import { LocationSelector } from "./components/LocationSelector";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { BurnChart } from "./components/BurnChart";
@@ -43,6 +46,7 @@ function App() {
 		skinType,
 		spfLevel,
 		sweatLevel,
+		environment,
 		geolocation,
 		calculation,
 		setCalculation,
@@ -78,6 +82,7 @@ function App() {
 			skinType,
 			spfLevel,
 			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
+			environment: environment ?? DEFAULT_ENVIRONMENT,
 		};
 
 		const result = findOptimalTimeSlicing(input);
@@ -87,6 +92,7 @@ function App() {
 		skinType,
 		spfLevel,
 		sweatLevel,
+		environment,
 		geolocation.weather,
 		geolocation.placeName,
 		setCalculation,
@@ -262,6 +268,11 @@ function App() {
 														Sweat Index {sweatIndex.value}
 													</Badge>
 												)}
+												{environment && environment !== DEFAULT_ENVIRONMENT && (
+													<Badge variant="outline">
+														{ENVIRONMENT_CONFIG[environment].label}
+													</Badge>
+												)}
 											</div>
 											<RelativeTime
 												timestamp={
@@ -275,7 +286,21 @@ function App() {
 							</div>
 						</AccordionTrigger>
 						<AccordionContent className="px-6 pb-6">
-							<LocationSelector />
+							<div className="space-y-6">
+								<LocationSelector />
+
+								{geolocation.status === "completed" && (
+									<div>
+										<h4 className="font-semibold mb-1 text-slate-800">
+											Surroundings
+										</h4>
+										<p className="text-sm text-muted-foreground mb-3">
+											Reflective ground adds UV on top of the forecast.
+										</p>
+										<EnvironmentSelector />
+									</div>
+								)}
+							</div>
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>

@@ -44,6 +44,14 @@ export function MathExplanation() {
 								A 0.8× geometry factor is applied because you're a person
 								standing and moving, not a flat sensor pointing at the sky.
 							</p>
+							<p className="text-xs text-slate-500 mt-2">
+								The UV Index only counts light coming down from the sky. Your
+								surroundings add reflected UV on top: fresh snow bounces back up
+								to 80% (nearly doubling your dose), dry sand about 15%, and
+								water around 8%, while shade removes the direct beam but leaves
+								roughly half the diffuse sky UV. The surroundings toggle scales
+								the UV before it enters the calculation.
+							</p>
 						</div>
 
 						{/* 2. Skin threshold */}

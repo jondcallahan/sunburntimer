@@ -10,6 +10,8 @@ import {
 	SweatLevel,
 	SPFLevel,
 	CALCULATION_CONSTANTS,
+	DEFAULT_ENVIRONMENT,
+	ENVIRONMENT_CONFIG,
 	SKIN_TYPE_CONFIG,
 	SPF_CONFIG,
 	SWEAT_CONFIG,
@@ -179,6 +181,10 @@ function calculateBurnTimeWithSlices(
 	const baseSpfValue =
 		SPF_CONFIG[input.spfLevel]?.coefficient ??
 		SPF_CONFIG[SPFLevel.NONE].coefficient;
+	// Ground reflection (or shade) scales the ambient UV the forecast reports
+	// into the UV that actually reaches the skin.
+	const environmentMultiplier =
+		ENVIRONMENT_CONFIG[input.environment ?? DEFAULT_ENVIRONMENT].uvMultiplier;
 	const startTimestampMs = input.currentTime.getTime();
 	const threshold = CALCULATION_CONSTANTS.DAMAGE_THRESHOLD;
 	const points: CalculationPoint[] = [];
@@ -203,10 +209,13 @@ function calculateBurnTimeWithSlices(
 			sliceDurationMs > 0
 				? (effectiveStartMs - currentSlice.start.getTime()) / sliceDurationMs
 				: 0;
-		const uviAtEffectiveStart =
+		const forecastUviAtEffectiveStart =
 			currentSlice.uviStart * (1 - startFraction) +
 			currentSlice.uviEnd * startFraction;
-		const uviAtEnd = currentSlice.uviEnd;
+		const forecastUviAtEnd = currentSlice.uviEnd;
+		const uviAtEffectiveStart =
+			forecastUviAtEffectiveStart * environmentMultiplier;
+		const uviAtEnd = forecastUviAtEnd * environmentMultiplier;
 		// SPF at endpoints (hours since application)
 		const hoursFromStartAtEffective =
 			(effectiveStartMs - startTimestampMs) / 3600000;
@@ -235,10 +244,11 @@ function calculateBurnTimeWithSlices(
 		let damageAddedInSlice =
 			(UVI_DAMAGE_FACTOR_PER_MIN * averageEffectiveIrradiance * minutes) /
 			medInJm2;
-		// For display, record midpoint UV
+		// For display, record the midpoint forecast UV (what the weather service
+		// reports, before any surroundings adjustment)
 		const displayTimeSlice: TimeSlice = {
 			datetime: new Date(effectiveStartMs),
-			uvIndex: 0.5 * (uviAtEffectiveStart + uviAtEnd),
+			uvIndex: 0.5 * (forecastUviAtEffectiveStart + forecastUviAtEnd),
 		};
 		// Crossing inside the window? Clamp and compute exact burnTime
 		// **If damage would exceed threshold mid-slice, calculate exact time to hit 100% (linear approximation).**
