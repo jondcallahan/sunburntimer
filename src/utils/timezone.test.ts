@@ -3,6 +3,7 @@ import {
 	formatInTimeZone,
 	getHoursInTimezone,
 	getFractionalHoursInTimezone,
+	isNextCalendarDay,
 } from "./timezone";
 
 describe("Timezone Utilities", () => {
@@ -60,6 +61,23 @@ describe("Timezone Utilities", () => {
 			const tokyoResult = formatInTimeZone(utcDate, "Asia/Tokyo", "h:mm a");
 			expect(utcResult).toBe("6:30 PM");
 			expect(tokyoResult).toBe("3:30 AM");
+		});
+	});
+
+	describe("isNextCalendarDay", () => {
+		it("should be false for two times on the same local calendar day", () => {
+			const start = new Date("2026-06-15T22:00:00-06:00");
+			const burn = new Date("2026-06-15T23:30:00-06:00");
+			expect(isNextCalendarDay(start, burn, "America/Denver")).toBe(false);
+		});
+
+		it("should follow the weather timezone, not UTC", () => {
+			// 11pm Denver June 15 → 1am Denver June 16 is next day there,
+			// but both instants are June 16 UTC.
+			const start = new Date("2026-06-16T05:00:00Z");
+			const burn = new Date("2026-06-16T07:00:00Z");
+			expect(isNextCalendarDay(start, burn, "America/Denver")).toBe(true);
+			expect(isNextCalendarDay(start, burn, "UTC")).toBe(false);
 		});
 	});
 });
