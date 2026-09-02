@@ -184,7 +184,9 @@ src/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Copyright © 2025–2026 Jon Callahan. All rights reserved.
+
+This project is **source available** (not open source). You may view the source; other use requires permission. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
