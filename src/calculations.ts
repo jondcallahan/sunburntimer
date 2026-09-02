@@ -213,9 +213,6 @@ function calculateBurnTimeWithSlices(
 			currentSlice.uviStart * (1 - startFraction) +
 			currentSlice.uviEnd * startFraction;
 		const forecastUviAtEnd = currentSlice.uviEnd;
-		const uviAtEffectiveStart =
-			forecastUviAtEffectiveStart * environmentMultiplier;
-		const uviAtEnd = forecastUviAtEnd * environmentMultiplier;
 		// SPF at endpoints (hours since application)
 		const hoursFromStartAtEffective =
 			(effectiveStartMs - startTimestampMs) / 3600000;
@@ -231,12 +228,16 @@ function calculateBurnTimeWithSlices(
 			hoursFromStartAtEnd,
 		);
 		// Trapezoid on effective irradiance (UVI/SPF)
-		// **Effective irradiance: UV strength divided by SPF, weighted for low UV. Average start/end for smooth integration.**
+		// Low-UV ramp is a forecast-UVI calibration, so it must not see albedo/shade
+		// scaling — otherwise snow escapes the ramp and shade can zero it out.
 		const effectiveIrradianceStart =
-			(uviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) *
-			lowUvWeight(uviAtEffectiveStart);
+			(forecastUviAtEffectiveStart / Math.max(1, spfAtEffectiveStart)) *
+			lowUvWeight(forecastUviAtEffectiveStart) *
+			environmentMultiplier;
 		const effectiveIrradianceEnd =
-			(uviAtEnd / Math.max(1, spfAtEnd)) * lowUvWeight(uviAtEnd);
+			(forecastUviAtEnd / Math.max(1, spfAtEnd)) *
+			lowUvWeight(forecastUviAtEnd) *
+			environmentMultiplier;
 		const averageEffectiveIrradiance =
 			0.5 * (effectiveIrradianceStart + effectiveIrradianceEnd);
 		// Damage% added in this (possibly partial) window

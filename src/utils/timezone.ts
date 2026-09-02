@@ -39,3 +39,25 @@ export function getFractionalHoursInTimezone(
 	const tzDate = toTZDate(date, timezone);
 	return tzDate.getHours() + tzDate.getMinutes() / 60;
 }
+
+/**
+ * True when `later` falls on a later calendar day than `earlier` in the
+ * weather location's timezone (not the browser's local TZ).
+ */
+export function isNextCalendarDay(
+	earlier: Date,
+	later: Date,
+	timezone?: string,
+): boolean {
+	if (timezone) {
+		return (
+			formatInTimeZone(earlier, timezone, "yyyy-MM-dd") !==
+			formatInTimeZone(later, timezone, "yyyy-MM-dd")
+		);
+	}
+	return (
+		earlier.getFullYear() !== later.getFullYear() ||
+		earlier.getMonth() !== later.getMonth() ||
+		earlier.getDate() !== later.getDate()
+	);
+}

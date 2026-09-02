@@ -645,6 +645,41 @@ describe("Sunburn Calculation Algorithm", () => {
 			});
 			expect(snow.points[0]?.slice.uvIndex).toBeCloseTo(5, 5);
 		});
+
+		it("should keep WHO multipliers at UVI 2 instead of mixing with the low-UV ramp", () => {
+			const base = createTestScenario(
+				FitzpatrickType.I,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(12).fill(2),
+				fixedTime,
+			);
+			const open = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.OPEN,
+			});
+			const snow = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.SNOW,
+			});
+			const shade = findOptimalTimeSlicing({
+				...base,
+				environment: Environment.SHADE,
+			});
+
+			const openMinutes = getBurnTimeMinutes(open, base);
+			const snowMinutes = getBurnTimeMinutes(snow, base);
+			const shadeMinutes = getBurnTimeMinutes(shade, base);
+
+			expect(openMinutes / snowMinutes).toBeCloseTo(
+				ENVIRONMENT_CONFIG[Environment.SNOW].uvMultiplier,
+				1,
+			);
+			expect(shadeMinutes / openMinutes).toBeCloseTo(
+				1 / ENVIRONMENT_CONFIG[Environment.SHADE].uvMultiplier,
+				1,
+			);
+		});
 	});
 
 	describe("SPF and Sweat Interaction", () => {

@@ -49,8 +49,9 @@ export function MathExplanation() {
 								surroundings add reflected UV on top: fresh snow bounces back up
 								to 80% (nearly doubling your dose), dry sand about 15%, and
 								water around 8%, while shade removes the direct beam but leaves
-								roughly half the diffuse sky UV. The surroundings toggle scales
-								the UV before it enters the calculation.
+								roughly half the diffuse sky UV. Those surroundings multipliers
+								are applied after the low-UV adjustment, so a cloudy beach still
+								gets extra reflection and shade still cuts the dose in half.
 							</p>
 						</div>
 

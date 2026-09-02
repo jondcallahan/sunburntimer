@@ -4,8 +4,19 @@ import { format } from "date-fns";
 import { Card, CardContent } from "./ui/card";
 import type { CalculationResult } from "../types";
 import { CALCULATION_CONSTANTS } from "../types";
-import { getHoursInTimezone } from "../utils/timezone";
+import {
+	formatInTimeZone,
+	getHoursInTimezone,
+	isNextCalendarDay,
+} from "../utils/timezone";
 import { formatDuration } from "../lib/utils";
+
+function formatBurnClock(burnTime: Date, timezone?: string): string {
+	if (timezone) {
+		return formatInTimeZone(burnTime, timezone, "h:mm a");
+	}
+	return format(burnTime, "h:mm a");
+}
 
 interface ResultsDisplayProps {
 	result: CalculationResult;
@@ -24,19 +35,13 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 	const safeTime = useMemo(() => {
 		if (!startTime || !burnTime) return null;
 
-		// Check if burn time is past midnight (next day)
-		const startDate = new Date(startTime);
-		const burnDate = new Date(burnTime);
-		const isNextDay = burnDate.getDate() !== startDate.getDate();
-		const isPastMidnight = isNextDay;
-
-		if (isPastMidnight) {
+		if (isNextCalendarDay(startTime, burnTime, timezone)) {
 			return "unlikely";
 		}
 
 		const diffMs = burnTime.getTime() - startTime.getTime();
 		return formatDuration(diffMs);
-	}, [startTime, burnTime]);
+	}, [startTime, burnTime, timezone]);
 
 	const isHighRisk = useMemo(() => {
 		// If sunburn is unlikely, it's not high risk
@@ -85,8 +90,8 @@ export function ResultsDisplay({ result, timezone }: ResultsDisplayProps) {
 									</p>
 									<p className="text-slate-600 tabular-nums">
 										{isHighRisk
-											? `Use sunscreen by ${format(burnTime, "h:mm a")}, sun damage may occur after`
-											: `Until ${format(burnTime, "h:mm a")}`}
+											? `Use sunscreen by ${formatBurnClock(burnTime, timezone)}, sun damage may occur after`
+											: `Until ${formatBurnClock(burnTime, timezone)}`}
 									</p>
 								</div>
 							) : (
