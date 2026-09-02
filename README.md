@@ -184,7 +184,12 @@ src/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+SunburnTimer is source-available, not open source. It is released under the
+[SunburnTimer Source-Available License](LICENSE).
+
+You may read, build, run, and modify SunburnTimer for personal or internal use. You may not
+sell it, redistribute it (source or compiled builds), rebrand it, or offer it as a
+commercial product or service without prior written permission.
 
 ## Acknowledgments
 
