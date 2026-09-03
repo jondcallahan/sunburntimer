@@ -204,6 +204,16 @@ export interface GeolocationState {
 	error?: string;
 }
 
+// Environmental UV multipliers (albedo / shade on effective irradiance).
+// Snow ~88% extra reflection, sand ~15%, shade ~50% of open-sky dose.
+export const ENVIRONMENTAL_MULTIPLIERS = {
+	SNOW: 1.88,
+	SAND: 1.15,
+	SHADE: 0.5,
+} as const;
+
+export type EnvironmentalCondition = keyof typeof ENVIRONMENTAL_MULTIPLIERS;
+
 // Calculation Models
 export interface CalculationInput {
 	weather: WeatherData;
@@ -212,6 +222,8 @@ export interface CalculationInput {
 	skinType: FitzpatrickType;
 	spfLevel: SPFLevel;
 	sweatLevel: SweatLevel;
+	/** Multiplier on effective UV irradiance (default 1). */
+	environmentalFactor?: number;
 }
 
 export interface TimeSlice {
@@ -225,12 +237,19 @@ export interface CalculationPoint {
 	totalDamageAtStart: number;
 }
 
+export interface EnvironmentalBurnTimes {
+	shade?: Date;
+	sand?: Date;
+	snow?: Date;
+}
+
 export interface CalculationResult {
 	startTime?: Date;
 	burnTime?: Date;
 	points: CalculationPoint[];
 	timeSlices: number;
 	advice: string[];
+	environmentalBurnTimes?: EnvironmentalBurnTimes;
 }
 
 // App State

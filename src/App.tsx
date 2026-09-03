@@ -80,7 +80,9 @@ function App() {
 			sweatLevel: sweatLevel ?? DEFAULT_SWEAT_LEVEL,
 		};
 
-		const result = findOptimalTimeSlicing(input);
+		const result = findOptimalTimeSlicing(input, {
+			includeEnvironmentalScenarios: true,
+		});
 		setCalculation(result);
 	}, [
 		isReadyToCalculate,

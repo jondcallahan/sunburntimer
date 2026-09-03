@@ -1,7 +1,15 @@
 import { describe, it, expect } from "bun:test";
-import { findOptimalTimeSlicing } from "./calculations";
+import {
+	findOptimalTimeSlicing,
+	calculateEnvironmentalBurnTimes,
+} from "./calculations";
 import type { CalculationInput, WeatherData, CalculationResult } from "./types";
-import { FitzpatrickType, SPFLevel, SweatLevel } from "./types";
+import {
+	FitzpatrickType,
+	SPFLevel,
+	SweatLevel,
+	ENVIRONMENTAL_MULTIPLIERS,
+} from "./types";
 
 // Test helper functions
 function createMockWeatherData(
@@ -605,6 +613,117 @@ describe("Sunburn Calculation Algorithm", () => {
 			if (lowSweatTime !== Infinity && highSweatTime !== Infinity) {
 				expect(highSweatTime).toBeLessThanOrEqual(lowSweatTime);
 			}
+		});
+	});
+
+	describe("Environmental dose-rate scaling", () => {
+		const fixedTime = new Date("2025-06-21T12:00:00Z");
+
+		it("should burn faster when environmental factor increases dose rate", () => {
+			const base = createTestScenario(
+				FitzpatrickType.I,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(8).fill(8),
+				fixedTime,
+			);
+			const snow = {
+				...base,
+				environmentalFactor: ENVIRONMENTAL_MULTIPLIERS.SNOW,
+			};
+			const shade = {
+				...base,
+				environmentalFactor: ENVIRONMENTAL_MULTIPLIERS.SHADE,
+			};
+
+			const baseResult = findOptimalTimeSlicing(base);
+			const snowResult = findOptimalTimeSlicing(snow);
+			const shadeResult = findOptimalTimeSlicing(shade);
+
+			const baseMin = getBurnTimeMinutes(baseResult, base);
+			const snowMin = getBurnTimeMinutes(snowResult, snow);
+			const shadeMin = getBurnTimeMinutes(shadeResult, shade);
+
+			expect(baseMin).not.toBe(Infinity);
+			expect(snowMin).toBeLessThan(baseMin);
+			expect(shadeMin).toBeGreaterThan(baseMin);
+		});
+
+		it("should approximate 1/factor under constant UV and constant SPF (no sweat decay)", () => {
+			// Constant conditions: burn time scales as 1 / environmentalFactor
+			const base = createTestScenario(
+				FitzpatrickType.I,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(10).fill(8),
+				fixedTime,
+			);
+			const sand = {
+				...base,
+				environmentalFactor: ENVIRONMENTAL_MULTIPLIERS.SAND,
+			};
+
+			const baseMin = getBurnTimeMinutes(findOptimalTimeSlicing(base), base);
+			const sandMin = getBurnTimeMinutes(findOptimalTimeSlicing(sand), sand);
+
+			expect(baseMin).not.toBe(Infinity);
+			expect(sandMin).not.toBe(Infinity);
+
+			const expected = baseMin / ENVIRONMENTAL_MULTIPLIERS.SAND;
+			// Trapezoid / slice quantization: allow small absolute error
+			expect(Math.abs(sandMin - expected)).toBeLessThan(1.5);
+		});
+
+		it("should re-integrate scenarios rather than scale final duration only", () => {
+			// Variable UV + SPF decay: clock time is non-linear in the dose multiplier
+			const input = createTestScenario(
+				FitzpatrickType.II,
+				SPFLevel.SPF_15,
+				SweatLevel.HIGH,
+				[3, 5, 8, 10, 11, 9, 6, 3],
+				fixedTime,
+			);
+
+			const withEnv = findOptimalTimeSlicing(input, {
+				includeEnvironmentalScenarios: true,
+			});
+			const snowBurn = withEnv.environmentalBurnTimes?.snow;
+			const shadeBurn = withEnv.environmentalBurnTimes?.shade;
+			expect(withEnv.burnTime).toBeDefined();
+			expect(snowBurn).toBeDefined();
+			expect(shadeBurn).toBeDefined();
+			if (!withEnv.burnTime || !snowBurn || !shadeBurn) {
+				throw new Error("expected burn times for base, snow, and shade");
+			}
+
+			const baseMs = withEnv.burnTime.getTime() - input.currentTime.getTime();
+			const naiveSnowMs = baseMs / ENVIRONMENTAL_MULTIPLIERS.SNOW;
+			const integratedSnowMs = snowBurn.getTime() - input.currentTime.getTime();
+			const shadeMs = shadeBurn.getTime() - input.currentTime.getTime();
+
+			expect(integratedSnowMs).toBeLessThan(baseMs);
+			expect(shadeMs).toBeGreaterThan(baseMs);
+			expect(Math.abs(integratedSnowMs - naiveSnowMs)).toBeGreaterThan(60_000);
+		});
+
+		it("calculateEnvironmentalBurnTimes returns ordered risk snow < sand < shade", () => {
+			const input = createTestScenario(
+				FitzpatrickType.I,
+				SPFLevel.NONE,
+				SweatLevel.LOW,
+				Array(8).fill(7),
+				fixedTime,
+			);
+			const env = calculateEnvironmentalBurnTimes(input);
+			expect(env.snow).toBeDefined();
+			expect(env.sand).toBeDefined();
+			expect(env.shade).toBeDefined();
+			if (!env.snow || !env.sand || !env.shade) {
+				throw new Error("expected snow, sand, and shade burn times");
+			}
+
+			expect(env.snow.getTime()).toBeLessThan(env.sand.getTime());
+			expect(env.sand.getTime()).toBeLessThan(env.shade.getTime());
 		});
 	});
 });
