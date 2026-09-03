@@ -1,40 +1,19 @@
-import { useCallback, useMemo } from "react";
+import type { ChartTooltipOptions } from "@tanstack/charts";
+import { focusNearestX } from "@tanstack/charts/focus";
+import { renderChartSvgWithResources } from "@tanstack/charts/svg/resources";
+import { Chart } from "@tanstack/react-charts";
+import { useMemo } from "react";
 import {
-	CategoryScale,
-	Chart as ChartJS,
-	Filler,
-	Legend,
-	LinearScale,
-	LineElement,
-	PointElement,
-	TimeScale,
-	Title,
-	Tooltip,
-	type TooltipItem,
-	type ScriptableContext,
-} from "chart.js";
-import annotationPlugin from "chartjs-plugin-annotation";
-import { Line } from "react-chartjs-2";
-import { format } from "date-fns";
-import "chartjs-adapter-date-fns";
-import type { CalculationResult } from "../types";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { useAppStore } from "../store";
+	formatChartTime,
+	type UVChartDatum,
+	type UVChartInput,
+	uvChartDefinition,
+} from "../lib/tanstack-charts";
 import { getUVIndexColor } from "../lib/utils";
-import { toTZDate, formatInTimeZone } from "../utils/timezone";
-
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend,
-	Filler,
-	TimeScale,
-	annotationPlugin,
-);
+import { useAppStore } from "../store";
+import type { CalculationResult } from "../types";
+import { toTZDate } from "../utils/timezone";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface UVChartProps {
 	result: CalculationResult;
@@ -43,204 +22,56 @@ interface UVChartProps {
 
 export function UVChart({ result, timezone }: UVChartProps) {
 	const { geolocation } = useAppStore();
-
-	// Calculate UV statistics from weather data or fallback to calculation points
 	const weatherData = geolocation.weather;
-	let currentUV: number;
-	let maxUV: number;
 
-	if (weatherData && weatherData.hourly.length > 0) {
-		currentUV = weatherData.current.uvi;
-		maxUV = Math.max(...weatherData.hourly.map((h) => h.uvi));
-	} else {
-		currentUV = result.points[0]?.slice.uvIndex || 0;
-		maxUV = Math.max(...result.points.map((p) => p.slice.uvIndex));
-	}
+	const currentUV =
+		weatherData?.current.uvi ?? result.points[0]?.slice.uvIndex ?? 0;
+	const uvValues =
+		weatherData && weatherData.hourly.length > 0
+			? weatherData.hourly.map((hour) => hour.uvi)
+			: result.points.map((point) => point.slice.uvIndex);
+	const maxUV = uvValues.length > 0 ? Math.max(...uvValues) : 0;
 
-	const chartData = useMemo(() => {
-		// Use full weather data instead of just calculation points for better forecast visualization
-		let times: Date[];
-		let uvData: number[];
-
-		if (!weatherData) {
-			// Fallback to calculation points if no weather data
-			times = result.points.map((point) =>
-				toTZDate(point.slice.datetime, timezone),
-			);
-			uvData = result.points.map((point) => point.slice.uvIndex);
-		} else {
-			// Show UV data for the next 3 days (up to 72 hours)
-			times = weatherData.hourly.map((hour) =>
-				toTZDate(new Date(hour.dt * 1000), timezone),
-			);
-			uvData = weatherData.hourly.map((hour) => hour.uvi);
+	const rows = useMemo<UVChartDatum[]>(() => {
+		if (weatherData) {
+			return weatherData.hourly.map((hour) => ({
+				id: `weather-${hour.dt}`,
+				time: toTZDate(new Date(hour.dt * 1000), timezone),
+				uvIndex: hour.uvi,
+				source: hour,
+			}));
 		}
 
-		return {
-			labels: times,
-			datasets: [
-				{
-					label: "UV Index",
-					data: uvData,
-					borderColor: "#f59e0b", // amber-500
-					backgroundColor: (context: ScriptableContext<"line">) => {
-						const ctx = context.chart.ctx;
-						const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+		return result.points.map((point) => ({
+			id: `calculation-${point.slice.datetime.getTime()}`,
+			time: toTZDate(point.slice.datetime, timezone),
+			uvIndex: point.slice.uvIndex,
+			source: point,
+		}));
+	}, [result.points, weatherData, timezone]);
 
-						// Create gradient based on UV risk levels
-						gradient.addColorStop(0, "rgba(239, 68, 68, 0.3)"); // red for high UV
-						gradient.addColorStop(0.3, "rgba(245, 158, 11, 0.3)"); // amber for moderate UV
-						gradient.addColorStop(0.6, "rgba(34, 197, 94, 0.3)"); // green for low UV
-						gradient.addColorStop(1, "rgba(34, 197, 94, 0.1)"); // very light green
-
-						return gradient;
-					},
-					fill: true,
-					tension: 0.4,
-					pointRadius: 1,
-					pointHoverRadius: 4,
-					pointBackgroundColor: "#f59e0b",
-					pointBorderColor: "#fff",
-					pointBorderWidth: 2,
-				},
-			],
-		};
-	}, [result.points, weatherData?.hourly.map, weatherData, timezone]);
-
-	const getUVRiskLevel = useCallback((uvIndex: number): string => {
-		if (uvIndex < 3) return "Low";
-		if (uvIndex < 6) return "Moderate";
-		if (uvIndex < 8) return "High";
-		if (uvIndex < 11) return "Very High";
-		return "Extreme";
-	}, []);
-
-	const options = useMemo(
+	const input = useMemo<UVChartInput>(
 		() => ({
-			responsive: true,
-			maintainAspectRatio: false,
-			interaction: {
-				intersect: false,
-				mode: "index" as const,
-			},
-			plugins: {
-				legend: {
-					display: false,
-				},
-				tooltip: {
-					backgroundColor: "rgba(0, 0, 0, 0.8)",
-					titleColor: "#fff",
-					bodyColor: "#fff",
-					cornerRadius: 8,
-					padding: 12,
-					callbacks: {
-						title: (context: TooltipItem<"line">[]) => {
-							const date = new Date(context[0].parsed.x);
-							return timezone
-								? formatInTimeZone(date, timezone, "h:mm a")
-								: format(date, "h:mm a");
-						},
-						label: (context: TooltipItem<"line">) => {
-							const uvIndex = context.parsed.y.toFixed(1);
-							const uvRisk = getUVRiskLevel(context.parsed.y);
-							return [`UV Index: ${uvIndex}`, `Risk Level: ${uvRisk}`];
-						},
-					},
-				},
-				annotation: {
-					annotations: {
-						currentTime: {
-							type: "line" as const,
-							xMin: Date.now(),
-							xMax: Date.now(),
-							borderColor: "#dc2626", // red-600
-							borderWidth: 2,
-							borderDash: [3, 3],
-							label: {
-								content: "Now",
-								enabled: true,
-								position: "start" as const,
-								backgroundColor: "#dc2626",
-								color: "white",
-								padding: 4,
-								borderRadius: 4,
-								font: {
-									size: 10,
-									weight: "bold" as const,
-								},
-							},
-						},
-					},
-				},
-			},
-			scales: {
-				x: {
-					type: "time" as const,
-					time: {
-						unit: "hour" as const,
-						displayFormats: {
-							hour: "h a",
-						},
-					},
-					title: {
-						display: true,
-						text: "Time",
-						font: {
-							size: 12,
-							weight: "bold" as const,
-						},
-						color: "#64748b", // slate-500
-					},
-					grid: {
-						color: "rgba(148, 163, 184, 0.1)", // slate-400 with opacity
-					},
-					ticks: {
-						color: "#64748b",
-						callback: (value: string | number) => {
-							const date = new Date(value as number);
-							return timezone
-								? formatInTimeZone(date, timezone, "h a")
-								: format(date, "h a");
-						},
-					},
-				},
-				y: {
-					min: 0,
-					max: Math.max(12, Math.ceil(maxUV + 1)),
-					title: {
-						display: true,
-						text: "UV Index",
-						font: {
-							size: 12,
-							weight: "bold" as const,
-						},
-						color: "#64748b",
-					},
-					grid: {
-						color: "rgba(148, 163, 184, 0.1)",
-					},
-					ticks: {
-						color: "#64748b",
-						callback: (value: string | number) => value.toString(),
-					},
-				},
-			},
-			elements: {
-				point: {
-					hoverRadius: 6,
-				},
-			},
+			rows,
+			now: toTZDate(new Date(), timezone),
+			yMaximum: Math.max(12, Math.ceil(maxUV + 1)),
+			timezone,
 		}),
-		[maxUV, getUVRiskLevel, timezone],
+		[rows, maxUV, timezone],
 	);
 
-	const getUVRiskColor = (uvIndex: number): string => {
-		if (uvIndex < 3) return "text-green-600";
-		if (uvIndex < 6) return "text-yellow-600";
-		if (uvIndex < 8) return "text-orange-600";
-		if (uvIndex < 11) return "text-red-600";
-		return "text-purple-600";
-	};
+	const tooltip = useMemo<ChartTooltipOptions<UVChartDatum, Date, number>>(
+		() => ({
+			className: "sunburn-chart-tooltip",
+			format: ({ datum }) =>
+				[
+					formatChartTime(datum.time, timezone, "h:mm a"),
+					`UV Index: ${datum.uvIndex.toFixed(1)}`,
+					`Risk Level: ${getUVRiskLevel(datum.uvIndex)}`,
+				].join("\n"),
+		}),
+		[timezone],
+	);
 
 	return (
 		<Card className="border-stone-200 shadow-sm">
@@ -266,42 +97,30 @@ export function UVChart({ result, timezone }: UVChartProps) {
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<div className="h-64 w-full mb-4">
-					<Line data={chartData} options={options} />
+				<div className="mb-4 h-64 w-full">
+					<Chart
+						definition={uvChartDefinition}
+						input={input}
+						height={256}
+						initialWidth={560}
+						ariaLabel="UV index forecast over the next three days"
+						ariaDescription="Hourly ultraviolet index forecast with a marker for the current time."
+						className="sunburn-chart"
+						focus={focusNearestX}
+						maxFocusDistance={Number.POSITIVE_INFINITY}
+						tooltip={tooltip}
+						animate={{ duration: 450, easing: "ease-out" }}
+						idPrefix="uv-chart"
+						renderSvg={renderChartSvgWithResources}
+					/>
 				</div>
 
-				{/* UV Risk Legend */}
 				<div className="grid grid-cols-5 gap-2 text-xs">
-					<div className={`text-center p-2 rounded ${getUVIndexColor(1).bg}`}>
-						<div className={`font-semibold ${getUVIndexColor(1).text}`}>
-							Low
-						</div>
-						<div className={`${getUVIndexColor(1).text} opacity-75`}>0-2</div>
-					</div>
-					<div className={`text-center p-2 rounded ${getUVIndexColor(4).bg}`}>
-						<div className={`font-semibold ${getUVIndexColor(4).text}`}>
-							Moderate
-						</div>
-						<div className={`${getUVIndexColor(4).text} opacity-75`}>3-5</div>
-					</div>
-					<div className={`text-center p-2 rounded ${getUVIndexColor(7).bg}`}>
-						<div className={`font-semibold ${getUVIndexColor(7).text}`}>
-							High
-						</div>
-						<div className={`${getUVIndexColor(7).text} opacity-75`}>6-7</div>
-					</div>
-					<div className={`text-center p-2 rounded ${getUVIndexColor(9).bg}`}>
-						<div className={`font-semibold ${getUVIndexColor(9).text}`}>
-							Very High
-						</div>
-						<div className={`${getUVIndexColor(9).text} opacity-75`}>8-10</div>
-					</div>
-					<div className={`text-center p-2 rounded ${getUVIndexColor(12).bg}`}>
-						<div className={`font-semibold ${getUVIndexColor(12).text}`}>
-							Extreme
-						</div>
-						<div className={`${getUVIndexColor(12).text} opacity-75`}>11+</div>
-					</div>
+					<UVRiskLegend uvIndex={1} label="Low" range="0-2" />
+					<UVRiskLegend uvIndex={4} label="Moderate" range="3-5" />
+					<UVRiskLegend uvIndex={7} label="High" range="6-7" />
+					<UVRiskLegend uvIndex={9} label="Very High" range="8-10" />
+					<UVRiskLegend uvIndex={12} label="Extreme" range="11+" />
 				</div>
 
 				<div className="mt-4 text-sm text-slate-600">
@@ -313,4 +132,38 @@ export function UVChart({ result, timezone }: UVChartProps) {
 			</CardContent>
 		</Card>
 	);
+}
+
+function UVRiskLegend({
+	uvIndex,
+	label,
+	range,
+}: {
+	uvIndex: number;
+	label: string;
+	range: string;
+}) {
+	const color = getUVIndexColor(uvIndex);
+	return (
+		<div className={`rounded p-2 text-center ${color.bg}`}>
+			<div className={`font-semibold ${color.text}`}>{label}</div>
+			<div className={`${color.text} opacity-75`}>{range}</div>
+		</div>
+	);
+}
+
+function getUVRiskLevel(uvIndex: number): string {
+	if (uvIndex < 3) return "Low";
+	if (uvIndex < 6) return "Moderate";
+	if (uvIndex < 8) return "High";
+	if (uvIndex < 11) return "Very High";
+	return "Extreme";
+}
+
+function getUVRiskColor(uvIndex: number): string {
+	if (uvIndex < 3) return "text-green-600";
+	if (uvIndex < 6) return "text-yellow-600";
+	if (uvIndex < 8) return "text-orange-600";
+	if (uvIndex < 11) return "text-red-600";
+	return "text-purple-600";
 }

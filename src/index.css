@@ -195,3 +195,45 @@
 		@apply order-first;
 	}
 }
+
+.sunburn-chart {
+	--ts-chart-focus-fill: #ffffff;
+	color: #64748b;
+}
+
+.sunburn-chart svg {
+	overflow: visible;
+}
+
+.sunburn-chart .ts-chart__axis text,
+.sunburn-chart .ts-chart__text text {
+	font-family: "TikTok Sans", ui-sans-serif, system-ui, sans-serif;
+	font-size: 11px;
+}
+
+.sunburn-chart .ts-chart__axis path,
+.sunburn-chart .ts-chart__axis line {
+	stroke: rgb(148 163 184 / 25%);
+}
+
+.sunburn-chart-tooltip.ts-chart-tooltip {
+	z-index: 20;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	padding: 0.65rem 0.75rem !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	border: 0 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	border-radius: 0.5rem !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	background: rgb(0 0 0 / 80%) !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	box-shadow: 0 8px 24px rgb(0 0 0 / 20%) !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	color: #ffffff !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	font-family: "TikTok Sans", ui-sans-serif, system-ui, sans-serif !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	font-size: 0.75rem !important;
+	/* biome-ignore lint/complexity/noImportantStyles: TanStack sets tooltip presentation inline. */
+	line-height: 1.35 !important;
+}

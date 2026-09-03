@@ -1,36 +1,17 @@
+import type { ChartTooltipOptions } from "@tanstack/charts";
+import { focusNearestX } from "@tanstack/charts/focus";
+import { renderChartSvgWithResources } from "@tanstack/charts/svg/resources";
+import { Chart } from "@tanstack/react-charts";
 import { useMemo } from "react";
 import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend,
-	Filler,
-	TimeScale,
-	type TooltipItem,
-	type ScriptableContext,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
-import { format } from "date-fns";
-import "chartjs-adapter-date-fns";
+	burnChartDefinition,
+	formatChartTime,
+	type BurnChartDatum,
+	type BurnChartInput,
+} from "../lib/tanstack-charts";
 import type { CalculationResult } from "../types";
+import { toTZDate } from "../utils/timezone";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { toTZDate, formatInTimeZone } from "../utils/timezone";
-
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend,
-	Filler,
-	TimeScale,
-);
 
 interface BurnChartProps {
 	result: CalculationResult;
@@ -39,11 +20,11 @@ interface BurnChartProps {
 
 export function BurnChart({ result, timezone }: BurnChartProps) {
 	const filteredPoints = useMemo(() => {
-		const tzPoints = result.points.map((p) => ({
-			...p,
+		const tzPoints = result.points.map((point) => ({
+			...point,
 			slice: {
-				...p.slice,
-				datetime: toTZDate(p.slice.datetime, timezone),
+				...point.slice,
+				datetime: toTZDate(point.slice.datetime, timezone),
 			},
 		}));
 
@@ -51,153 +32,49 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 			result.startTime ? new Date(result.startTime) : new Date(),
 			timezone,
 		);
-
-		// setHours(24) on a TZDate correctly means "midnight in the target tz"
 		const cutoffTime = new Date(tzStartTime);
 		cutoffTime.setHours(24, 0, 0, 0);
 
 		return tzPoints.filter((point) => point.slice.datetime <= cutoffTime);
 	}, [result.points, result.startTime, timezone]);
 
-	const chartData = useMemo(() => {
-		const times = filteredPoints.map((point) => point.slice.datetime);
-		const damageData = filteredPoints.map((_, i) => {
-			// Calculate cumulative damage up to this point
-			const cumulativeDamage = filteredPoints
-				.slice(0, i + 1)
-				.reduce((sum, point) => sum + point.burnCost, 0);
-			return Math.min(cumulativeDamage, 100);
+	const rows = useMemo<BurnChartDatum[]>(() => {
+		let cumulativeDamage = 0;
+		return filteredPoints.map((point) => {
+			cumulativeDamage = Math.min(cumulativeDamage + point.burnCost, 100);
+			return {
+				id: `${point.slice.datetime.getTime()}-${cumulativeDamage}`,
+				time: point.slice.datetime,
+				damage: cumulativeDamage,
+				point,
+			};
 		});
-
-		return {
-			labels: times,
-			datasets: [
-				{
-					label: "Cumulative Skin Damage (%)",
-					data: damageData,
-					borderColor: "#f97316", // Orange
-					backgroundColor: (context: ScriptableContext<"line">) => {
-						const ctx = context.chart.ctx;
-						const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-						gradient.addColorStop(0, "rgba(249, 115, 22, 0.3)");
-						gradient.addColorStop(0.6, "rgba(251, 191, 36, 0.2)");
-						gradient.addColorStop(1, "rgba(255, 255, 255, 0.1)");
-						return gradient;
-					},
-					fill: true,
-					tension: 0.3,
-					pointRadius: 4,
-					pointHoverRadius: 6,
-					pointBackgroundColor: "#f97316",
-					pointBorderColor: "#fff",
-					pointBorderWidth: 2,
-				},
-			],
-		};
 	}, [filteredPoints]);
 
-	const options = useMemo(
+	const input = useMemo<BurnChartInput>(
 		() => ({
-			responsive: true,
-			maintainAspectRatio: false,
-			interaction: {
-				intersect: false,
-				mode: "index" as const,
-			},
-			plugins: {
-				legend: {
-					display: false,
-				},
-				tooltip: {
-					backgroundColor: "rgba(0, 0, 0, 0.8)",
-					titleColor: "#fff",
-					bodyColor: "#fff",
-					cornerRadius: 8,
-					padding: 12,
-					callbacks: {
-						title: (context: TooltipItem<"line">[]) => {
-							const date = new Date(context[0].parsed.x);
-							return timezone
-								? formatInTimeZone(date, timezone, "h:mm a")
-								: format(date, "h:mm a");
-						},
-						label: (context: TooltipItem<"line">) => {
-							const damage = context.parsed.y.toFixed(1);
-							const point = filteredPoints[context.dataIndex];
-							return [
-								`Damage: ${damage}%`,
-								`UV Index: ${point.slice.uvIndex.toFixed(1)}`,
-								`Rate: ${point.burnCost.toFixed(2)}%/interval`,
-							];
-						},
-					},
-				},
-			},
-			scales: {
-				x: {
-					type: "time" as const,
-					time: {
-						unit: "hour" as const,
-						displayFormats: {
-							hour: "h a",
-						},
-					},
-					title: {
-						display: true,
-						text: "Time",
-						font: {
-							size: 12,
-							weight: "bold" as const,
-						},
-					},
-					grid: {
-						color: "rgba(0, 0, 0, 0.05)",
-					},
-					ticks: {
-						callback: (value: string | number) => {
-							const date = new Date(value as number);
-							return timezone
-								? formatInTimeZone(date, timezone, "h a")
-								: format(date, "h a");
-						},
-					},
-				},
-				y: {
-					min: 0,
-					max: 100,
-					title: {
-						display: true,
-						text: "Skin Damage (%)",
-						font: {
-							size: 12,
-							weight: "bold" as const,
-						},
-					},
-					grid: {
-						color: "rgba(0, 0, 0, 0.05)",
-					},
-					ticks: {
-						callback: (value: string | number) => `${value}%`,
-					},
-				},
-			},
-			elements: {
-				point: {
-					hoverRadius: 8,
-				},
-			},
+			rows,
+			fallbackTime: toTZDate(result.startTime ?? new Date(), timezone),
+			timezone,
 		}),
-		[filteredPoints, timezone],
+		[rows, result.startTime, timezone],
 	);
 
-	const burnTimeReached = useMemo(() => {
-		return filteredPoints.some((_, i) => {
-			const cumulativeDamage = filteredPoints
-				.slice(0, i + 1)
-				.reduce((sum, point) => sum + point.burnCost, 0);
-			return cumulativeDamage >= 100;
-		});
-	}, [filteredPoints]);
+	const tooltip = useMemo<ChartTooltipOptions<BurnChartDatum, Date, number>>(
+		() => ({
+			className: "sunburn-chart-tooltip",
+			format: ({ datum }) =>
+				[
+					formatChartTime(datum.time, timezone, "h:mm a"),
+					`Damage: ${datum.damage.toFixed(1)}%`,
+					`UV Index: ${datum.point.slice.uvIndex.toFixed(1)}`,
+					`Rate: ${datum.point.burnCost.toFixed(2)}%/interval`,
+				].join("\n"),
+		}),
+		[timezone],
+	);
+
+	const burnTimeReached = rows.some((row) => row.damage >= 100);
 
 	return (
 		<Card>
@@ -205,7 +82,7 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 				<CardTitle className="flex items-center justify-between">
 					<span>Skin Damage Over Time</span>
 					{burnTimeReached && (
-						<span className="text-sm text-destructive bg-destructive/10 px-2 py-1 rounded">
+						<span className="rounded bg-destructive/10 px-2 py-1 text-sm text-destructive">
 							Burn threshold reached
 						</span>
 					)}
@@ -213,7 +90,21 @@ export function BurnChart({ result, timezone }: BurnChartProps) {
 			</CardHeader>
 			<CardContent>
 				<div className="h-80 w-full">
-					<Line data={chartData} options={options} />
+					<Chart
+						definition={burnChartDefinition}
+						input={input}
+						height={320}
+						initialWidth={560}
+						ariaLabel="Cumulative skin damage percentage over time"
+						ariaDescription="Skin damage accumulated from UV exposure, skin type, and sun protection factors."
+						className="sunburn-chart"
+						focus={focusNearestX}
+						maxFocusDistance={Number.POSITIVE_INFINITY}
+						tooltip={tooltip}
+						animate={{ duration: 450, easing: "ease-out" }}
+						idPrefix="burn-chart"
+						renderSvg={renderChartSvgWithResources}
+					/>
 				</div>
 
 				<div className="mt-4 text-sm text-muted-foreground">
