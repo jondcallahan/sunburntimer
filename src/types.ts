@@ -240,6 +240,7 @@ export interface AppState {
 	sweatLevel?: SweatLevel;
 	geolocation: GeolocationState;
 	calculation?: CalculationResult;
+	activityStartTime?: string;
 }
 
 // Constants
